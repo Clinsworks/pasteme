@@ -4,7 +4,7 @@ import { z } from "zod";
 dotenv.config();
 
 const schema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  NODE_ENV: z.enum(["development", "test", "production"]).default(process.env.VERCEL ? "production" : "development"),
   PORT: z.coerce.number().int().positive().default(5000),
   MONGODB_URI: z.string().min(1, "MONGODB_URI is required."),
   AUTH_TOKEN_SECRET: z.string().min(32, "AUTH_TOKEN_SECRET must be at least 32 characters."),

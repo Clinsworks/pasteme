@@ -7,6 +7,7 @@ import { env } from "./config/env.js";
 import authRoutes from "./routes/authRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import { connectDatabase } from "./config/database.js";
 import { errorHandler, HttpError } from "./middleware/errors.js";
 
 const app = express();
@@ -29,6 +30,14 @@ app.use((request, _response, next) => {
 });
 app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());
+app.use(async (_request, _response, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
