@@ -1,0 +1,44 @@
+{
+  "id": "/",
+  "name": "PasteMe — Fundraising made easier",
+  "short_name": "PasteMe",
+  "description": "Create and share fundraising campaigns with a link or QR code.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F7F5F0",
+  "theme_color": "#54265F",
+  "icons": [
+    {
+      "src": "/pasteme-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pasteme-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pasteme-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Creator dashboard",
+      "short_name": "Dashboard",
+      "url": "/dashboard"
+    },
+    {
+      "name": "Create campaign",
+      "short_name": "Create",
+      "url": "/create"
+    }
+  ]
+}
