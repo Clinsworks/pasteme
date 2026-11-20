@@ -12,6 +12,7 @@ const schema = z.object({
   API_PUBLIC_URL: z.string().url().default("http://localhost:5000"),
   PAYMENT_DATA_ENCRYPTION_KEY: z.string().optional(),
   OPEN_PAYMENTS_CLIENT_WALLET_ADDRESS: z.string().optional(),
+  OPEN_PAYMENTS_PRIVATE_KEY: z.string().optional(),
   OPEN_PAYMENTS_PRIVATE_KEY_PATH: z.string().optional(),
   OPEN_PAYMENTS_KEY_ID: z.string().optional(),
 });

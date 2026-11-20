@@ -45,8 +45,11 @@ To use the Interledger test network:
 3. Create a client wallet address and developer key for PasteMe. Verify that
    `{client-wallet-address}/jwks.json` publishes the matching Ed25519 public
    key with the exact key ID configured in `OPEN_PAYMENTS_KEY_ID`. Configure
-   the address, key ID and private key path in the three `OPEN_PAYMENTS_*`
-   variables. Keep the private key outside source control.
+   the address and key ID in `OPEN_PAYMENTS_CLIENT_WALLET_ADDRESS` and
+   `OPEN_PAYMENTS_KEY_ID`. For deployments, set the private key contents in
+   the secret `OPEN_PAYMENTS_PRIVATE_KEY` variable; for local development, you
+   can instead set `OPEN_PAYMENTS_PRIVATE_KEY_PATH` to a key file. Keep the
+   private key outside source control.
 4. Configure `API_PUBLIC_URL` to the publicly reachable HTTPS API origin when
    testing wallet authorization redirects. Configure `FRONTEND_URL` to the
    frontend origin.
