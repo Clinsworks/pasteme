@@ -1,7 +1,10 @@
 
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import BrandLogo from "../../components/BrandLogo";
+import Icon from "../../components/Icon";
 import { getPublishedCampaign } from "../../lib/campaignStore";
+import { getCategoryLabel } from "../../lib/categoryLabels";
 import { apiRequest } from "../../lib/api";
 import { formatMoney } from "../../lib/money";
 import "./Checkout.css";
@@ -15,7 +18,7 @@ const translations = {
     amount: "Choose your contribution",
     custom: "Enter another amount",
     wallet: "Your wallet address",
-    walletHelp: "Your wallet can use a different currency. Your wallet provider will show the converted amount before you approve.",
+    walletHelp: "Enter your public Open Payments wallet URL.",
     walletWarning: "Never enter your wallet password or secret keys here.",
     continue: "Get payment quote",
     quoteTitle: "Review your contribution",
@@ -68,7 +71,7 @@ const translations = {
     amount: "Choose how much you wan contribute",
     custom: "Enter another amount",
     wallet: "Your wallet address",
-    walletHelp: "Your wallet fit use another currency. Your wallet provider go show the converted amount before you approve.",
+    walletHelp: "Enter your public Open Payments wallet URL.",
     walletWarning: "No enter your wallet password or secret keys here.",
     continue: "Get payment quote",
     quoteTitle: "Check your contribution",
@@ -121,7 +124,7 @@ const translations = {
     amount: "Yan iye owó ìrànlọ́wọ́ rẹ",
     custom: "Tẹ iye owó mìíràn",
     wallet: "Àdírẹ́sì àpò owó rẹ",
-    walletHelp: "Àpò owó rẹ lè lo owó oríṣiríṣi; olùpèsè rẹ yóò fi iye tí a yí padà hàn kí o tó fọwọ́ sí i.",
+    walletHelp: "Tẹ ìjápọ̀ àpò owó Open Payments rẹ.",
     walletWarning: "Má ṣe tẹ ọ̀rọ̀ aṣínà tàbí kọ́kọ́rọ́ àṣírí rẹ síbí.",
     continue: "Gba ìṣirò owó",
     quoteTitle: "Ṣàyẹ̀wò ìrànlọ́wọ́ rẹ",
@@ -462,7 +465,7 @@ export default function SupporterCheckout() {
   if (loading) {
     return (
       <main className="checkout-state">
-        <span className="checkout-state-logo">p.</span>
+        <BrandLogo className="checkout-state-logo" />
         <p>{t.loading}</p>
       </main>
     );
@@ -471,7 +474,7 @@ export default function SupporterCheckout() {
   if (campaignUnavailable || !campaign) {
     return (
       <main className="checkout-state">
-        <span className="checkout-state-logo">p.</span>
+        <BrandLogo className="checkout-state-logo" />
         <h1>{t.titleNotFound}</h1>
         <p>{t.notFound}</p>
         <button onClick={() => navigate("/")}>{t.home}</button>
@@ -481,23 +484,22 @@ export default function SupporterCheckout() {
 
   const raised = Number(campaign.raised) || 0;
   const goal = Number(campaign.target) || 0;
+  const category = getCategoryLabel(campaign.category, language);
 
   return (
     <main className="checkout-page">
 
       {/* NAVIGATION */}
       <nav className="checkout-nav">
-        <Link to="/" className="checkout-logo">
-          paste<span>me</span><i>.</i>
-        </Link>
+        <BrandLogo className="checkout-logo" />
 
         <div className="checkout-nav-right">
           <span className="checkout-secure-label">
-            <span>✳</span> {t.live}
+            <Icon name="shield-check" size={16} /> {t.live}
           </span>
 
           <div className="checkout-language">
-            <span>文</span>
+            <Icon name="globe" size={16} />
             <select
               value={language}
               onChange={handleLanguageChange}
@@ -523,14 +525,14 @@ export default function SupporterCheckout() {
               <img src={campaign.coverImage} alt="" />
             ) : (
               <div className="checkout-art-placeholder">
-                <span>✳</span>
+                <Icon name="heart-handshake" size={20} />
                 <small>PASTEME</small>
               </div>
             )}
           </div>
 
           <span className="checkout-category">
-            {campaign.category}
+            {category}
           </span>
 
           <h1>{campaign.title}</h1>
@@ -563,7 +565,7 @@ export default function SupporterCheckout() {
             className="checkout-return-link"
             onClick={handleReturnToCampaign}
           >
-            ← {t.viewCampaign}
+            <Icon name="arrow-left" size={16} /> {t.viewCampaign}
           </button>
 
         </aside>
@@ -656,7 +658,7 @@ export default function SupporterCheckout() {
                 </div>
 
                 <div className="checkout-wallet-warning">
-                  <span>!</span>
+                  <Icon name="alert-circle" size={17} />
                   <p>{t.walletWarning}</p>
                 </div>
 
@@ -670,11 +672,11 @@ export default function SupporterCheckout() {
                   disabled={busy || campaignEnded}
                 >
                   {campaignEnded ? t.campaignEnded : busy ? t.processing : t.continue}
-                  <span>↗</span>
+                  <Icon name="arrow-up-right" size={16} />
                 </button>
 
                 <div className="checkout-trust-note">
-                  <span>✓</span>
+                  <Icon name="check-circle" size={15} />
                   {t.noSignup}
                 </div>
 
@@ -715,7 +717,7 @@ export default function SupporterCheckout() {
               )}
 
               <div className="quote-security-note">
-                <span>✳</span>
+                <Icon name="shield-check" size={18} />
                 <p>{t.secure}</p>
               </div>
 
@@ -730,7 +732,7 @@ export default function SupporterCheckout() {
                 disabled={busy}
               >
                 {busy ? t.redirecting : t.authorize}
-                <span>↗</span>
+                <Icon name="arrow-up-right" size={16} />
               </button>
 
               <button
@@ -739,7 +741,7 @@ export default function SupporterCheckout() {
                 onClick={handleBackToForm}
                 disabled={busy}
               >
-                ← {t.back}
+                <Icon name="arrow-left" size={16} /> {t.back}
               </button>
 
             </div>
@@ -747,7 +749,7 @@ export default function SupporterCheckout() {
 
           {step === "checking" && (
             <StatusPanel
-              icon="◌"
+              icon="loader"
               title={t.checkStatus}
               description={t.pendingText}
               busy
@@ -756,7 +758,7 @@ export default function SupporterCheckout() {
 
           {step === "success" && (
             <StatusPanel
-              icon="✓"
+              icon="check-circle"
               title={t.success}
               description={t.successText}
               success
@@ -767,7 +769,7 @@ export default function SupporterCheckout() {
 
           {step === "pending" && (
             <StatusPanel
-              icon="◷"
+              icon="clock"
               title={t.pending}
               description={t.pendingText}
               buttonText={busy ? t.checkStatus : t.retry}
@@ -779,7 +781,7 @@ export default function SupporterCheckout() {
 
           {step === "failed" && (
             <StatusPanel
-              icon="!"
+              icon="alert-circle"
               title={t.failed}
               description={t.failedText}
               error
@@ -818,7 +820,7 @@ function StatusPanel({
           success ? "success" : error ? "failure" : ""
         } ${busy ? "spinning" : ""}`}
       >
-        {icon}
+        <Icon name={icon} size={28} />
       </div>
 
       <h2>{title}</h2>
@@ -836,7 +838,7 @@ function StatusPanel({
           disabled={disabled}
         >
           {buttonText}
-          <span>↗</span>
+          <Icon name="arrow-up-right" size={16} />
         </button>
       )}
     </div>

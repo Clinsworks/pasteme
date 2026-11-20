@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Landing from "./pages/Landing/Landing";
 import CreateCampaign from "./pages/CreCamp/CreCamp";
 import CampaignPreview from "./pages/CampaignPrev/CampaignPrev";
@@ -12,18 +12,29 @@ import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
+import ScrollReveal from "./components/ScrollReveal";
 import { useAuth } from "./context/AuthContext";
+import Icon from "./components/Icon";
 
 function GuestOnly({ children }) {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) return <p role="status">Checking your account...</p>;
+  const language = localStorage.getItem("pasteme_language") || "en";
+  const loadingText = {
+    en: "Checking your account...",
+    pcm: "We dey check your account...",
+    yo: "A ń ṣàyẹ̀wò àkáǹtì rẹ...",
+  }[language] || "Checking your account...";
+  if (loading) return <div className="app-route-loading" role="status"><Icon name="loader" size={20} /><span>{loadingText}</span></div>;
   return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
 }
 
 export default function App() {
+  const location = useLocation();
+
   return (
     <>
       <ScrollToTop />
+      <ScrollReveal key={location.pathname} />
       <Routes>
       {/* Pages available without a PasteMe account */}
       <Route path="/" element={<Landing />} />

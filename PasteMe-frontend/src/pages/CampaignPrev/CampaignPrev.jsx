@@ -1,5 +1,8 @@
 import { useMemo, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getCategoryLabel } from "../../lib/categoryLabels";
+import { useLocation, useNavigate } from "react-router-dom";
+import BrandLogo from "../../components/BrandLogo";
+import Icon from "../../components/Icon";
 import { useAuth } from "../../context/AuthContext";
 import { saveCampaign } from "../../lib/campaignStore";
 import { formatMoney } from "../../lib/money";
@@ -17,7 +20,7 @@ const translations = {
     titleLabel: "Campaign title", categoryLabel: "Campaign category", goalLabel: "Fundraising goal", storyLabel: "Campaign story", added: "Added",
     reminder: "Once published, your campaign will have a shareable page and QR code.", publish: "Publish campaign", publishing: "Publishing...", save: "Save campaign changes", edit: "Make changes",
     terms: "By publishing, you confirm that your campaign information is accurate.", emptyTitle: "No campaign to preview", emptyText: "Create a campaign before accessing its preview.", create: "Create campaign",
-    error: "Some campaign details are missing. Go back and complete the form.", deadlineError: "Choose a campaign deadline or make the campaign open-ended.", publishError: "Unable to publish campaign. Please try again.", dashboard: "Dashboard",
+    error: "Some campaign details are missing. Go back and complete the form.", deadlineError: "Choose a campaign deadline or make the campaign open-ended.", publishError: "Unable to publish campaign. Please try again.", dashboard: "Dashboard", deadlineExpired: "The end date don pass. Choose a future date or make the fundraiser open-ended.",
   },
   pcm: {
     navPreview: "Campaign preview", editCampaign: "Edit campaign", publicPreview: "PUBLIC CAMPAIGN PAGE",
@@ -29,7 +32,7 @@ const translations = {
     titleLabel: "Campaign title", categoryLabel: "Campaign category", goalLabel: "Fundraising target", storyLabel: "Campaign story", added: "Don add am",
     reminder: "When you publish, your campaign go get link and QR code wey you fit share.", publish: "Publish campaign", publishing: "E dey publish...", save: "Save campaign changes", edit: "Make changes",
     terms: "When you publish, you confirm say your campaign information correct.", emptyTitle: "No campaign to preview", emptyText: "Create campaign before you open preview.", create: "Create campaign",
-    error: "Some campaign details no complete. Go back fill the form.", deadlineError: "Choose deadline or make campaign open-ended.", publishError: "We no fit publish campaign. Try again.", dashboard: "Dashboard",
+    error: "Some campaign details no complete. Go back fill the form.", deadlineError: "Choose deadline or make campaign open-ended.", publishError: "We no fit publish campaign. Try again.", dashboard: "Dashboard", deadlineExpired: "The end date don pass. Choose a future date or make the fundraiser open-ended.",
   },
   yo: {
     navPreview: "Àyẹ̀wò ìpolongo", editCampaign: "Ṣàtúnṣe ìpolongo", publicPreview: "OJÚ ÌPOLONGO FÚN GBOGBO ÈNÌYÀN",
@@ -41,19 +44,11 @@ const translations = {
     titleLabel: "Àkọlé ìpolongo", categoryLabel: "Ẹ̀ka ìpolongo", goalLabel: "Àfojúsùn owó", storyLabel: "Ìtàn ìpolongo", added: "A ti fi kún un",
     reminder: "Lẹ́yìn ìtẹ̀jáde, ìpolongo rẹ yóò ní ìjápọ̀ àti kóòdù QR tí o lè pín.", publish: "Tẹ ìpolongo jáde", publishing: "A ń tẹ̀ ẹ jáde...", save: "Fi àwọn àyípadà pamọ́", edit: "Ṣe àtúnṣe",
     terms: "Nípa títẹ̀jáde, o jẹ́rìísí pé àlàyé ìpolongo rẹ tọ́.", emptyTitle: "Kò sí ìpolongo fún àyẹ̀wò", emptyText: "Ṣẹ̀dá ìpolongo kí o tó lè ṣàyẹ̀wò rẹ.", create: "Ṣẹ̀dá ìpolongo",
-    error: "Àwọn àlàyé kan kò sí. Padà kí o sì kún fọ́ọ̀mù náà.", deadlineError: "Yan ọjọ́ ìparí tàbí ṣe ìpolongo tí kò ní ọjọ́ ìparí.", publishError: "A kò lè tẹ ìpolongo jáde. Jọ̀wọ́ tún gbìyànjú.", dashboard: "Ojú ìṣàkóso",
+    error: "Àwọn àlàyé kan kò sí. Padà kí o sì kún fọ́ọ̀mù náà.", deadlineError: "Yan ọjọ́ ìparí tàbí ṣe ìpolongo tí kò ní ọjọ́ ìparí.", publishError: "A kò lè tẹ ìpolongo jáde. Jọ̀wọ́ tún gbìyànjú.", deadlineExpired: "Ọjọ́ ìparí yìí ti kọjá. Yan ọjọ́ iwájú tàbí ṣe ìpolongo tí kò ní ọjọ́ ìparí.", dashboard: "Ojú ìṣàkóso",
   },
 };
 
 
-const categoryLabels = {
-  Education: { en: "Education", pcm: "Education", yo: "Ẹ̀kọ́" },
-  Medical: { en: "Medical", pcm: "Health", yo: "Ìlera" },
-  Community: { en: "Community", pcm: "Community", yo: "Àwùjọ" },
-  Personal: { en: "Personal", pcm: "Personal", yo: "Ti ara ẹni" },
-  Business: { en: "Business", pcm: "Business", yo: "Iṣòwò" },
-  Other: { en: "Other", pcm: "Other", yo: "Òmíràn" },
-};
 
 function getSavedDraft(email) {
   try {
@@ -81,7 +76,7 @@ export default function CampaignPreview() {
   const progress = campaign?.target
     ? Math.min(((Number(campaign.raised) || 0) / Number(campaign.target)) * 100, 100)
     : 0;
-  const category = categoryLabels[campaign?.category]?.[language] || campaign?.category;
+  const category = getCategoryLabel(campaign?.category, language);
 
   const handleLanguageChange = (event) => {
     const selected = event.target.value;
@@ -169,7 +164,7 @@ export default function CampaignPreview() {
   return (
     <main className="preview-page">
       <nav className="preview-nav">
-        <Link to="/dashboard" className="preview-logo">paste<span>me</span><i>.</i></Link>
+        <BrandLogo to="/dashboard" className="preview-logo" />
         <div className="preview-nav-center">
           <span className="preview-status-dot" /> {t.navPreview}
         </div>
@@ -179,7 +174,7 @@ export default function CampaignPreview() {
             <option value="pcm">Pidgin</option>
             <option value="yo">Yorùbá</option>
           </select>
-          <button className="preview-exit" type="button" onClick={handleEdit}>← {t.editCampaign}</button>
+          <button className="preview-exit" type="button" onClick={handleEdit}><Icon name="arrow-left" size={17} /> {t.editCampaign}</button>
         </div>
       </nav>
 
@@ -197,14 +192,14 @@ export default function CampaignPreview() {
                 <img src={campaign.coverImage} alt="Campaign cover" />
               ) : (
                 <div className="cover-placeholder">
-                  <span>✳</span>
+                  <Icon name="image" size={25} />
                   <p>{t.cover}</p>
                 </div>
               )}
             </div>
 
             <div className="public-campaign-content">
-              <span className="campaign-category">{campaign.category}</span>
+              <span className="campaign-category">{category}</span>
               <h2>{campaign.title}</h2>
               <p className="campaign-story">{campaign.story}</p>
 
@@ -236,7 +231,7 @@ export default function CampaignPreview() {
           </article>
 
           <div className="preview-footnote">
-            <span>✳</span>
+            <Icon name="info" size={17} />
             {t.footnote}
           </div>
         </section>
@@ -250,29 +245,29 @@ export default function CampaignPreview() {
 
           <div className="publish-checklist">
             <div className="checklist-item">
-              <span className="check-icon">✓</span>
+              <span className="check-icon"><Icon name="check" size={15} /></span>
               <div><strong>{t.titleLabel}</strong><span>{campaign.title}</span></div>
             </div>
             <div className="checklist-item">
-              <span className="check-icon">✓</span>
+              <span className="check-icon"><Icon name="check" size={15} /></span>
               <div><strong>{t.categoryLabel}</strong><span>{category}</span></div>
             </div>
             <div className="checklist-item">
-              <span className="check-icon">✓</span>
+              <span className="check-icon"><Icon name="check" size={15} /></span>
               <div><strong>{t.goalLabel}</strong><span>{formatMoney(campaign.target, campaign.currency, campaign.assetScale)}</span></div>
             </div>
             <div className="checklist-item">
-              <span className="check-icon">✓</span>
+              <span className="check-icon"><Icon name="check" size={15} /></span>
               <div><strong>{t.storyLabel}</strong><span>{t.added}</span></div>
             </div>
             <div className="checklist-item">
-              <span className="check-icon">✓</span>
+              <span className="check-icon"><Icon name="check" size={15} /></span>
               <div><strong>{t.deadlineLabel}</strong><span>{deadline}</span></div>
             </div>
           </div>
 
           <div className="publish-reminder">
-            <span>✳</span>
+            <Icon name="qr-code" size={18} />
             <p>{t.reminder}</p>
           </div>
 
@@ -280,7 +275,7 @@ export default function CampaignPreview() {
 
           <button className="publish-button" type="button" onClick={handlePublish} disabled={publishing}>
             {publishing ? t.publishing : campaign.id ? t.save : t.publish}
-            <span>↗</span>
+            <Icon name="arrow-up-right" size={17} />
           </button>
 
           <button className="back-edit-button" type="button" onClick={handleEdit}>

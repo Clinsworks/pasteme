@@ -28,20 +28,7 @@
 }
 
 .checkout-logo {
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: -1.8px;
-  text-decoration: none;
   color: var(--charcoal);
-}
-
-.checkout-logo span {
-  color: var(--plum);
-}
-
-.checkout-logo i {
-  color: var(--sage);
-  font-style: normal;
 }
 
 .checkout-nav-right {
@@ -672,9 +659,12 @@
 }
 
 .checkout-state-logo {
-  color: var(--plum);
-  font-size: 46px;
-  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.checkout-state-logo img {
+  width: 48px;
+  height: 48px;
 }
 
 .checkout-state h1 {
@@ -757,10 +747,6 @@
 }
 
 @media (max-width: 380px) {
-  .checkout-logo {
-    font-size: 23px;
-  }
-
   .checkout-language {
     padding: 8px;
   }

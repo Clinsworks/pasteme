@@ -29,20 +29,7 @@
 }
 
 .dashboard-logo {
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: -1.8px;
-  text-decoration: none;
   color: var(--charcoal);
-}
-
-.dashboard-logo span {
-  color: var(--plum);
-}
-
-.dashboard-logo i {
-  color: var(--sage);
-  font-style: normal;
 }
 
 .dashboard-nav-center {
@@ -738,10 +725,6 @@
 }
 
 @media (max-width: 380px) {
-  .dashboard-logo {
-    font-size: 24px;
-  }
-
   .dashboard-language {
     padding: 7px;
   }

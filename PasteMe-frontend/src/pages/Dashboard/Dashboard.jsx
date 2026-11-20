@@ -1,6 +1,9 @@
 
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { getCategoryLabel } from "../../lib/categoryLabels";
+import { useNavigate } from "react-router-dom";
+import BrandLogo from "../../components/BrandLogo";
+import Icon from "../../components/Icon";
 import InstallAppButton from "../../components/InstallAppButton";
 import { useAuth } from "../../context/AuthContext";
 import { deleteCampaign, listCampaigns } from "../../lib/campaignStore";
@@ -142,14 +145,6 @@ const translations = {
   },
 };
 
-const categoryLabels = {
-  Education: { en: "Education", pcm: "Education", yo: "Ẹ̀kọ́" },
-  Medical: { en: "Medical", pcm: "Health", yo: "Ìlera" },
-  Community: { en: "Community", pcm: "Community", yo: "Àwùjọ" },
-  Personal: { en: "Personal", pcm: "Personal", yo: "Ti ara ẹni" },
-  Business: { en: "Business", pcm: "Business", yo: "Iṣòwò" },
-  Other: { en: "Other", pcm: "Other", yo: "Òmíràn" },
-};
 
 const formatDate = (date, language = "en") => {
   if (!date) return "—";
@@ -301,9 +296,7 @@ export default function Dashboard() {
       {/* NAVIGATION */}
       <nav className="dashboard-nav">
 
-        <Link to="/dashboard" className="dashboard-logo">
-          paste<span>me</span><i>.</i>
-        </Link>
+        <BrandLogo to="/dashboard" className="dashboard-logo" />
 
         <div className="dashboard-nav-center">
           <span className="dashboard-nav-active">
@@ -316,7 +309,7 @@ export default function Dashboard() {
           <InstallAppButton label={t.installApp} />
 
           <div className="dashboard-language">
-            <span>文</span>
+            <Icon name="globe" size={16} />
 
             <select
               value={language}
@@ -337,7 +330,7 @@ export default function Dashboard() {
           </div>
 
           <button className="dashboard-logout" type="button" onClick={handleLogout}>
-            {t.logout} <span>↗</span>
+            {t.logout} <Icon name="log-out" size={16} />
           </button>
 
         </div>
@@ -359,7 +352,7 @@ export default function Dashboard() {
             className="dashboard-create-button"
             onClick={handleNewCampaign}
           >
-            <span>+</span>
+            <Icon name="plus" size={17} />
             {t.newCampaign}
           </button>
 
@@ -371,14 +364,14 @@ export default function Dashboard() {
           <div className="dashboard-section-heading">
             <span>{t.overview}</span>
             <span className="dashboard-overview-indicator">
-              ✳ {t.viewAll}
+              <Icon name="sparkles" size={14} /> {t.viewAll}
             </span>
           </div>
 
           <div className="dashboard-stats">
 
             <article className="dashboard-stat-card stat-plum">
-              <div className="stat-icon">¤</div>
+              <div className="stat-icon"><Icon name="wallet" size={19} /></div>
               <span>{t.totalRaised}</span>
               <strong>
                 {overview.raisedByCurrency.length
@@ -391,14 +384,14 @@ export default function Dashboard() {
             </article>
 
             <article className="dashboard-stat-card stat-sage">
-              <div className="stat-icon">↗</div>
+              <div className="stat-icon"><Icon name="megaphone" size={19} /></div>
               <span>{t.campaigns}</span>
               <strong>{campaigns.length.toString().padStart(2, "0")}</strong>
               <small>{t.published}</small>
             </article>
 
             <article className="dashboard-stat-card stat-ivory">
-              <div className="stat-icon">♡</div>
+              <div className="stat-icon"><Icon name="users" size={19} /></div>
               <span>{t.supporters}</span>
               <strong>{overview.totalSupporters.toLocaleString("en-NG")}</strong>
               <small>{t.totalAcross}</small>
@@ -430,7 +423,7 @@ export default function Dashboard() {
             <div className="dashboard-empty">
 
               <div className="empty-decoration">
-                <span>✳</span>
+                <Icon name="sparkles" size={25} />
               </div>
 
               <h3>{t.noCampaigns}</h3>
@@ -442,7 +435,7 @@ export default function Dashboard() {
                 onClick={handleNewCampaign}
               >
                 {t.createFirst}
-                <span>↗</span>
+                <Icon name="arrow-up-right" size={15} />
               </button>
 
             </div>
@@ -478,7 +471,7 @@ export default function Dashboard() {
                             alt=""
                           />
                         ) : (
-                          <span>✳</span>
+                          <Icon name="heart-handshake" size={24} />
                         )}
                       </div>
 
@@ -494,7 +487,7 @@ export default function Dashboard() {
                         </div>
 
                         <span className="campaign-card-category">
-                          {categoryLabels[campaign.category]?.[language] || campaign.category || "Other"}
+                          {getCategoryLabel(campaign.category || "Other", language)}
                         </span>
 
                         <div className="campaign-card-progress">
@@ -536,7 +529,7 @@ export default function Dashboard() {
                         onClick={() => handleViewCampaign(campaign.id)}
                       >
                         {t.view}
-                        <span>↗</span>
+                        <Icon name="arrow-up-right" size={15} />
                       </button>
 
                       <button
@@ -589,7 +582,7 @@ export default function Dashboard() {
         {campaigns.length > 0 && (
           <section className="dashboard-quick-create">
 
-            <div className="quick-create-decoration">✳</div>
+            <div className="quick-create-decoration"><Icon name="sparkles" size={22} /></div>
 
             <div className="quick-create-content">
               <h2>{t.quickTitle}</h2>
@@ -601,7 +594,7 @@ export default function Dashboard() {
               className="quick-create-button"
             >
               {t.quickAction}
-              <span>↗</span>
+              <Icon name="arrow-up-right" size={16} />
             </button>
 
           </section>

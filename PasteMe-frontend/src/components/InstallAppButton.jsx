@@ -1,3 +1,4 @@
+import Icon from "./Icon";
 import { useEffect, useState } from "react";
 
 export default function InstallAppButton({ label = "Install app" }) {
@@ -46,7 +47,7 @@ export default function InstallAppButton({ label = "Install app" }) {
 
   return (
     <button className="install-app-button" type="button" onClick={handleInstall}>
-      <span aria-hidden="true">↓</span>
+      <Icon name="download" size={16} />
       {label}
     </button>
   );
