@@ -28,10 +28,11 @@ health check. The frontend Vite server proxies `/api` requests to this API.
 ## Open Payments setup
 
 The checkout uses the Open Payments API and Interledger's Node SDK. The
-campaign's receiving wallet determines its currency and asset scale. A
-supporter's wallet can use another currency when the wallet provider can quote
-the conversion. Open Payments standardizes payment instructions and user
-authorization; wallet providers and the underlying rail perform settlement.
+campaign's receiving wallet determines its currency and asset scale, and the
+contribution amount is entered in that currency. The quote shows the amount
+debited from the supporter's wallet in its own currency; the wallet provider
+and underlying rail perform the conversion when supported. Open Payments
+standardizes payment instructions and user authorization.
 
 To use the Interledger test network:
 
