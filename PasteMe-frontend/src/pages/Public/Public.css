@@ -29,20 +29,7 @@
 }
 
 .public-logo {
-  text-decoration: none;
   color: var(--charcoal);
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: -1.8px;
-}
-
-.public-logo span {
-  color: var(--plum);
-}
-
-.public-logo i {
-  color: var(--sage);
-  font-style: normal;
 }
 
 .public-nav-right {
@@ -519,10 +506,6 @@
 }
 
 @media (max-width: 380px) {
-  .public-logo {
-    font-size: 23px;
-  }
-
   .public-language {
     padding: 8px;
   }

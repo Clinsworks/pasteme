@@ -42,20 +42,7 @@
 }
 
 .published-logo {
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: -1.8px;
-  text-decoration: none;
   color: var(--charcoal);
-}
-
-.published-logo span {
-  color: var(--plum);
-}
-
-.published-logo i {
-  color: var(--sage);
-  font-style: normal;
 }
 
 .published-nav-right {
@@ -779,10 +766,6 @@
 }
 
 @media (max-width: 400px) {
-  .published-logo {
-    font-size: 24px;
-  }
-
   .language-selector {
     padding: 8px;
   }

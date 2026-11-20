@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import BrandLogo from "../components/BrandLogo";
+import Icon from "../components/Icon";
 import "./NotFound.css";
 
 const copy = {
@@ -40,9 +42,7 @@ export default function NotFound() {
 
   return (
     <main className="not-found-page">
-      <Link to="/" className="not-found-logo">
-        paste<span>me</span><i>.</i>
-      </Link>
+      <BrandLogo className="not-found-logo" />
 
       <label className="not-found-language">
         <span className="sr-only">{t.language}</span>
@@ -58,7 +58,7 @@ export default function NotFound() {
       <h1>{t.title}</h1>
       <p>{t.description}</p>
       <Link to="/" className="not-found-button">
-        {t.action} <span>↗</span>
+        {t.action} <Icon name="arrow-up-right" size={16} />
       </Link>
     </main>
   );

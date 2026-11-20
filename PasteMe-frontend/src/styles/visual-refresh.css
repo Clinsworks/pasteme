@@ -1,0 +1,1139 @@
+/* PasteMe visual refresh: editorial, human, clear and consistent. */
+:root {
+  --plum: #54265F;
+  --plum-dark: #402048;
+  --sage: #A9C5A0;
+  --charcoal: #302B32;
+  --muted: #766F78;
+  --ivory: #F7F5F0;
+  --white: #FFFFFF;
+  --border: #E6E0E5;
+  --border-strong: #D4CDD5;
+  --radius-card: 14px;
+  --radius-button: 9px;
+  --shadow-card: 0 8px 28px rgba(48, 43, 50, 0.055);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+
+body {
+  background: var(--ivory);
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, p {
+  overflow-wrap: anywhere;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+button:not(:disabled),
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button svg,
+a svg,
+label svg {
+  display: inline-block;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+/* Shared focus and interaction language */
+:where(button, a, input, select, textarea, summary):focus-visible {
+  outline: 3px solid rgba(169, 197, 160, 0.85);
+  outline-offset: 3px;
+}
+
+.primary-button,
+.secondary-button,
+.dashboard-create-button,
+.publish-button,
+.published-primary,
+.public-donate-button,
+.checkout-primary,
+.auth-submit,
+.create-continue-button,
+.not-found-button {
+  border-radius: var(--radius-button);
+  box-shadow: none;
+  min-height: 48px;
+  font-weight: 650;
+  transition: background-color 180ms ease, color 180ms ease,
+    border-color 180ms ease, transform 180ms ease;
+}
+
+.primary-button:hover,
+.dashboard-create-button:hover,
+.publish-button:hover,
+.published-primary:hover,
+.public-donate-button:hover,
+.checkout-primary:hover,
+.auth-submit:hover,
+.create-continue-button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+/* Logo: keep the communal emblem, give the wordmark a more distinctive rhythm. */
+.brand-logo {
+  gap: 9px;
+  font-family: var(--font-heading);
+  font-size: 23px;
+  font-weight: 750;
+  letter-spacing: -1.2px;
+}
+
+.brand-logo img {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  object-fit: cover;
+}
+
+.brand-logo > span {
+  color: currentColor;
+}
+
+/* LANDING — less floating decoration, more editorial balance. */
+.navbar {
+  height: 76px;
+  background: rgba(247, 245, 240, 0.97);
+  backdrop-filter: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-links,
+.nav-actions {
+  gap: 25px;
+}
+
+.nav-links > a:not(.primary-button),
+.sign-in {
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.hero {
+  padding: 78px 0 82px;
+  background: var(--ivory);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-grid {
+  grid-template-columns: minmax(0, 0.95fr) minmax(390px, 1.05fr);
+  gap: clamp(28px, 5vw, 76px);
+}
+
+.hero-copy h1 {
+  max-width: 650px;
+  margin: 18px 0 20px;
+  font-family: var(--font-display);
+  font-size: clamp(48px, 5.6vw, 74px);
+  font-weight: 500;
+  line-height: 0.99;
+  letter-spacing: -0.045em;
+}
+
+.hero-copy h1 span {
+  color: var(--plum);
+  font-style: italic;
+}
+
+.hero-description {
+  max-width: 460px;
+  color: #625B65;
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+.hero-actions {
+  margin-top: 27px;
+}
+
+.hero-note {
+  font-size: 12px;
+  color: #6F6872;
+}
+
+.hero-visual {
+  min-height: 490px;
+  transform: none;
+}
+
+.visual-orbit {
+  display: none;
+}
+
+.campaign-phone {
+  width: 270px;
+  min-height: 445px;
+  padding: 14px;
+  border: 1px solid #D8D1D9;
+  border-radius: 22px;
+  background: #FFFFFF;
+  box-shadow: 0 18px 42px rgba(48, 43, 50, 0.12);
+  transform: rotate(-2deg);
+  animation: none;
+}
+
+.campaign-image {
+  border-radius: 10px;
+  background: #DCE7D7;
+}
+
+.image-sun {
+  background: #E5C48E;
+}
+
+.hill-back {
+  background: #A9C5A0;
+}
+
+.hill-front {
+  background: #6F8A68;
+}
+
+.floating-qr {
+  right: 4%;
+  bottom: 52px;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 9px 24px rgba(48, 43, 50, 0.09);
+  transform: rotate(2deg);
+}
+
+.floating-note {
+  border-radius: 9px;
+  box-shadow: 0 8px 22px rgba(48, 43, 50, 0.08);
+  padding: 11px 13px;
+}
+
+.note-top {
+  top: 56px;
+  left: 2%;
+}
+
+.note-bottom {
+  bottom: 42px;
+  left: 4%;
+}
+
+.trust-strip {
+  background: #FFFFFF;
+  border-color: var(--border);
+}
+
+.trust-inner {
+  min-height: 72px;
+}
+
+.trust-item {
+  font-size: 12px;
+  color: #68616C;
+}
+
+.section {
+  padding: 88px 0;
+}
+
+.section-heading h2,
+.why-copy h2,
+.final-cta h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.section-heading h2 {
+  font-size: clamp(34px, 4vw, 48px);
+}
+
+.section-heading p,
+.why-copy > p {
+  max-width: 600px;
+  color: #6F6872;
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.step-card,
+.benefit-card {
+  border-radius: 12px;
+  border-color: var(--border);
+  box-shadow: none;
+  transition: border-color 180ms ease, transform 180ms ease, background-color 180ms ease;
+}
+
+.step-card:hover,
+.benefit-card:hover {
+  transform: translateY(-3px);
+  border-color: #C9BFCB;
+  box-shadow: none;
+}
+
+.step-icon,
+.benefit-icon {
+  width: 43px;
+  height: 43px;
+  border-radius: 10px;
+  background: #F0EAF2;
+}
+
+.why-section {
+  background: #F0EBF0;
+}
+
+.benefit-card {
+  background: #FFFEFC;
+}
+
+.faq-item {
+  padding: 20px 0;
+  border-color: #DDD5DE;
+}
+
+.faq-item summary {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.faq-item > p {
+  color: #6F6872;
+  font-size: 13px;
+}
+
+.final-cta {
+  background: var(--plum);
+}
+
+.final-cta::after {
+  display: none;
+}
+
+.final-cta h2 {
+  font-size: clamp(36px, 4.2vw, 52px);
+}
+
+.cta-light-button {
+  border-radius: 9px;
+  box-shadow: none;
+}
+
+.footer {
+  background: #29232B;
+}
+
+/* AUTH — an editorial split, without floating gradient ornaments. */
+.auth-page {
+  grid-template-columns: minmax(300px, 0.82fr) minmax(0, 1.18fr);
+  background: var(--ivory);
+}
+
+.auth-visual {
+  padding: clamp(30px, 5vw, 64px);
+  background: var(--plum);
+}
+
+.auth-decoration {
+  display: none;
+}
+
+.auth-visual-content h1 {
+  font-family: var(--font-display);
+  font-size: clamp(42px, 4.2vw, 58px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.auth-visual-content > p {
+  font-size: 13px;
+  line-height: 1.85;
+}
+
+.auth-form-section {
+  background: var(--ivory);
+}
+
+.auth-form-container h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  font-size: clamp(34px, 3.5vw, 43px);
+}
+
+.auth-form-subtitle {
+  color: #6F6872;
+  font-size: 13px;
+}
+
+.auth-field label {
+  font-size: 12px;
+}
+
+.auth-field input {
+  min-height: 48px;
+  border-radius: 8px;
+  border-color: #D9D2DA;
+  font-size: 13px;
+}
+
+.auth-field input:focus {
+  box-shadow: 0 0 0 3px rgba(84, 38, 95, 0.08);
+}
+
+.auth-submit {
+  min-height: 50px;
+  border-radius: 8px;
+}
+
+.auth-demo-note {
+  border: 1px solid #E3E8DF;
+  background: #EFF3EC;
+  border-radius: 9px;
+}
+
+/* CREATE FUNDRAISER — keep the six-step structure; make it calmer and clearer. */
+.create-wizard {
+  grid-template-columns: minmax(300px, 36%) minmax(0, 1fr);
+  background: #FFFFFF;
+}
+
+.create-intro {
+  background: var(--plum);
+  padding: clamp(28px, 4vw, 54px);
+}
+
+.create-intro::before,
+.create-intro::after {
+  display: none;
+}
+
+.create-intro-content h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(38px, 3.5vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+}
+
+.create-intro-content p {
+  font-size: 13px;
+  line-height: 1.85;
+}
+
+.create-right-panel {
+  background: #FFFFFF;
+}
+
+.create-topbar {
+  border-bottom: 1px solid #F0ECF0;
+}
+
+.create-step-shell {
+  width: min(100% - 72px, 740px);
+}
+
+.create-step-heading h2 {
+  font-family: var(--font-display);
+  font-size: clamp(29px, 2.7vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.create-step-heading p {
+  color: #6D6670;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.create-choice-card {
+  border-radius: 10px;
+  border-color: #DAD3DB;
+  min-height: 100px;
+  box-shadow: none;
+}
+
+.create-choice-card:hover {
+  background: #FBF9FC;
+  border-color: #BBAFC0;
+}
+
+.create-choice-card.is-selected {
+  background: #F7F2F8;
+  border-color: var(--plum);
+  box-shadow: inset 0 0 0 1px var(--plum);
+}
+
+.create-choice-icon {
+  border-radius: 9px;
+  background: #F4F1F4;
+}
+
+.create-choice-copy strong {
+  font-size: 14px;
+}
+
+.create-choice-copy small {
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.create-field label,
+.create-category-block h3 {
+  font-size: 12px;
+}
+
+.create-field input,
+.create-field select,
+.create-field textarea {
+  border-radius: 8px;
+  border-color: #DAD3DB;
+  font-size: 13px;
+}
+
+.create-category-chip {
+  border-radius: 7px;
+  min-height: 39px;
+  padding-inline: 13px;
+  font-size: 12px;
+}
+
+.create-upload-zone {
+  border-radius: 10px;
+  background: #FBFAF8;
+}
+
+.create-wallet-notice {
+  background: #F1F4EF;
+  border: 1px solid #E2EADF;
+  border-radius: 9px;
+}
+
+.create-action-footer {
+  border-top-color: var(--border);
+}
+
+.create-action-row {
+  min-height: 82px;
+}
+
+.create-continue-button {
+  background: var(--plum);
+  border-radius: 8px;
+  color: #FFFFFF;
+}
+
+.create-continue-button:not(:disabled):hover {
+  background: var(--plum-dark);
+}
+
+.create-continue-button:disabled {
+  background: #AFA6B1;
+  opacity: 0.72;
+}
+
+.create-back-button {
+  border-radius: 8px;
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* PREVIEW — let the page breathe on short screens. */
+.preview-page {
+  height: auto;
+  min-height: 100svh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.preview-nav,
+.published-nav,
+.checkout-nav,
+.public-nav,
+.dashboard-nav {
+  border-bottom-color: var(--border);
+}
+
+.preview-layout {
+  min-height: auto;
+  grid-template-columns: minmax(0, 1.4fr) minmax(290px, 0.8fr);
+  gap: clamp(24px, 5vw, 68px);
+  padding-top: 44px;
+  padding-bottom: 48px;
+}
+
+.preview-heading h1,
+.publish-panel-heading h2,
+.share-panel-heading h2,
+.published-hero h1,
+.checkout-heading h2,
+.checkout-quote h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.preview-heading h1 {
+  font-size: clamp(34px, 3.6vw, 48px);
+}
+
+.public-campaign-card,
+.publish-panel,
+.published-share-panel,
+.checkout-card,
+.public-donation-card {
+  border: 1px solid #E5DFE6;
+  border-radius: 13px;
+  box-shadow: 0 8px 28px rgba(48, 43, 50, 0.05);
+}
+
+.campaign-cover,
+.published-cover {
+  background: #E4EBDD;
+}
+
+.campaign-story,
+.preview-heading p,
+.publish-panel-heading p {
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.publish-checklist {
+  gap: 16px;
+}
+
+.publish-button,
+.published-primary {
+  border-radius: 8px;
+}
+
+/* PUBLISHED — let the success message lead; keep the QR/share panel practical. */
+.published-page {
+  min-height: 100svh;
+}
+
+.published-layout {
+  width: min(88%, 1220px);
+  grid-template-columns: minmax(0, 1.12fr) minmax(310px, 0.88fr);
+  gap: clamp(28px, 5vw, 70px);
+  padding: 48px 0;
+}
+
+.published-hero h1 {
+  font-size: clamp(42px, 4.5vw, 62px);
+  line-height: 1.02;
+}
+
+.published-hero p,
+.share-panel-heading p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.published-cover {
+  background: #E3EBDD;
+}
+
+.published-card-body h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 27px;
+  letter-spacing: -0.03em;
+}
+
+.published-qr-container {
+  background: #F1F4EE;
+  border-color: #E1E9DC;
+  border-radius: 10px;
+}
+
+.published-qr-image {
+  border-radius: 6px;
+}
+
+.published-link-field {
+  border-radius: 8px;
+}
+
+/* PUBLIC CAMPAIGN — make the cause the focus. */
+.public-hero {
+  height: clamp(270px, 34vw, 390px);
+  background: #E1EBDD;
+}
+
+.public-hero-overlay {
+  background: rgba(39, 34, 40, 0.34);
+}
+
+.public-image-placeholder {
+  background: #E1EBDD;
+}
+
+.public-hero-content h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(42px, 5.4vw, 68px);
+  letter-spacing: -0.035em;
+}
+
+.public-category {
+  border-radius: 6px;
+  padding: 7px 10px;
+}
+
+.public-layout {
+  grid-template-columns: minmax(0, 1.3fr) minmax(290px, 0.7fr);
+  gap: clamp(30px, 6vw, 84px);
+  padding-top: 54px;
+  padding-bottom: 64px;
+}
+
+.public-story-text {
+  font-size: 14px;
+  line-height: 1.95;
+}
+
+.public-donation-card {
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(48, 43, 50, 0.045);
+}
+
+.public-donate-button {
+  border-radius: 8px;
+}
+
+.public-share-button,
+.public-copy-button {
+  border-radius: 8px;
+}
+
+/* CHECKOUT — make the steps and money information easy to scan. */
+.checkout-layout {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(28px, 6vw, 80px);
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.checkout-campaign-art {
+  background: #E2EBDD;
+  border-radius: 10px;
+}
+
+.checkout-campaign h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(34px, 3.5vw, 48px);
+  letter-spacing: -0.035em;
+}
+
+.checkout-heading h2,
+.checkout-quote h2 {
+  font-size: clamp(30px, 3.4vw, 42px);
+}
+
+.checkout-card {
+  padding: clamp(23px, 3vw, 36px);
+}
+
+.amount-option {
+  border-radius: 8px;
+  min-height: 46px;
+}
+
+.checkout-wallet-input,
+.checkout-custom-amount {
+  border-radius: 8px;
+}
+
+.quote-amount-box,
+.quote-security-note,
+.checkout-wallet-warning {
+  border-radius: 9px;
+}
+
+/* DASHBOARD — simple, useful and not over-carded. */
+.dashboard-nav {
+  background: #FFFEFC;
+}
+
+.dashboard-container {
+  width: min(88%, 1160px);
+  padding-top: 44px;
+}
+
+.dashboard-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 4.2vw, 55px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.dashboard-header p,
+.campaign-heading p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.dashboard-stats {
+  gap: 14px;
+}
+
+.dashboard-stat-card {
+  min-height: 146px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: #FFFFFF;
+  padding: 20px 21px;
+}
+
+.stat-plum,
+.stat-sage,
+.stat-ivory {
+  background: #FFFFFF;
+}
+
+.stat-plum {
+  border-top: 3px solid var(--plum);
+}
+
+.stat-sage {
+  border-top: 3px solid var(--sage);
+}
+
+.stat-ivory {
+  border-top: 3px solid #C6B59F;
+}
+
+.dashboard-stat-card > strong {
+  font-size: clamp(21px, 2.2vw, 28px);
+}
+
+.dashboard-campaigns-section {
+  margin-top: 44px;
+}
+
+.dashboard-campaign-card {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  box-shadow: none;
+  padding: 18px;
+}
+
+.dashboard-campaign-card:hover {
+  border-color: #C9BECF;
+  box-shadow: 0 7px 20px rgba(48, 43, 50, 0.045);
+  transform: translateY(-1px);
+}
+
+.campaign-card-image {
+  border-radius: 8px;
+  background: #E5EBDD;
+}
+
+.campaign-view-button,
+.campaign-copy-button,
+.campaign-delete-button {
+  min-height: 39px;
+  border-radius: 7px;
+}
+
+.dashboard-empty {
+  border: 1px dashed #D5CDD7;
+  border-radius: 12px;
+  background: #FFFEFC;
+}
+
+.dashboard-quick-create {
+  background: #EEE8F0;
+  border-radius: 11px;
+}
+
+/* Language controls: same treatment across all screens. */
+.auth-language,
+.landing-language,
+.dashboard-language,
+.public-language,
+.checkout-language,
+.language-selector {
+  border-radius: 8px;
+  border-color: #DDD6DE;
+  background: #FFFFFF;
+}
+
+/* Loading, empty and error states */
+.public-state,
+.checkout-state,
+.published-empty,
+.preview-empty,
+.preview-empty {
+  background: var(--ivory);
+}
+
+/* Responsive refinements */
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hero-visual {
+    min-height: 450px;
+  }
+
+  .preview-layout,
+  .published-layout,
+  .public-layout,
+  .checkout-layout {
+    gap: 28px;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    padding: 58px 0 48px;
+  }
+
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-visual {
+    min-height: 430px;
+    margin-top: 8px;
+  }
+
+  .section {
+    padding: 66px 0;
+  }
+
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-visual {
+    min-height: auto;
+    padding: 24px 7% 28px;
+  }
+
+  .auth-visual-content {
+    margin: 32px 0 0;
+    padding-bottom: 4px;
+  }
+
+  .auth-visual-content h1 {
+    font-size: clamp(34px, 9vw, 44px);
+  }
+
+  .auth-visual-mark,
+  .auth-visual-footer {
+    display: none;
+  }
+
+  .auth-form-section {
+    min-height: auto;
+    padding: 25px 7% 32px;
+  }
+
+  .auth-form-container {
+    margin: 34px auto;
+  }
+
+  .create-wizard {
+    grid-template-columns: 1fr;
+  }
+
+  .create-intro {
+    padding: 24px 6% 28px;
+  }
+
+  .create-intro-content h1 {
+    font-size: clamp(32px, 8vw, 42px);
+  }
+
+  .preview-layout,
+  .published-layout,
+  .public-layout,
+  .checkout-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 90%;
+    padding: 32px 0 42px;
+  }
+
+  .preview-main,
+  .publish-panel,
+  .published-content,
+  .published-share-panel,
+  .public-story-section,
+  .public-donation-card,
+  .checkout-campaign,
+  .checkout-card {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .publish-panel {
+    align-self: stretch;
+  }
+
+  .dashboard-container {
+    width: 90%;
+    padding: 34px 0 46px;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-copy h1 {
+    font-size: clamp(42px, 12vw, 54px);
+  }
+
+  .hero-visual {
+    min-height: 390px;
+  }
+
+  .campaign-phone {
+    width: 240px;
+    min-height: 410px;
+  }
+
+  .floating-qr {
+    right: -1%;
+    bottom: 28px;
+    transform: none;
+  }
+
+  .note-top {
+    top: 24px;
+    left: -2%;
+  }
+
+  .note-bottom {
+    bottom: 22px;
+    left: -2%;
+  }
+
+  .published-nav,
+  .checkout-nav,
+  .public-nav,
+  .preview-nav,
+  .dashboard-nav {
+    padding-inline: 5%;
+  }
+
+  .published-layout,
+  .checkout-layout,
+  .preview-layout,
+  .public-layout {
+    width: 90%;
+  }
+
+  .published-share-panel,
+  .checkout-card {
+    padding: 21px 18px;
+  }
+
+  .campaign-card-title-row {
+    align-items: flex-start;
+  }
+
+  .dashboard-nav-right {
+    gap: 9px;
+  }
+
+  .dashboard-language select,
+  .auth-language select,
+  .checkout-language select,
+  .public-language select {
+    max-width: 92px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* Consistent local Lucide-style line icons and route feedback. */
+.pm-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+.app-route-loading {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--muted);
+  background: var(--ivory);
+  font-size: 13px;
+}
+
+.app-route-loading svg {
+  color: var(--plum);
+  animation: pm-spin 1.2s linear infinite;
+}
+
+@keyframes pm-spin { to { transform: rotate(360deg); } }
+
+/* Use one calm icon treatment across navigation, cards and buttons. */
+.step-icon, .benefit-icon, .stat-icon, .create-choice-icon,
+.create-upload-icon, .success-icon, .check-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button svg, a svg {
+  flex: 0 0 auto;
+}
+
+/* Short viewport support: forms remain usable without clipping actions. */
+@media (max-height: 760px) and (min-width: 761px) {
+  .create-wizard { min-height: 100svh; height: auto; }
+  .create-right-panel { min-height: 100svh; }
+  .create-main-scroll { overflow-y: auto; }
+  .create-step-shell { padding-top: 24px; padding-bottom: 24px; }
+  .create-action-row { min-height: 72px; }
+  .auth-page, .auth-visual, .auth-form-section { min-height: 100svh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-route-loading svg { animation: none; }
+}
+
+/* Keep the hero artwork editorial and grounded; movement is interaction-led. */
+.campaign-phone { animation: none !important; }
+@media (hover: hover) and (pointer: fine) {
+  .campaign-phone { transition: transform 260ms ease; }
+  .campaign-phone:hover { transform: rotate(-1deg) translateY(-2px); }
+}

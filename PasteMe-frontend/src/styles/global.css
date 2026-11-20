@@ -26,6 +26,29 @@ a {
   text-decoration: none;
 }
 
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  color: inherit;
+  font: 800 24px/1 var(--font-heading);
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand-logo img {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  object-fit: cover;
+}
+
+.brand-logo > span {
+  color: inherit;
+}
+
 button {
   cursor: pointer;
 }

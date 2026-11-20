@@ -14,12 +14,7 @@
   position: absolute;
   top: 28px;
   left: 7%;
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: -1.8px;
 }
-.not-found-logo span { color: #54265F; }
-.not-found-logo i { color: #A9C5A0; font-style: normal; }
 .not-found-code {
   color: #54265F;
   font-size: clamp(76px, 15vw, 140px);

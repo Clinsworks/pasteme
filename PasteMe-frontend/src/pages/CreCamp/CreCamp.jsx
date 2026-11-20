@@ -1,90 +1,317 @@
-
-import { useEffect, useState } from "react";
-import "./CreCramp.css";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { getCategoryLabel } from "../../lib/categoryLabels";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import Icon from "../../components/Icon";
 import { getCampaignWalletAsset } from "../../lib/campaignStore";
+import "./CreCramp.css";
+
+const STEPS = 6;
 
 const categories = [
-  "Education",
-  "Medical",
-  "Community",
-  "Personal",
+  "Animals",
   "Business",
+  "Community",
+  "Competitions",
+  "Creative",
+  "Education",
+  "Emergencies",
+  "Environment",
+  "Events",
+  "Faith",
+  "Family",
+  "Funerals & Memorials",
+  "Medical",
+  "Monthly Bills",
+  "Newlyweds",
+  "Other",
+  "Sports",
+  "Travel",
+  "Ukraine Relief",
+  "Volunteer",
+  "Wishes",
+];
+
+const countries = [
+  "Nigeria",
+  "Ghana",
+  "Kenya",
+  "South Africa",
+  "United Kingdom",
+  "United States",
+  "Canada",
   "Other",
 ];
 
+const countryCurrencies = {
+  Nigeria: "NGN",
+  Ghana: "GHS",
+  Kenya: "KES",
+  "South Africa": "ZAR",
+  "United Kingdom": "GBP",
+  "United States": "USD",
+  Canada: "CAD",
+};
+
+
 const translations = {
   en: {
-    creating: "Creating a campaign", dashboard: "Dashboard", introTag: "YOUR NEXT CHAPTER STARTS HERE",
-    hero1: "Every great", hero2: "story starts", hero3: "with a", heroAccent: "little help.",
-    introText: "Turn your idea into something people can believe in. Create a campaign, share your story, and let people be part of making it happen.",
-    noteTitle: "Made for meaningful causes.", noteText: "Your story deserves a place to be heard.",
-    campaignDetails: "CAMPAIGN DETAILS", formTitle: "Let's get started.", formSubtitle: "Tell us a little about what you're raising for.",
-    title: "Campaign title", titlePlaceholder: "Give your campaign a name", cover: "Campaign cover image", optional: "Optional",
-    category: "Category", chooseCategory: "Select a category", story: "Your story", storyPlaceholder: "What are you raising funds for? Why does it matter?",
-    goal: "Fundraising goal", deadline: "Deadline", openEnded: "Keep this campaign open-ended", wallet: "Receiving wallet",
-    walletHelp: "Where your contributions will be received", walletLabel: "Open Payments wallet address URL", walletPlaceholder: "https://...",
-    walletPrivate: "Your receiving wallet is stored securely and only used to receive contributions.", continue: "Continue to preview", terms: "By continuing, you agree to PasteMe's terms of service.",
-    invalidImage: "Choose an image file.", imageLarge: "Please choose an image smaller than 1 MB.", imageRead: "The image could not be loaded. Try another file.", removeImage: "Remove image",
-    required: "Complete the campaign title, category and story.", invalidGoal: "Enter a fundraising goal greater than zero.", deadlineRequired: "Choose a deadline or select an open-ended campaign.",
-    deadlinePast: "The campaign deadline must be in the future.", invalidWallet: "Enter a valid HTTPS receiving wallet URL.", walletRequired: "Add an HTTPS Open Payments receiving wallet before publishing.",
-    walletChecking: "Checking wallet currency...", walletCurrencyError: "Unable to verify the receiving wallet currency.",
+    creating: "Creating a fundraiser",
+    dashboard: "Dashboard",
+    saveExit: "Save & exit",
+    signIn: "Sign in",
+    stepOf: "of",
+    stepOneLeftTitle: "Tell us who you're raising funds for.",
+    stepOneLeftText: "This helps us understand who will benefit from your fundraiser.",
+    stepTwoLeftTitle: "Let's begin your fundraising journey.",
+    stepTwoLeftText: "We're here to guide you every step of the way.",
+    stepThreeLeftTitle: "Give your fundraiser a name.",
+    stepThreeLeftText: "A clear title and honest story help people understand why this matters.",
+    stepFourLeftTitle: "Set a goal worth working toward.",
+    stepFourLeftText: "Choose a target that reflects what you need and a timeline that works for you.",
+    stepFiveLeftTitle: "Bring your story to life.",
+    stepFiveLeftText: "A thoughtful cover image helps people recognise and remember your fundraiser.",
+    stepSixLeftTitle: "Where should contributions go?",
+    stepSixLeftText: "Connect the receiving wallet that will collect contributions for this fundraiser.",
+    brandFoot: "YOUR STORY. YOUR IMPACT.",
+    helpNote: "Made for meaningful causes.",
+    helpText: "Your story deserves a place to be heard.",
+    stepOneTitle: "Who are you fundraising for?",
+    stepOneSubtitle: "Choose the person or organisation this fundraiser is for.",
+    yourself: "Yourself",
+    yourselfText: "You're raising funds for your own needs or a personal goal.",
+    someoneElse: "Someone else",
+    someoneElseText: "You're raising funds on behalf of another person or family.",
+    charity: "A charity or organisation",
+    charityText: "You're raising funds for a nonprofit, community group or organisation.",
+    stepTwoTitle: "Where will the funds go?",
+    stepTwoSubtitle: "Choose the country where the fundraiser is based and what best describes your cause.",
+    country: "Country",
+    postalCode: "Postal code",
+    postalPlaceholder: "Enter postal code",
+    categoryQuestion: "What best describes why you're fundraising?",
+    stepThreeTitle: "Tell people what this is about.",
+    stepThreeSubtitle: "Give your fundraiser a clear title and explain why it matters.",
+    campaignTitle: "Fundraiser title",
+    titlePlaceholder: "Give your fundraiser a name",
+    story: "Your story",
+    storyPlaceholder: "What are you raising funds for? Why does it matter? How will the funds help?",
+    characters: "characters",
+    stepFourTitle: "Set your fundraising goal.",
+    stepFourSubtitle: "Choose the amount you hope to raise and when the fundraiser should end.",
+    goal: "Fundraising goal",
+    deadline: "End date",
+    chooseDate: "Choose an end date",
+    openEnded: "Keep this fundraiser open-ended",
+    openEndedHelp: "The fundraiser stays open until you decide to close it.",
+    stepFiveTitle: "Add a cover image.",
+    stepFiveSubtitle: "Help people connect with your cause. A cover image is optional.",
+    coverLabel: "Fundraiser cover",
+    uploadTitle: "Choose an image to upload",
+    uploadHelp: "PNG, JPG or WEBP · Up to 1 MB",
+    changeImage: "Choose another image",
+    removeImage: "Remove image",
+    imageOptional: "You can continue without an image.",
+    stepSixTitle: "Where should contributions be received?",
+    stepSixSubtitle: "Add the Open Payments wallet address that will receive contributions.",
+    wallet: "Receiving wallet URL",
+    walletPlaceholder: "https://wallet.example/your-wallet",
+    walletHelp: "Use the public wallet address URL provided by your wallet service.",
+    walletPrivacy: "This address is used for receiving contributions and should not be displayed on your public fundraiser page.",
+    walletChecking: "Checking wallet details...",
+    continue: "Continue",
+    back: "Back",
+    preview: "Continue to preview",
+    requiredChoice: "Choose who you're fundraising for to continue.",
+    requiredCategory: "Choose a fundraising category to continue.",
+    requiredDetails: "Add a title and story before continuing.",
+    requiredGoal: "Enter a fundraising goal greater than zero.",
+    requiredDeadline: "Choose an end date or make this fundraiser open-ended.",
+    deadlinePast: "The end date must be today or a future date.",
+    invalidImage: "Choose a valid image file.",
+    imageLarge: "Choose an image smaller than 1 MB.",
+    imageRead: "The image could not be loaded. Try another file.",
+    invalidWallet: "Enter a valid HTTPS receiving wallet URL.",
+    walletRequired: "Add your receiving wallet URL to continue.",
+    walletCurrencyError: "We couldn't verify the receiving wallet's currency. Check the URL and try again.",
+    otherCurrency: "The currency used for the fundraiser is determined by your receiving wallet.",
+    saved: "Your progress is saved in this browser while you create your fundraiser.",
   },
   pcm: {
-    creating: "You dey create campaign", dashboard: "Dashboard", introTag: "YOUR NEXT CHAPTER STARTS HERE",
-    hero1: "Every great", hero2: "story dey start", hero3: "with small", heroAccent: "help.",
-    introText: "Turn your idea to something wey people fit believe. Create campaign, share your story, make people join you.",
-    noteTitle: "For causes wey matter.", noteText: "Your story deserve make people hear am.",
-    campaignDetails: "CAMPAIGN DETAILS", formTitle: "Make we start.", formSubtitle: "Tell us wetin you dey raise money for.",
-    title: "Campaign title", titlePlaceholder: "Give your campaign name", cover: "Campaign cover image", optional: "Optional",
-    category: "Category", chooseCategory: "Choose category", story: "Your story", storyPlaceholder: "Wetin you dey raise money for? Why e matter?",
-    goal: "Fundraising target", deadline: "Deadline", openEnded: "Make this campaign no get deadline", wallet: "Receiving wallet",
-    walletHelp: "Where people go send contributions", walletLabel: "Open Payments wallet address URL", walletPlaceholder: "https://...",
-    walletPrivate: "Your receiving wallet is stored securely and only used to receive contributions.", continue: "Continue to preview", terms: "By continuing, you agree to PasteMe terms.",
-    invalidImage: "Choose image file.", imageLarge: "Choose image wey small pass 1 MB.", imageRead: "Image no fit load. Try another one.", removeImage: "Remove image",
-    required: "Complete campaign title, category and story.", invalidGoal: "Enter fundraising target wey pass zero.", deadlineRequired: "Choose deadline or select open-ended campaign.",
-    deadlinePast: "Campaign deadline must dey future.", invalidWallet: "Enter correct HTTPS receiving wallet URL.", walletRequired: "Add an HTTPS Open Payments receiving wallet before publishing.",
-    walletChecking: "We dey check wallet currency...", walletCurrencyError: "We no fit verify the receiving wallet currency.",
+    creating: "You dey create fundraiser",
+    dashboard: "Dashboard",
+    saveExit: "Save & exit",
+    signIn: "Sign in",
+    stepOf: "of",
+    stepOneLeftTitle: "Tell us who you dey raise money for.",
+    stepOneLeftText: "This go help us understand who go benefit from your fundraiser.",
+    stepTwoLeftTitle: "Make we start your fundraising journey.",
+    stepTwoLeftText: "We dey guide you through every step.",
+    stepThreeLeftTitle: "Give your fundraiser a name.",
+    stepThreeLeftText: "Good title and clear story go help people understand why e matter.",
+    stepFourLeftTitle: "Set a target wey make sense.",
+    stepFourLeftText: "Choose the amount wey you need and when you wan end the fundraiser.",
+    stepFiveLeftTitle: "Make your story come alive.",
+    stepFiveLeftText: "Good cover picture go help people remember your fundraiser.",
+    stepSixLeftTitle: "Where the contributions go reach?",
+    stepSixLeftText: "Connect the wallet wey go receive the contributions.",
+    brandFoot: "YOUR STORY. YOUR IMPACT.",
+    helpNote: "For causes wey matter.",
+    helpText: "Your story deserve make people hear am.",
+    stepOneTitle: "Who you dey raise money for?",
+    stepOneSubtitle: "Choose the person or organisation wey this fundraiser dey for.",
+    yourself: "Myself",
+    yourselfText: "You dey raise money for your own needs or personal goal.",
+    someoneElse: "Another person",
+    someoneElseText: "You dey raise money for another person or family.",
+    charity: "Charity or organisation",
+    charityText: "You dey raise money for nonprofit, community group or organisation.",
+    stepTwoTitle: "Where the money go reach?",
+    stepTwoSubtitle: "Choose the country and the category wey describe your cause.",
+    country: "Country",
+    postalCode: "Postal code",
+    postalPlaceholder: "Enter postal code",
+    categoryQuestion: "Which one best describe wetin you dey raise money for?",
+    stepThreeTitle: "Tell people wetin this one dey about.",
+    stepThreeSubtitle: "Give your fundraiser clear title and explain why e matter.",
+    campaignTitle: "Fundraiser title",
+    titlePlaceholder: "Give your fundraiser name",
+    story: "Your story",
+    storyPlaceholder: "Wetin you dey raise money for? Why e matter? How the money go help?",
+    characters: "characters",
+    stepFourTitle: "Set your fundraising target.",
+    stepFourSubtitle: "Choose how much you wan raise and when the fundraiser go end.",
+    goal: "Fundraising target",
+    deadline: "End date",
+    chooseDate: "Choose end date",
+    openEnded: "Make this fundraiser no get end date",
+    openEndedHelp: "The fundraiser go remain open until you decide to close am.",
+    stepFiveTitle: "Add cover picture.",
+    stepFiveSubtitle: "Help people connect with your cause. Cover picture no compulsory.",
+    coverLabel: "Fundraiser cover",
+    uploadTitle: "Choose picture to upload",
+    uploadHelp: "PNG, JPG or WEBP · Up to 1 MB",
+    changeImage: "Choose another picture",
+    removeImage: "Remove picture",
+    imageOptional: "You fit continue without picture.",
+    stepSixTitle: "Where contributions go reach?",
+    stepSixSubtitle: "Add the Open Payments wallet address wey go receive the money.",
+    wallet: "Receiving wallet URL",
+    walletPlaceholder: "https://wallet.example/your-wallet",
+    walletHelp: "Use the public wallet address URL wey your wallet service give you.",
+    walletPrivacy: "This address na for receiving contributions. E no suppose show for your public fundraiser page.",
+    walletChecking: "We dey check wallet details...",
+    continue: "Continue",
+    back: "Back",
+    preview: "Continue to preview",
+    requiredChoice: "Choose who you dey raise money for make you continue.",
+    requiredCategory: "Choose fundraising category make you continue.",
+    requiredDetails: "Add title and story before you continue.",
+    requiredGoal: "Enter fundraising target wey pass zero.",
+    requiredDeadline: "Choose end date or make the fundraiser open-ended.",
+    deadlinePast: "The end date must be today or future date.",
+    invalidImage: "Choose correct image file.",
+    imageLarge: "Choose picture wey small pass 1 MB.",
+    imageRead: "Picture no fit load. Try another file.",
+    invalidWallet: "Enter correct HTTPS receiving wallet URL.",
+    walletRequired: "Add your receiving wallet URL make you continue.",
+    walletCurrencyError: "We no fit check the wallet currency. Check the URL and try again.",
+    otherCurrency: "The fundraiser currency go depend on the receiving wallet.",
+    saved: "Your progress dey save for this browser as you dey create the fundraiser.",
   },
   yo: {
-    creating: "Ṣíṣẹ̀dá ìpolongo", dashboard: "Ojú ìṣàkóso", introTag: "ÌGBÉSẸ̀ TÍ Ó TỌ̀ WÁ BẸ̀RẸ̀ NÍBÍ",
-    hero1: "Gbogbo ìtàn rere", hero2: "máa ń bẹ̀rẹ̀", hero3: "pẹ̀lú", heroAccent: "ìrànlọ́wọ́ díẹ̀.",
-    introText: "Yí èrò rẹ padà sí ohun tí àwọn ènìyàn lè gbàgbọ́. Ṣẹ̀dá ìpolongo, pín ìtàn rẹ, kí àwọn ènìyàn lè kópa.",
-    noteTitle: "A ṣe é fún àwọn ohun tó ṣe pàtàkì.", noteText: "Ó yẹ kí àwọn ènìyàn gbọ́ ìtàn rẹ.",
-    campaignDetails: "ÀLÀYÉ ÌPOLONGO", formTitle: "Ẹ jẹ́ ká bẹ̀rẹ̀.", formSubtitle: "Sọ díẹ̀ nípa ohun tí o fẹ́ kó owó jọ fún.",
-    title: "Àkọlé ìpolongo", titlePlaceholder: "Fún ìpolongo rẹ ní orúkọ", cover: "Àwòrán ìborí ìpolongo", optional: "Kò pọndandan",
-    category: "Ẹ̀ka", chooseCategory: "Yan ẹ̀ka kan", story: "Ìtàn rẹ", storyPlaceholder: "Kí ni o ń kó owó jọ fún? Kí ló dé tí ó fi ṣe pàtàkì?",
-    goal: "Àfojúsùn owó", deadline: "Ọjọ́ ìparí", openEnded: "Jẹ́ kí ìpolongo yìí má ní ọjọ́ ìparí", wallet: "Àpò owó ìgbàwọlé",
-    walletHelp: "Ibi tí a ó ti gba owó ìrànlọ́wọ́ rẹ", walletLabel: "Open Payments wallet address URL", walletPlaceholder: "https://...",
-    walletPrivate: "Your receiving wallet is stored securely and only used to receive contributions.", continue: "Tẹ̀síwájú sí àyẹ̀wò", terms: "Nípa títẹ̀síwájú, o gbà sí àwọn òfin PasteMe.",
-    invalidImage: "Yan fáìlì àwòrán kan.", imageLarge: "Jọ̀wọ́ yan àwòrán tó kéré sí 1 MB.", imageRead: "A kò lè ṣí àwòrán yìí. Gbìyànjú òmíràn.", removeImage: "Yọ àwòrán kúrò",
-    required: "Kún àkọlé, ẹ̀ka àti ìtàn ìpolongo náà.", invalidGoal: "Tẹ àfojúsùn owó tó ju òdo lọ.", deadlineRequired: "Yan ọjọ́ ìparí tàbí yan ìpolongo tí kò ní ọjọ́ ìparí.",
-    deadlinePast: "Ọjọ́ ìparí ìpolongo gbọ́dọ̀ jẹ́ ọjọ́ iwájú.", invalidWallet: "Tẹ URL àpò owó HTTPS tó tọ́.", walletRequired: "Add an HTTPS Open Payments receiving wallet before publishing.",
-    walletChecking: "A ń ṣàyẹ̀wò owó àpò rẹ...", walletCurrencyError: "A kò lè jẹ́rìí owó àpò ìgbàwọlé.",
+    creating: "Ṣíṣẹ̀dá ìpolongo ìkójọ owó",
+    dashboard: "Ojú ìṣàkóso",
+    saveExit: "Fi pamọ́ kí o sì jáde",
+    signIn: "Wọlé",
+    stepOf: "nínú",
+    stepOneLeftTitle: "Sọ ẹni tí o ń kó owó jọ fún.",
+    stepOneLeftText: "Èyí yóò ràn wá lọ́wọ́ láti mọ ẹni tí yóò jàǹfààní nínú ìpolongo rẹ.",
+    stepTwoLeftTitle: "Ẹ jẹ́ ká bẹ̀rẹ̀ ìrìnàjò ìkójọ owó rẹ.",
+    stepTwoLeftText: "A wà níbí láti tọ́ ọ sọ́nà ní gbogbo ìgbésẹ̀.",
+    stepThreeLeftTitle: "Fún ìpolongo rẹ ní àkọlé.",
+    stepThreeLeftText: "Àkọlé tó ṣe kedere àti ìtàn tó dára yóò jẹ́ kí àwọn ènìyàn lóye ìdí rẹ.",
+    stepFourLeftTitle: "Yan àfojúsùn tó yẹ.",
+    stepFourLeftText: "Yan iye owó tí o nílò àti àkókò tí o fẹ́ parí ìpolongo náà.",
+    stepFiveLeftTitle: "Jẹ́ kí ìtàn rẹ yè ní ojú àwọn ènìyàn.",
+    stepFiveLeftText: "Àwòrán ìborí tó dára yóò ran àwọn ènìyàn lọ́wọ́ láti rántí ìpolongo rẹ.",
+    stepSixLeftTitle: "Níbo ni a ó ti gba owó ìrànlọ́wọ́?",
+    stepSixLeftText: "So àpò owó ìgbàwọlé tí yóò gba àwọn ìrànlọ́wọ́ pọ̀ mọ́ ìpolongo rẹ.",
+    brandFoot: "ÌTÀN RẸ. IPA RẸ.",
+    helpNote: "A ṣe é fún àwọn ohun tó ṣe pàtàkì.",
+    helpText: "Ó yẹ kí àwọn ènìyàn gbọ́ ìtàn rẹ.",
+    stepOneTitle: "Ta ni o ń kó owó jọ fún?",
+    stepOneSubtitle: "Yan ẹni tàbí àjọ tí ìpolongo yìí jẹ́ fún.",
+    yourself: "Ìwọ fúnra rẹ",
+    yourselfText: "O ń kó owó jọ fún àìní tàbí ète tìrẹ.",
+    someoneElse: "Ẹlòmíràn",
+    someoneElseText: "O ń kó owó jọ fún ẹlòmíràn tàbí ìdílé kan.",
+    charity: "Àjọ ìrànlọ́wọ́",
+    charityText: "O ń kó owó jọ fún àjọ àìní èrè tàbí àwùjọ kan.",
+    stepTwoTitle: "Níbo ni owó náà yóò lọ?",
+    stepTwoSubtitle: "Yan orílẹ̀-èdè àti ẹ̀ka tó ṣàpèjúwe ohun tí o ń kó owó jọ fún.",
+    country: "Orílẹ̀-èdè",
+    postalCode: "Kóòdù ìpínlẹ̀ ìfiṣẹ́ lẹ́tà",
+    postalPlaceholder: "Tẹ kóòdù ìpínlẹ̀",
+    categoryQuestion: "Kí ni ó ṣàpèjúwe ìdí tí o fi ń kó owó jọ?",
+    stepThreeTitle: "Sọ fún àwọn ènìyàn ohun tí èyí jẹ́ nípa rẹ̀.",
+    stepThreeSubtitle: "Fún ìpolongo rẹ ní àkọlé tó ṣe kedere, kí o sì ṣàlàyé ìdí rẹ.",
+    campaignTitle: "Àkọlé ìpolongo",
+    titlePlaceholder: "Fún ìpolongo rẹ ní orúkọ",
+    story: "Ìtàn rẹ",
+    storyPlaceholder: "Kí ni o ń kó owó jọ fún? Kí ló dé tí ó fi ṣe pàtàkì? Báwo ni owó náà yóò ṣe ràn ọ́ lọ́wọ́?",
+    characters: "ààmì ọ̀rọ̀",
+    stepFourTitle: "Yan àfojúsùn owó rẹ.",
+    stepFourSubtitle: "Yan iye owó tí o fẹ́ kó jọ àti ọjọ́ tí ìpolongo náà yóò parí.",
+    goal: "Àfojúsùn owó",
+    deadline: "Ọjọ́ ìparí",
+    chooseDate: "Yan ọjọ́ ìparí",
+    openEnded: "Jẹ́ kí ìpolongo yìí má ní ọjọ́ ìparí",
+    openEndedHelp: "Ìpolongo náà yóò máa lọ títí tí o fi pinnu láti dá a dúró.",
+    stepFiveTitle: "Fi àwòrán ìborí kún un.",
+    stepFiveSubtitle: "Ràn àwọn ènìyàn lọ́wọ́ láti ní ìbáṣepọ̀ pẹ̀lú ohun tí o ń ṣe. Àwòrán kò pọndandan.",
+    coverLabel: "Àwòrán ìborí ìpolongo",
+    uploadTitle: "Yan àwòrán láti gbé sókè",
+    uploadHelp: "PNG, JPG tàbí WEBP · Kò ju 1 MB lọ",
+    changeImage: "Yan àwòrán mìíràn",
+    removeImage: "Yọ àwòrán kúrò",
+    imageOptional: "O lè tẹ̀síwájú láìsí àwòrán.",
+    stepSixTitle: "Níbo ni a ó ti gba owó ìrànlọ́wọ́?",
+    stepSixSubtitle: "Fi URL àpò owó Open Payments tí yóò gba ìrànlọ́wọ́ sí i.",
+    wallet: "URL àpò owó ìgbàwọlé",
+    walletPlaceholder: "https://wallet.example/your-wallet",
+    walletHelp: "Lo URL àdírẹ́sì àpò owó gbogbogbò tí olùpèsè àpò rẹ fún ọ.",
+    walletPrivacy: "A máa lo àdírẹ́sì yìí láti gba ìrànlọ́wọ́. A kò gbọ́dọ̀ fi hàn lójú ìwé ìpolongo gbogbogbò rẹ.",
+    walletChecking: "A ń ṣàyẹ̀wò àlàyé àpò owó...",
+    continue: "Tẹ̀síwájú",
+    back: "Padà",
+    preview: "Tẹ̀síwájú sí àyẹ̀wò",
+    requiredChoice: "Yan ẹni tí o ń kó owó jọ fún kí o tó tẹ̀síwájú.",
+    requiredCategory: "Yan ẹ̀ka ìpolongo kí o tó tẹ̀síwájú.",
+    requiredDetails: "Fi àkọlé àti ìtàn kún un kí o tó tẹ̀síwájú.",
+    requiredGoal: "Tẹ àfojúsùn owó tó ju òdo lọ.",
+    requiredDeadline: "Yan ọjọ́ ìparí tàbí jẹ́ kí ìpolongo náà má ní ọjọ́ ìparí.",
+    deadlinePast: "Ọjọ́ ìparí gbọ́dọ̀ jẹ́ ti òní tàbí ọjọ́ iwájú.",
+    invalidImage: "Yan fáìlì àwòrán tó tọ́.",
+    imageLarge: "Yan àwòrán tó kéré sí 1 MB.",
+    imageRead: "A kò lè ṣí àwòrán náà. Gbìyànjú fáìlì mìíràn.",
+    invalidWallet: "Tẹ URL àpò owó HTTPS tó tọ́.",
+    walletRequired: "Fi URL àpò owó ìgbàwọlé rẹ kún un kí o tó tẹ̀síwájú.",
+    walletCurrencyError: "A kò lè jẹ́rìí owó àpò ìgbàwọlé. Ṣàyẹ̀wò URL kí o sì tún gbìyànjú.",
+    otherCurrency: "Owó tí ìpolongo yóò lò dá lórí àpò owó ìgbàwọlé rẹ.",
+    saved: "A ń fi ìlọsíwájú rẹ pamọ́ sínú ẹ̀rọ aṣàwákiri yìí bí o ṣe ń ṣẹ̀dá ìpolongo.",
   },
 };
 
-const categoryLabels = {
-  Education: { en: "Education", pcm: "Education", yo: "Ẹ̀kọ́" },
-  Medical: { en: "Medical", pcm: "Health", yo: "Ìlera" },
-  Community: { en: "Community", pcm: "Community", yo: "Àwùjọ" },
-  Personal: { en: "Personal", pcm: "Personal", yo: "Ti ara ẹni" },
-  Business: { en: "Business", pcm: "Business", yo: "Iṣòwò" },
-  Other: { en: "Other", pcm: "Other", yo: "Òmíràn" },
-};
+const countryOptions = countries.map((country) => ({
+  value: country,
+  label: country,
+}));
 
-
-export default function CreateCampaign() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useAuth();
-  const [language, setLanguage] = useState(() => localStorage.getItem("pasteme_language") || "en");
-  const t = translations[language] || translations.en;
-
-  const draftKey = `pasteme_campaign_draft:${user?.email?.toLowerCase() || "guest"}`;
-
-  const emptyCampaign = {
+const emptyCampaign = {
+  fundraisingFor: "",
+  country: "Nigeria",
+  postalCode: "",
   title: "",
   category: "",
   story: "",
@@ -97,48 +324,68 @@ export default function CreateCampaign() {
   coverImage: "",
 };
 
-const [formData, setFormData] = useState(() => {
-  // Prioritize campaign data returned from the Preview page.
-  if (location.state?.campaign) {
-    return {
-      ...emptyCampaign,
-      ...location.state.campaign,
-    };
+function getInitialCampaign(locationState, draftKey) {
+  if (locationState?.campaign) {
+    return { ...emptyCampaign, ...locationState.campaign };
   }
 
-  // Restore the public campaign draft after a page refresh.
   try {
-    const savedDraft = sessionStorage.getItem(
-      draftKey
-    );
-
+    const savedDraft = sessionStorage.getItem(draftKey);
     return savedDraft
-      ? {
-          ...emptyCampaign,
-          ...JSON.parse(savedDraft),
-        }
+      ? { ...emptyCampaign, ...JSON.parse(savedDraft) }
       : emptyCampaign;
   } catch {
     return emptyCampaign;
   }
-});
+}
 
-  // Keep a creator-specific draft so refreshing the page does not erase work.
-  // Receiving wallet details are excluded from browser storage.
-  useEffect(() => {
-    const safeDraft = { ...formData };
-    delete safeDraft.walletAddress;
-    try {
-      sessionStorage.setItem(draftKey, JSON.stringify(safeDraft));
-    } catch (error) {
-      console.warn("Could not save the campaign draft in this browser:", error);
-    }
-  }, [formData, draftKey]);
+export default function CreateCampaign() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
 
-  const [showWallet, setShowWallet] = useState(true);
+  const draftKey = `pasteme_campaign_draft:${user?.email?.toLowerCase() || "guest"}`;
+  const [language, setLanguage] = useState(
+    () => localStorage.getItem("pasteme_language") || "en"
+  );
+  const t = translations[language] || translations.en;
+
+  const [formData, setFormData] = useState(() =>
+    getInitialCampaign(location.state, draftKey)
+  );
+  const [currentStep, setCurrentStep] = useState(
+    () => (location.state?.campaign ? STEPS : 1)
+  );
   const [formError, setFormError] = useState("");
   const [imageError, setImageError] = useState("");
   const [resolvingWallet, setResolvingWallet] = useState(false);
+
+  const progress = (currentStep / STEPS) * 100;
+  const currencyLabel = formData.currency || countryCurrencies[formData.country] || "NGN";
+
+  const leftCopy = useMemo(() => {
+    const copyByStep = {
+      1: [t.stepOneLeftTitle, t.stepOneLeftText],
+      2: [t.stepTwoLeftTitle, t.stepTwoLeftText],
+      3: [t.stepThreeLeftTitle, t.stepThreeLeftText],
+      4: [t.stepFourLeftTitle, t.stepFourLeftText],
+      5: [t.stepFiveLeftTitle, t.stepFiveLeftText],
+      6: [t.stepSixLeftTitle, t.stepSixLeftText],
+    };
+    return copyByStep[currentStep] || copyByStep[1];
+  }, [currentStep, t]);
+
+  // Persist only the non-sensitive draft fields in this browser.
+  useEffect(() => {
+    const safeDraft = { ...formData };
+    delete safeDraft.walletAddress;
+
+    try {
+      sessionStorage.setItem(draftKey, JSON.stringify(safeDraft));
+    } catch (error) {
+      console.warn("Could not save the fundraiser draft:", error);
+    }
+  }, [formData, draftKey]);
 
   const handleLanguageChange = (event) => {
     const selected = event.target.value;
@@ -146,13 +393,17 @@ const [formData, setFormData] = useState(() => {
     localStorage.setItem("pasteme_language", selected);
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
+  const handleChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    setFormData((previous) => ({
+      ...previous,
       [name]: type === "checkbox" ? checked : value,
     }));
+    setFormError("");
+  };
+
+  const handleSelect = (name, value) => {
+    setFormData((previous) => ({ ...previous, [name]: value }));
     setFormError("");
   };
 
@@ -176,335 +427,510 @@ const [formData, setFormData] = useState(() => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setFormData((prev) => ({ ...prev, coverImage: String(reader.result) }));
+      setFormData((previous) => ({
+        ...previous,
+        coverImage: String(reader.result || ""),
+      }));
     };
     reader.onerror = () => setImageError(t.imageRead);
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validateCurrentStep = () => {
+    if (currentStep === 1 && !formData.fundraisingFor) {
+      setFormError(t.requiredChoice);
+      return false;
+    }
+
+    if (currentStep === 2 && (!formData.country || !formData.category)) {
+      setFormError(t.requiredCategory);
+      return false;
+    }
+
+    if (currentStep === 3 && (!formData.title.trim() || !formData.story.trim())) {
+      setFormError(t.requiredDetails);
+      return false;
+    }
+
+    if (currentStep === 4) {
+      const target = Number(formData.target);
+      if (!Number.isFinite(target) || target <= 0) {
+        setFormError(t.requiredGoal);
+        return false;
+      }
+      if (!formData.openEnded && !formData.deadline) {
+        setFormError(t.requiredDeadline);
+        return false;
+      }
+      if (formData.deadline && !formData.openEnded) {
+        const selectedDate = new Date(`${formData.deadline}T23:59:59`);
+        if (Number.isNaN(selectedDate.getTime()) || selectedDate < new Date()) {
+          setFormError(t.deadlinePast);
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  const handleContinue = async () => {
     setFormError("");
 
-    const target = Number(formData.target);
-    if (!formData.title.trim() || !formData.category || !formData.story.trim()) {
-      setFormError(t.required);
-      return;
-    }
+    if (!validateCurrentStep()) return;
 
-    if (!Number.isFinite(target) || target <= 0) {
-      setFormError(t.invalidGoal);
+    if (currentStep < STEPS) {
+      setCurrentStep((step) => Math.min(step + 1, STEPS));
       return;
-    }
-
-    if (!formData.openEnded && !formData.deadline) {
-      setFormError(t.deadlineRequired);
-      return;
-    }
-
-    if (formData.deadline && !formData.openEnded) {
-      const selectedDate = new Date(`${formData.deadline}T23:59:59`);
-      if (selectedDate < new Date()) {
-        setFormError(t.deadlinePast);
-        return;
-      }
     }
 
     if (!formData.walletAddress.trim()) {
       setFormError(t.walletRequired);
-      setShowWallet(true);
       return;
     }
 
-    if (formData.walletAddress.trim()) {
-      try {
-        const walletUrl = new URL(formData.walletAddress.trim());
-        if (walletUrl.protocol !== "https:") throw new Error("HTTPS required");
-      } catch {
-        setFormError(t.invalidWallet);
-        return;
-      }
+    let walletUrl;
+    try {
+      walletUrl = new URL(formData.walletAddress.trim());
+      if (walletUrl.protocol !== "https:") throw new Error("HTTPS required");
+    } catch {
+      setFormError(t.invalidWallet);
+      return;
     }
 
     setResolvingWallet(true);
-    let walletAsset;
     try {
-      walletAsset = await getCampaignWalletAsset(formData.walletAddress.trim());
+      const walletAsset = await getCampaignWalletAsset(walletUrl.href);
+      const target = Number(formData.target);
+
+      const draft = {
+        ...formData,
+        title: formData.title.trim(),
+        story: formData.story.trim(),
+        target: String(target),
+        walletAddress: walletUrl.href,
+        currency: walletAsset.currency,
+        assetScale: walletAsset.assetScale,
+        creatorId: user?.id,
+        ownerEmail: user?.email?.toLowerCase(),
+      };
+
+      // Never persist the receiving wallet URL in browser draft storage.
+      const safeDraft = { ...draft };
+      delete safeDraft.walletAddress;
+      try {
+        sessionStorage.setItem(draftKey, JSON.stringify(safeDraft));
+      } catch (storageError) {
+        console.warn("Could not persist this draft:", storageError);
+      }
+
+      navigate("/campaign-preview", {
+        state: { campaign: draft },
+      });
     } catch (error) {
+      console.error("Wallet lookup failed:", error);
       setFormError(error.message || t.walletCurrencyError);
+    } finally {
       setResolvingWallet(false);
+    }
+  };
+
+  const handleBack = () => {
+    setFormError("");
+    if (currentStep > 1) {
+      setCurrentStep((step) => step - 1);
       return;
     }
-    setResolvingWallet(false);
+    navigate("/dashboard");
+  };
 
-    const draft = {
-      ...formData,
-      title: formData.title.trim(),
-      story: formData.story.trim(),
-      target: String(target),
-      currency: walletAsset.currency,
-      assetScale: walletAsset.assetScale,
-      creatorId: user?.id,
-      ownerEmail: user?.email?.toLowerCase(),
-    };
+  const stepCanContinue = (() => {
+    if (currentStep === 1) return Boolean(formData.fundraisingFor);
+    if (currentStep === 2) return Boolean(formData.country && formData.category);
+    if (currentStep === 3) return Boolean(formData.title.trim() && formData.story.trim());
+    if (currentStep === 4) return Boolean(
+      Number(formData.target) > 0 && (formData.openEnded || formData.deadline)
+    );
+    if (currentStep === 6) return Boolean(formData.walletAddress.trim());
+    return true;
+  })();
 
-    // The wallet URL stays in navigation memory and is never written to
-    // public campaign storage or the local draft persisted in sessionStorage.
-    const safeDraft = { ...draft };
-    delete safeDraft.walletAddress;
-    try {
-      sessionStorage.setItem(draftKey, JSON.stringify(safeDraft));
-    } catch (storageError) {
-      // Navigation state still carries this draft for the current flow.
-      console.warn("Could not persist this draft in the browser:", storageError);
+  const renderStepOne = () => {
+    const choices = [
+      {
+        value: "yourself",
+        title: t.yourself,
+        description: t.yourselfText,
+        icon: "user",
+      },
+      {
+        value: "someone-else",
+        title: t.someoneElse,
+        description: t.someoneElseText,
+        icon: "users",
+      },
+      {
+        value: "charity",
+        title: t.charity,
+        description: t.charityText,
+        icon: "building",
+      },
+    ];
+
+    return (
+      <div className="create-step-content create-choice-step">
+        <div className="create-step-heading">
+          <h2>{t.stepOneTitle}</h2>
+          <p>{t.stepOneSubtitle}</p>
+        </div>
+
+        <div className="create-choice-list" role="group" aria-label={t.stepOneTitle}>
+          {choices.map((choice) => {
+            const selected = formData.fundraisingFor === choice.value;
+            return (
+              <button
+                type="button"
+                key={choice.value}
+                className={`create-choice-card${selected ? " is-selected" : ""}`}
+                onClick={() => handleSelect("fundraisingFor", choice.value)}
+                aria-pressed={selected}
+              >
+                <span className="create-choice-icon" aria-hidden="true"><Icon name={choice.icon} size={22} /></span>
+                <span className="create-choice-copy">
+                  <strong>{choice.title}</strong>
+                  <small>{choice.description}</small>
+                </span>
+                <span className="create-choice-radio" aria-hidden="true" />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const renderStepTwo = () => (
+    <div className="create-step-content">
+      <div className="create-step-heading">
+        <h2>{t.stepTwoTitle}</h2>
+        <p>{t.stepTwoSubtitle}</p>
+      </div>
+
+      <div className="create-location-row">
+        <div className="create-field create-country-field">
+          <label htmlFor="country">{t.country}</label>
+          <select id="country" name="country" value={formData.country} onChange={handleChange}>
+            {countryOptions.map((country) => (
+              <option key={country.value} value={country.value}>{country.label}</option>
+            ))}
+          </select>
+        </div>
+        <div className="create-field">
+          <label htmlFor="postalCode">{t.postalCode}</label>
+          <input
+            id="postalCode"
+            name="postalCode"
+            type="text"
+            value={formData.postalCode}
+            onChange={handleChange}
+            placeholder={t.postalPlaceholder}
+            autoComplete="postal-code"
+            maxLength={16}
+          />
+        </div>
+      </div>
+
+      <div className="create-category-block">
+        <h3>{t.categoryQuestion}</h3>
+        <div className="create-category-chips" role="group" aria-label={t.categoryQuestion}>
+          {categories.map((category) => {
+            const selected = formData.category === category;
+            const label = getCategoryLabel(category, language);
+            return (
+              <button
+                type="button"
+                key={category}
+                className={`create-category-chip${selected ? " is-selected" : ""}`}
+                onClick={() => handleSelect("category", category)}
+                aria-pressed={selected}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStepThree = () => (
+    <div className="create-step-content create-fields-step">
+      <div className="create-step-heading">
+        <h2>{t.stepThreeTitle}</h2>
+        <p>{t.stepThreeSubtitle}</p>
+      </div>
+
+      <div className="create-field">
+        <label htmlFor="title">{t.campaignTitle}</label>
+        <input
+          id="title"
+          name="title"
+          type="text"
+          value={formData.title}
+          onChange={handleChange}
+          placeholder={t.titlePlaceholder}
+          maxLength={80}
+          autoComplete="off"
+        />
+        <small className="create-field-meta">{formData.title.length}/80</small>
+      </div>
+
+      <div className="create-field">
+        <label htmlFor="story">{t.story}</label>
+        <textarea
+          id="story"
+          name="story"
+          value={formData.story}
+          onChange={handleChange}
+          placeholder={t.storyPlaceholder}
+          maxLength={1500}
+          rows={7}
+        />
+        <small className="create-field-meta">{formData.story.length}/1500 {t.characters}</small>
+      </div>
+
+      <div className="create-selected-category">
+        <span>{t.categoryQuestion}</span>
+        <strong>{getCategoryLabel(formData.category, language)}</strong>
+      </div>
+    </div>
+  );
+
+  const renderStepFour = () => (
+    <div className="create-step-content create-fields-step">
+      <div className="create-step-heading">
+        <h2>{t.stepFourTitle}</h2>
+        <p>{t.stepFourSubtitle}</p>
+      </div>
+
+      <div className="create-field">
+        <label htmlFor="target">{t.goal}</label>
+        <div className="create-amount-input">
+          <span>{currencyLabel}</span>
+          <input
+            id="target"
+            name="target"
+            type="number"
+            min="1"
+            step="1"
+            value={formData.target}
+            onChange={handleChange}
+            placeholder="e.g. 500,000"
+          />
+        </div>
+        <small className="create-field-meta">{t.otherCurrency}</small>
+      </div>
+
+      <div className="create-field create-deadline-field">
+        <label htmlFor="deadline">{t.deadline}</label>
+        <input
+          id="deadline"
+          name="deadline"
+          type="date"
+          value={formData.deadline}
+          onChange={handleChange}
+          disabled={formData.openEnded}
+          min={new Date().toISOString().split("T")[0]}
+        />
+      </div>
+
+      <label className="create-open-ended">
+        <input
+          type="checkbox"
+          name="openEnded"
+          checked={formData.openEnded}
+          onChange={handleChange}
+        />
+        <span className="create-custom-checkbox" aria-hidden="true" />
+        <span className="create-open-copy">
+          <strong>{t.openEnded}</strong>
+          <small>{t.openEndedHelp}</small>
+        </span>
+      </label>
+    </div>
+  );
+
+  const renderStepFive = () => (
+    <div className="create-step-content create-fields-step">
+      <div className="create-step-heading">
+        <h2>{t.stepFiveTitle}</h2>
+        <p>{t.stepFiveSubtitle}</p>
+      </div>
+
+      <div className={`create-upload-zone${formData.coverImage ? " has-image" : ""}`}>
+        {formData.coverImage ? (
+          <div className="create-upload-preview">
+            <img src={formData.coverImage} alt="Fundraiser cover preview" />
+            <div className="create-upload-preview-actions">
+              <label htmlFor="coverImageInput" className="create-upload-change">{t.changeImage}</label>
+              <button
+                type="button"
+                className="create-upload-remove"
+                onClick={() => setFormData((previous) => ({ ...previous, coverImage: "" }))}
+              >
+                {t.removeImage}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <label htmlFor="coverImageInput" className="create-upload-prompt">
+            <span className="create-upload-icon" aria-hidden="true"><Icon name="image-plus" size={24} /></span>
+            <strong>{t.uploadTitle}</strong>
+            <small>{t.uploadHelp}</small>
+          </label>
+        )}
+        <input
+          id="coverImageInput"
+          className="create-file-input"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          onChange={handleCoverChange}
+        />
+      </div>
+
+      {imageError && <p className="create-inline-error" role="alert">{imageError}</p>}
+      <p className="create-optional-note">{t.imageOptional}</p>
+    </div>
+  );
+
+  const renderStepSix = () => (
+    <div className="create-step-content create-fields-step">
+      <div className="create-step-heading">
+        <h2>{t.stepSixTitle}</h2>
+        <p>{t.stepSixSubtitle}</p>
+      </div>
+
+      <div className="create-field">
+        <label htmlFor="walletAddress">{t.wallet}</label>
+        <input
+          id="walletAddress"
+          name="walletAddress"
+          type="url"
+          value={formData.walletAddress}
+          onChange={handleChange}
+          placeholder={t.walletPlaceholder}
+          autoComplete="url"
+          spellCheck="false"
+        />
+        <small className="create-field-meta">{t.walletHelp}</small>
+      </div>
+
+      <div className="create-wallet-notice">
+        <Icon name="shield-check" size={20} />
+        <p>{t.walletPrivacy}</p>
+      </div>
+
+      <div className="create-final-summary">
+        <span>{formData.title || t.campaignTitle}</span>
+        <strong>{formData.category ? (getCategoryLabel(formData.category, language)) : "—"}</strong>
+        <strong>{formData.target ? `${Number(formData.target).toLocaleString()} ${currencyLabel}` : "—"}</strong>
+      </div>
+    </div>
+  );
+
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1: return renderStepOne();
+      case 2: return renderStepTwo();
+      case 3: return renderStepThree();
+      case 4: return renderStepFour();
+      case 5: return renderStepFive();
+      case 6: return renderStepSix();
+      default: return renderStepOne();
     }
-
-    navigate("/campaign-preview", {
-      state: { campaign: draft },
-    });
   };
 
   return (
-    <main className="create-page">
-      <nav className="create-nav">
-        <Link to="/dashboard" className="create-logo">
-          paste<span>me</span>
-          <i>.</i>
+    <main className="create-page create-wizard">
+      <aside className="create-intro">
+        <Link to="/dashboard" className="create-brand" aria-label="PasteMe dashboard">
+          <span className="create-brand-mark" aria-hidden="true"><Icon name="sparkles" size={20} /></span>
+          <span className="create-brand-word">paste<span>me</span><i>.</i></span>
         </Link>
 
-        <div className="create-nav-right">
-          <span>{t.creating}</span>
-          <select className="create-language-select" value={language} onChange={handleLanguageChange} aria-label="Language">
-            <option value="en">English</option>
-            <option value="pcm">Pidgin</option>
-            <option value="yo">Yorùbá</option>
-          </select>
-          <div className="creator-avatar" aria-label={user?.name || "Creator"}>
-            {(user?.name || "C").trim().charAt(0).toUpperCase()}
+        <div className="create-intro-content">
+          <div className="create-step-counter">
+            <span>{currentStep}</span> {t.stepOf} {STEPS}
           </div>
-          <button type="button" className="create-dashboard-link" onClick={() => navigate("/dashboard")}>
-            {t.dashboard}
-          </button>
+          <div className="create-side-progress" aria-label={`Step ${currentStep} of ${STEPS}`}>
+            {Array.from({ length: STEPS }, (_, index) => (
+              <span key={index} className={index < currentStep ? "is-complete" : ""} />
+            ))}
+          </div>
+          <h1>{leftCopy[0]}</h1>
+          <p>{leftCopy[1]}</p>
         </div>
-      </nav>
 
-      <section className="create-layout">
+        <div className="create-intro-footer">
+          <span className="create-intro-sparkle"><Icon name="sparkles" size={18} /></span>
+          <span>{t.brandFoot}</span>
+        </div>
+      </aside>
 
-        {/* LEFT CONTENT */}
-        <aside className="create-intro">
-
-          <div className="intro-tag">
-            <span className="intro-dot" />
-            {t.introTag}
+      <section className="create-right-panel">
+        <header className="create-topbar">
+          <span className="create-topbar-label">{t.creating}</span>
+          <div className="create-topbar-actions">
+            <select
+              className="create-language-select"
+              value={language}
+              onChange={handleLanguageChange}
+              aria-label="Language"
+            >
+              <option value="en">English</option>
+              <option value="pcm">Pidgin</option>
+              <option value="yo">Yorùbá</option>
+            </select>
+            <Link to="/dashboard" className="create-dashboard-link">{t.saveExit}</Link>
           </div>
+        </header>
 
-          <div className="intro-content">
-            <h1>
-              {t.hero1}
-              <br />
-              {t.hero2}
-              <br />
-              {t.hero3} <span>{t.heroAccent}</span>
-            </h1>
-
-            <p>
-              {t.introText}
-            </p>
+        <div className="create-main-scroll">
+          <div className="create-step-shell" key={currentStep}>
+            {renderCurrentStep()}
+            {formError && <p className="create-inline-error" role="alert">{formError}</p>}
           </div>
+        </div>
 
-          <div className="create-note">
-            <div className="note-icon">✳</div>
-            <div>
-              <strong>{t.noteTitle}</strong>
-              <span>
-                {t.noteText}
-              </span>
-            </div>
+        <footer className="create-action-footer">
+          <div className="create-footer-progress" aria-hidden="true">
+            <span style={{ width: `${progress}%` }} />
           </div>
-
-          <div className="intro-footer">
-            <span>01 — CREATE</span>
-            <span>02 — SHARE</span>
-            <span>03 — MAKE IT HAPPEN</span>
-          </div>
-
-        </aside>
-
-        {/* RIGHT FORM */}
-        <section className="create-form-section">
-
-          <div className="form-heading">
-            <div>
-              <span className="form-eyebrow">{t.campaignDetails}</span>
-              <h2>{t.formTitle}</h2>
-              <p>{t.formSubtitle}</p>
-            </div>
-
-            <span className="form-step">01 / 01</span>
-          </div>
-
-          <form onSubmit={handleSubmit} className="campaign-form">
-
-            <div className="form-group">
-              <label htmlFor="title">{t.title}</label>
-              <input
-                id="title"
-                name="title"
-                type="text"
-                placeholder={t.titlePlaceholder}
-                value={formData.title}
-                onChange={handleChange}
-                maxLength={80}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="coverImageInput">{t.cover} <span className="optional-label">{t.optional}</span></label>
-              <input
-                id="coverImageInput"
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                onChange={handleCoverChange}
-              />
-              {imageError && <small className="create-error">{imageError}</small>}
-              {formData.coverImage && (
-                <div className="create-cover-preview">
-                  <img src={formData.coverImage} alt="Campaign cover preview" />
-                  <button type="button" onClick={() => setFormData((prev) => ({ ...prev, coverImage: "" }))}>{t.removeImage}</button>
-                </div>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="category">{t.category}</label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-              >
-                <option value="">{t.chooseCategory}</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {categoryLabels[category]?.[language] || category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="story">{t.story}</label>
-              <textarea
-                id="story"
-                name="story"
-                placeholder={t.storyPlaceholder}
-                value={formData.story}
-                onChange={handleChange}
-                maxLength={1500}
-                rows={3}
-                required
-              />
-              <span className="character-count">
-                {formData.story.length}/1500
-              </span>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="target">
-                  {t.goal}{formData.currency ? ` (${formData.currency})` : ""}
-                </label>
-                <div className="input-with-prefix">
-                <span>{formData.currency || "¤"}</span>
-                  <input
-                    id="target"
-                    name="target"
-                    type="number"
-                    min="1"
-                    step="1"
-                    placeholder="e.g. 500,000"
-                    value={formData.target}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="deadline">{t.deadline}</label>
-                <input
-                  id="deadline"
-                  name="deadline"
-                  type="date"
-                  value={formData.deadline}
-                  onChange={handleChange}
-                  disabled={formData.openEnded}
-                  required={!formData.openEnded}
-                  min={new Date().toISOString().split("T")[0]}
-                />
-              </div>
-            </div>
-
-            <label className="open-ended-option">
-              <input
-                type="checkbox"
-                name="openEnded"
-                checked={formData.openEnded}
-                onChange={handleChange}
-              />
-              <span>{t.openEnded}</span>
-            </label>
-
-            <div className="wallet-section">
-              <button
-                type="button"
-                className="wallet-toggle"
-                onClick={() => setShowWallet(!showWallet)}
-              >
-                <span>
-                  <strong>{t.wallet}</strong>
-                  <small>{t.walletHelp}</small>
-                </span>
-                <span>{showWallet ? "−" : "+"}</span>
-              </button>
-
-              {showWallet && (
-                <div className="form-group wallet-input">
-                  <label htmlFor="walletAddress">
-                    {t.walletLabel}
-                  </label>
-                  <input
-                    id="walletAddress"
-                    name="walletAddress"
-                    type="url"
-                    placeholder={t.walletPlaceholder}
-                    value={formData.walletAddress}
-                    onChange={handleChange}
-                    required
-                  />
-                  <small>
-                    {t.walletPrivate}
-                  </small>
-                </div>
-              )}
-            </div>
-
-            {formError && <p className="create-error" role="alert">{formError}</p>}
-
-            <button type="submit" className="create-submit" disabled={resolvingWallet}>
-              {resolvingWallet ? t.walletChecking : t.continue}
-              <span>↗</span>
+          <div className="create-action-row">
+            <button
+              type="button"
+              className="create-back-button"
+              onClick={handleBack}
+              aria-label={currentStep === 1 ? t.dashboard : t.back}
+            >
+              <Icon name="arrow-left" size={18} />
+              <small>{currentStep === 1 ? t.dashboard : t.back}</small>
             </button>
 
-            <p className="form-disclaimer">
-              {t.terms}
-            </p>
-
-          </form>
-        </section>
-
+            <div className="create-action-right">
+              <span className="create-save-hint">{t.saved}</span>
+              <button
+                type="button"
+                className="create-continue-button"
+                onClick={handleContinue}
+                disabled={resolvingWallet || !stepCanContinue}
+              >
+                {resolvingWallet ? t.walletChecking : currentStep === STEPS ? t.preview : t.continue}
+                <Icon name="arrow-right" size={18} />
+              </button>
+            </div>
+          </div>
+        </footer>
       </section>
     </main>
   );

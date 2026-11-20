@@ -32,21 +32,7 @@
 .auth-logo {
   position: relative;
   z-index: 2;
-  width: fit-content;
   color: white;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -2px;
-  text-decoration: none;
-}
-
-.auth-logo span {
-  color: #E6DCE9;
-}
-
-.auth-logo i {
-  color: var(--sage);
-  font-style: normal;
 }
 
 .auth-decoration {
@@ -395,10 +381,6 @@
     padding: 24px 7%;
   }
 
-  .auth-logo {
-    font-size: 26px;
-  }
-
   .auth-visual-content {
     margin: 37px 0 10px;
   }
@@ -471,4 +453,117 @@
 
 .auth-forgot-row a:hover {
   text-decoration: underline;
+}
+
+/* Keep signup controls inside the viewport while preserving login layout. */
+.auth-page-signup {
+  height: 100svh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.auth-page-signup .auth-visual,
+.auth-page-signup .auth-form-section {
+  min-height: 0;
+  height: 100svh;
+}
+
+.auth-page-signup .auth-form-section {
+  padding-block: clamp(12px, 3vh, 30px);
+}
+
+.auth-page-signup .auth-form-container {
+  margin-block: clamp(8px, 1.5vh, 18px);
+}
+
+.auth-page-signup .auth-form {
+  gap: clamp(8px, 1.5vh, 14px);
+  margin-top: clamp(12px, 2vh, 22px);
+}
+
+.auth-page-signup .auth-field input {
+  min-height: 42px;
+  padding-block: 10px;
+}
+
+.auth-page-signup .auth-submit {
+  min-height: 44px;
+  padding-block: 11px;
+}
+
+.auth-page-signup .auth-switch {
+  margin-top: 13px;
+}
+
+.auth-page-signup .auth-demo-note {
+  margin-top: 14px;
+  padding: 9px;
+}
+
+@media (max-width: 760px) {
+  .auth-page-signup {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .auth-page-signup .auth-visual {
+    flex: 0 0 58px;
+    height: 58px;
+    padding: 12px 7%;
+  }
+
+  .auth-page-signup .auth-visual-content {
+    display: none;
+  }
+
+  .auth-page-signup .auth-form-section {
+    flex: 1 1 auto;
+    height: auto;
+    padding: 12px 7%;
+  }
+
+  .auth-page-signup .auth-form-container {
+    margin: clamp(8px, 2svh, 15px) auto;
+  }
+
+  .auth-page-signup .auth-demo-note {
+    display: none;
+  }
+}
+
+@media (max-height: 620px) {
+  .auth-page-signup .auth-form-section {
+    padding-block: 8px;
+  }
+
+  .auth-page-signup .auth-form-subtitle {
+    display: none;
+  }
+
+  .auth-page-signup .auth-form-container h2 {
+    margin-block: 6px;
+    font-size: 30px;
+  }
+
+  .auth-page-signup .auth-form {
+    gap: 7px;
+    margin-top: 10px;
+  }
+
+  .auth-page-signup .auth-field {
+    gap: 4px;
+  }
+
+  .auth-page-signup .auth-field input {
+    min-height: 38px;
+    padding-block: 8px;
+  }
+
+  .auth-page-signup .auth-switch {
+    margin-top: 8px;
+  }
+
+  .auth-page-signup .auth-footer {
+    display: none;
+  }
 }

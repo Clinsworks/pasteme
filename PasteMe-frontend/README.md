@@ -80,3 +80,7 @@ session secret and payment-data encryption key must remain server-side.
 The app includes a web app manifest, icons and a production service worker.
 Campaign QR codes use the current deployed origin. The public campaign API is
 required to open a shared campaign on a different device.
+
+## Frontend design system
+
+The interface uses the PasteMe palette (deep plum, muted sage, charcoal and ivory), a shared outline icon component, conversational English/Pidgin/Yorùbá copy, responsive layouts and restrained motion. See [FRONTEND_REFRESH_NOTES.md](./FRONTEND_REFRESH_NOTES.md) for the latest frontend-only changes and validation notes.

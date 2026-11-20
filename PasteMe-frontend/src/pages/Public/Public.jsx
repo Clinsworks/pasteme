@@ -1,6 +1,9 @@
 
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { getCategoryLabel } from "../../lib/categoryLabels";
+import { useNavigate, useParams } from "react-router-dom";
+import BrandLogo from "../../components/BrandLogo";
+import Icon from "../../components/Icon";
 import { getPublishedCampaign } from "../../lib/campaignStore";
 import { copyText } from "../../lib/clipboard";
 import { formatMoney } from "../../lib/money";
@@ -92,14 +95,6 @@ const translations = {
   },
 };
 
-const categories = {
-  Education: { en: "Education", pcm: "Education", yo: "Ẹ̀kọ́" },
-  Medical: { en: "Medical", pcm: "Health", yo: "Ìlera" },
-  Community: { en: "Community", pcm: "Community", yo: "Àwùjọ" },
-  Personal: { en: "Personal", pcm: "Personal", yo: "Ti ara ẹni" },
-  Business: { en: "Business", pcm: "Business", yo: "Iṣòwò" },
-  Other: { en: "Other", pcm: "Other", yo: "Òmíràn" },
-};
 
 export default function PublicCampaign() {
   const { campaignId } = useParams();
@@ -210,9 +205,7 @@ export default function PublicCampaign() {
   if (error || !campaign) {
     return (
       <main className="public-state">
-        <Link to="/" className="public-logo">
-          paste<span>me</span>.
-        </Link>
+        <BrandLogo className="public-logo" />
 
         <h1>{t.notFound}</h1>
         <p>{t.notFoundText}</p>
@@ -235,8 +228,7 @@ export default function PublicCampaign() {
     : 0;
 
   const category =
-    categories[campaign.category]?.[language] ||
-    campaign.category;
+    getCategoryLabel(campaign.category, language);
 
   const deadline = campaign.openEnded
     ? t.open
@@ -263,9 +255,7 @@ export default function PublicCampaign() {
 
       {/* NAVIGATION */}
       <nav className="public-nav">
-        <Link to="/" className="public-logo">
-          paste<span>me</span><i>.</i>
-        </Link>
+        <BrandLogo className="public-logo" />
 
         <div className="public-nav-right">
 
@@ -275,7 +265,7 @@ export default function PublicCampaign() {
           </div>
 
           <div className="public-language">
-            <span>文</span>
+            <Icon name="globe" size={16} />
             <select
               value={language}
               onChange={handleLanguageChange}
@@ -301,7 +291,7 @@ export default function PublicCampaign() {
             />
           ) : (
             <div className="public-image-placeholder">
-              <span>✳</span>
+              <Icon name="heart-handshake" size={32} />
               <p>{t.coverLine}</p>
             </div>
           )}
@@ -333,7 +323,7 @@ export default function PublicCampaign() {
           </div>
 
           <div className="public-story-bottom">
-            <span>✳</span>
+            <Icon name="heart-handshake" size={18} />
             <p>{t.contributions}</p>
           </div>
 
@@ -393,11 +383,11 @@ export default function PublicCampaign() {
             }
           >
             {campaignEnded ? t.campaignEnded : t.donate}
-            {!campaignEnded && <span>↗</span>}
+            {!campaignEnded && <Icon name="arrow-up-right" size={17} />}
           </button>
 
           <p className="public-no-account">
-            <span>✓</span>
+            <Icon name="check-circle" size={15} />
             {t.noAccount}
           </p>
 
@@ -405,7 +395,7 @@ export default function PublicCampaign() {
             className="public-share-button"
             onClick={handleShare}
           >
-            ↗ {t.share}
+            <Icon name="share" size={16} /> {t.share}
           </button>
 
           <button

@@ -1,0 +1,196 @@
+/* -------------------------------------------------------------------------- */
+/* PasteMe motion system                                                      */
+/* Restrained motion: page transitions, scroll reveals and small interactions. */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  --pm-motion-fast: 160ms;
+  --pm-motion-standard: 280ms;
+  --pm-motion-emphasis: 460ms;
+  --pm-ease-out: cubic-bezier(0.22, 0.78, 0.24, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  scroll-behavior: smooth;
+}
+
+.create-main-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Each route enters softly without shifting the layout. */
+.route-transition {
+  min-height: 100%;
+  animation: pm-page-enter 320ms var(--pm-ease-out) both;
+}
+
+@keyframes pm-page-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 7px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Elements are only hidden after JavaScript has registered them for reveal. */
+.pm-reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 520ms var(--pm-ease-out),
+    transform 520ms var(--pm-ease-out);
+  will-change: opacity, transform;
+}
+
+.pm-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Light stagger makes repeated cards feel intentional, not mechanical. */
+.steps-grid > .pm-reveal:nth-child(2),
+.benefit-grid > .pm-reveal:nth-child(2),
+.dashboard-stats > .pm-reveal:nth-child(2),
+.dashboard-campaign-list > .pm-reveal:nth-child(2),
+.create-choice-list > .pm-reveal:nth-child(2) {
+  transition-delay: 65ms;
+}
+
+.steps-grid > .pm-reveal:nth-child(3),
+.benefit-grid > .pm-reveal:nth-child(3),
+.dashboard-stats > .pm-reveal:nth-child(3),
+.dashboard-campaign-list > .pm-reveal:nth-child(3),
+.create-choice-list > .pm-reveal:nth-child(3) {
+  transition-delay: 125ms;
+}
+
+.benefit-grid > .pm-reveal:nth-child(4),
+.dashboard-campaign-list > .pm-reveal:nth-child(4) {
+  transition-delay: 185ms;
+}
+
+/* Small tactile feedback across shared controls. */
+button:not(:disabled) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.985);
+}
+
+input,
+textarea,
+select {
+  transition:
+    border-color var(--pm-motion-fast) ease,
+    box-shadow var(--pm-motion-fast) ease,
+    background-color var(--pm-motion-fast) ease;
+}
+
+/* Subtle image movement in campaign cards. */
+.campaign-card-image,
+.published-cover,
+.checkout-campaign-art,
+.public-hero-image {
+  overflow: hidden;
+}
+
+.campaign-card-image img,
+.published-cover > img,
+.checkout-campaign-art img,
+.public-hero-image img {
+  transition: transform 650ms var(--pm-ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-campaign-card:hover .campaign-card-image img,
+  .published-campaign-card:hover .published-cover > img,
+  .checkout-campaign-art:hover img,
+  .public-hero:hover .public-hero-image img {
+    transform: scale(1.035);
+  }
+}
+
+/* Campaign wizard: each step enters gently when the keyed step changes. */
+.create-step-shell {
+  animation: pm-step-enter 300ms var(--pm-ease-out) both;
+}
+
+@keyframes pm-step-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(10px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A restrained floating effect for the landing-page illustration. */
+.campaign-phone {
+  animation: pm-phone-float 7s ease-in-out infinite;
+}
+
+@keyframes pm-phone-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-5deg);
+  }
+
+  50% {
+    transform: translate3d(0, -7px, 0) rotate(-4.2deg);
+  }
+}
+
+/* Smoothly animate fundraiser completion/progress when values change. */
+.funding-fill,
+.published-progress-fill,
+.public-progress-fill,
+.checkout-progress-track > div,
+.campaign-progress-track > div,
+.create-footer-progress > span {
+  transition: width 520ms var(--pm-ease-out);
+}
+
+/* Avoid scroll-reveal and decorative movement for motion-sensitive visitors. */
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto !important;
+  }
+
+  .route-transition,
+  .create-step-shell,
+  .campaign-phone {
+    animation: none !important;
+  }
+
+  .pm-reveal,
+  .pm-reveal.is-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

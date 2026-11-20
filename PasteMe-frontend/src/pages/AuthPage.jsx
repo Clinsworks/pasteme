@@ -1,6 +1,8 @@
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import BrandLogo from "../components/BrandLogo";
+import Icon from "../components/Icon";
 import "./Auth.css";
 
 const translations = {
@@ -37,18 +39,19 @@ const translations = {
     loginAside: "Your stories. Your impact.",
     signupAside: "Start something meaningful.",
     required: "Please complete all required fields.",
+    wait: "Just a moment...", showPassword: "Show password", hidePassword: "Hide password",
     forgot: "Forgot password?",
   },
 
   pcm: {
-    login: "Welcome back.",
+    login: "You don come back.",
     signup: "Make we get started.",
     loginSubtitle: "Log in make you continue your journey with PasteMe.",
     signupSubtitle: "Create account make your ideas fit grow.",
-    brandLogin: "Good stories deserve to continue.",
-    brandSignup: "Every meaningful change start with one story.",
+    brandLogin: "Your story fit still move forward.",
+    brandSignup: "Every big change dey start with one story.",
     brandDescription:
-      "Bring your ideas to life, share your story and make meaningful things happen.",
+      "Bring your idea come life, share your story, and make people join you.",
     name: "Your full name",
     email: "Email address",
     password: "Password",
@@ -66,20 +69,21 @@ const translations = {
     passwordHint: "Use at least 8 characters.",
     mismatch: "The passwords no match.",
     demoNotice: "PasteMe go protect your account with secure sign-in.",
-    footer: "Made for meaningful causes.",
+    footer: "For causes wey matter.",
     language: "Language",
-    loginEyebrow: "WELCOME BACK",
+    loginEyebrow: "YOU DON COME BACK",
     signupEyebrow: "JOIN PASTEME",
     loginAside: "Your stories. Your impact.",
     signupAside: "Start something meaningful.",
     required: "Abeg complete all the required fields.",
+    wait: "Just small moment...", showPassword: "Show password", hidePassword: "Hide password",
     forgot: "You forget password?",
   },
 
   yo: {
     login: "Ẹ káàbọ̀ padà.",
     signup: "Ẹ jẹ́ ká bẹ̀rẹ̀.",
-    loginSubtitle: " wọlé láti tẹ̀síwájú pẹ̀lú PasteMe.",
+    loginSubtitle: "Wọlé láti tẹ̀síwájú pẹ̀lú PasteMe.",
     signupSubtitle: "Ṣẹ̀dá àkáǹtì kí àwọn èrò rẹ lè dàgbà.",
     brandLogin: "Ó yẹ kí ìtàn rere máa bá a lọ.",
     brandSignup: "Gbogbo ìyípadà rere bẹ̀rẹ̀ pẹ̀lú ìtàn kan.",
@@ -109,6 +113,7 @@ const translations = {
     loginAside: "Ìtàn rẹ. Ipa rẹ.",
     signupAside: "Bẹ̀rẹ̀ ohun tó ní ìtumọ̀.",
     required: "Jọ̀wọ́ kún gbogbo àlàyé tó yẹ.",
+    wait: "Ẹ dúró díẹ̀...", showPassword: "Fi ọ̀rọ̀ aṣínà hàn", hidePassword: "Fi ọ̀rọ̀ aṣínà pamọ́",
     forgot: "Ṣé o gbàgbé ọ̀rọ̀ aṣínà rẹ?",
   },
 };
@@ -194,14 +199,12 @@ export default function AuthPage({ mode }) {
   };
 
   return (
-    <main className="auth-page">
+    <main className={`auth-page${isSignup ? " auth-page-signup" : ""}`}>
 
       {/* LEFT BRAND SECTION */}
       <section className="auth-visual">
 
-        <Link to="/" className="auth-logo">
-          paste<span>me</span><i>.</i>
-        </Link>
+        <BrandLogo className="auth-logo" />
 
         <div className="auth-decoration decoration-one" />
         <div className="auth-decoration decoration-two" />
@@ -219,7 +222,7 @@ export default function AuthPage({ mode }) {
           <p>{t.brandDescription}</p>
 
           <div className="auth-visual-mark">
-            <span>✳</span>
+            <Icon name="sparkles" size={18} />
             <span>YOUR STORY. YOUR IMPACT.</span>
           </div>
 
@@ -241,7 +244,7 @@ export default function AuthPage({ mode }) {
           </span>
 
           <div className="auth-language">
-            <span>文</span>
+            <Icon name="globe" size={16} />
 
             <select
               value={language}
@@ -326,9 +329,9 @@ export default function AuthPage({ mode }) {
                   type="button"
                   className="auth-password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? t.hidePassword : t.showPassword}
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  <Icon name={showPassword ? "eye-off" : "eye"} size={17} />
                 </button>
 
               </div>
@@ -373,8 +376,8 @@ export default function AuthPage({ mode }) {
             )}
 
             <button type="submit" className="auth-submit" disabled={submitting}>
-              {submitting ? "Please wait..." : isSignup ? t.signupButton : t.loginButton}
-              <span>↗</span>
+              {submitting ? t.wait : isSignup ? t.signupButton : t.loginButton}
+              <Icon name="arrow-up-right" size={16} />
             </button>
 
           </form>
@@ -392,7 +395,7 @@ export default function AuthPage({ mode }) {
           </div>
 
           <div className="auth-demo-note">
-            <span>✳</span>
+            <Icon name="shield-check" size={17} />
             <p>{t.demoNotice}</p>
           </div>
 

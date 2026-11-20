@@ -1,6 +1,9 @@
 
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { getCategoryLabel } from "../../lib/categoryLabels";
+import { useNavigate, useParams } from "react-router-dom";
+import BrandLogo from "../../components/BrandLogo";
+import Icon from "../../components/Icon";
 import { getOwnerCampaign } from "../../lib/campaignStore";
 import { copyText } from "../../lib/clipboard";
 import { formatMoney } from "../../lib/money";
@@ -138,38 +141,6 @@ const translations = {
   },
 };
 
-const categoryTranslations = {
-  Education: {
-    en: "Education",
-    pcm: "Education",
-    yo: "Ẹ̀kọ́",
-  },
-  Medical: {
-    en: "Medical",
-    pcm: "Health",
-    yo: "Ìlera",
-  },
-  Community: {
-    en: "Community",
-    pcm: "Community",
-    yo: "Àwùjọ",
-  },
-  Personal: {
-    en: "Personal",
-    pcm: "Personal",
-    yo: "Ti ara ẹni",
-  },
-  Business: {
-    en: "Business",
-    pcm: "Business",
-    yo: "Iṣòwò",
-  },
-  Other: {
-    en: "Other",
-    pcm: "Other",
-    yo: "Òmíràn",
-  },
-};
 
 export default function CampaignPublished() {
   const { campaignId } = useParams();
@@ -308,9 +279,7 @@ export default function CampaignPublished() {
     return (
       <main className="published-empty">
         <nav className="published-nav">
-          <Link to="/dashboard" className="published-logo">
-            paste<span>me</span><i>.</i>
-          </Link>
+          <BrandLogo to="/dashboard" className="published-logo" />
         </nav>
         <div className="empty-content">
           <p role="status">{t.loading}</p>
@@ -323,9 +292,7 @@ export default function CampaignPublished() {
     return (
       <main className="published-empty">
         <nav className="published-nav">
-          <Link to="/dashboard" className="published-logo">
-            paste<span>me</span><i>.</i>
-          </Link>
+          <BrandLogo to="/dashboard" className="published-logo" />
 
           <LanguageSelector
             language={language}
@@ -359,8 +326,7 @@ export default function CampaignPublished() {
     : 0;
 
   const category =
-    categoryTranslations[campaign.category]?.[language] ||
-    campaign.category;
+    getCategoryLabel(campaign.category, language);
 
   const deadline = campaign.openEnded
     ? t.openEnded
@@ -378,9 +344,7 @@ export default function CampaignPublished() {
       {/* NAVIGATION */}
       <nav className="published-nav">
 
-        <Link to="/dashboard" className="published-logo">
-          paste<span>me</span><i>.</i>
-        </Link>
+        <BrandLogo to="/dashboard" className="published-logo" />
 
         <div className="published-nav-right">
           <button
@@ -417,7 +381,7 @@ export default function CampaignPublished() {
         <section className="published-content">
 
           <div className="published-success-label">
-            <span className="success-sparkle">✳</span>
+            <span className="success-sparkle"><Icon name="sparkles" size={18} /></span>
             {t.eyebrow}
           </div>
 
@@ -442,7 +406,7 @@ export default function CampaignPublished() {
                 <img src={campaign.coverImage} alt="Campaign cover" />
               ) : (
                 <div className="published-cover-decoration">
-                  <span>✳</span>
+                  <Icon name="heart-handshake" size={28} />
                   <span>paste me.</span>
                 </div>
               )}
@@ -503,7 +467,7 @@ export default function CampaignPublished() {
           </article>
 
           <p className="published-original-note">
-            <span>✳</span>
+            <Icon name="info" size={16} />
             {t.authoredNote}
           </p>
 
@@ -537,14 +501,14 @@ export default function CampaignPublished() {
                   {qrError ? (
                     <span>!</span>
                   ) : (
-                    <span className="qr-loading">✳</span>
+                    <span className="qr-loading"><Icon name="loader" size={24} /></span>
                   )}
                 </div>
               )}
             </div>
 
             <div className="published-qr-caption">
-              <span>✳</span>
+              <Icon name="scan-line" size={15} />
               <p>{t.scanCaption}</p>
             </div>
 
@@ -569,7 +533,7 @@ export default function CampaignPublished() {
                 onClick={handleCopyLink}
                 aria-label={t.copy}
               >
-                <span className="copy-icon">▢</span>
+                <Icon name="copy" size={17} />
               </button>
             </div>
 
@@ -594,7 +558,7 @@ export default function CampaignPublished() {
               onClick={handleCopyLink}
             >
               {copied ? t.copied : t.copy}
-              <span>↗</span>
+              <Icon name="arrow-up-right" size={16} />
             </button>
 
             <button
@@ -602,7 +566,7 @@ export default function CampaignPublished() {
               className="published-secondary"
               onClick={handleShare}
             >
-              <span>↗</span>
+              <Icon name="share" size={16} />
               {t.share}
             </button>
 
@@ -617,7 +581,7 @@ export default function CampaignPublished() {
                 if (!qrCode) e.preventDefault();
               }}
             >
-              <span>↓</span>
+              <Icon name="download" size={16} />
               {qrError ? t.qrError : t.download}
             </a>
 
@@ -626,13 +590,13 @@ export default function CampaignPublished() {
               className="published-view"
               onClick={handleViewCampaign}
             >
-              {t.view} →
+              {t.view} <Icon name="arrow-right" size={15} />
             </button>
 
           </div>
 
           <div className="published-notice">
-            <span>✳</span>
+            <Icon name="info" size={16} />
             <p>{t.notice}</p>
           </div>
 
@@ -643,7 +607,7 @@ export default function CampaignPublished() {
       <footer className="published-footer">
         <span>paste<span>me</span>.</span>
         <button onClick={handleNewCampaign}>
-          {t.newCampaign} ↗
+          {t.newCampaign} <Icon name="arrow-up-right" size={15} />
         </button>
       </footer>
 
@@ -654,7 +618,7 @@ export default function CampaignPublished() {
 function LanguageSelector({ language, onChange }) {
   return (
     <div className="language-selector">
-      <span className="language-icon">文</span>
+      <span className="language-icon"><Icon name="globe" size={16} /></span>
 
       <select
         aria-label="Select language"
@@ -666,7 +630,7 @@ function LanguageSelector({ language, onChange }) {
         <option value="yo">Yorùbá</option>
       </select>
 
-      <span className="language-chevron">⌄</span>
+      <span className="language-chevron"><Icon name="chevron-down" size={13} /></span>
     </div>
   );
 }
