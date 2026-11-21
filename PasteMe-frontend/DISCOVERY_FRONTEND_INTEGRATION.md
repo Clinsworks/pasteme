@@ -1,6 +1,6 @@
 # PasteMe community discovery frontend integration
 
-This document describes the frontend additions in this package. It does not modify or implement the backend.
+This document describes the frontend discovery contract and the backend endpoint that serves it.
 
 ## New public frontend route
 
@@ -12,12 +12,20 @@ This document describes the frontend additions in this package. It does not modi
 
 The frontend uses `src/lib/discoveryStore.js` for discovery-only calls. This is intentionally separate from `listCampaigns()` because the existing `/api/campaigns` endpoint is used by the signed-in creator workspace.
 
-### `GET /api/discovery/pastes?limit=24`
+### `GET /api/discovery/pastes?page=1`
 
-Expected response:
+The backend returns campaigns in pages of five. `hasMore` indicates whether a
+subsequent page is available; the Explore client requests pages until it has
+loaded the full feed. The homepage only requests enough pages to render its
+featured items.
+
+Response:
 
 ```json
 {
+  "page": 1,
+  "pageSize": 5,
+  "hasMore": true,
   "pastes": [
     {
       "id": "paste-id",
@@ -42,7 +50,7 @@ Expected response:
 }
 ```
 
-The `target` may be `null` or omitted. In that case the UI shows the amount raised and supporter count, but no progress bar. Campaign data must be public-safe: never return receiving wallet URLs, wallet identifiers marked private, credentials, or payment secrets. `raised` and `contributors` must be based only on confirmed contributions. Only public, active, non-expired campaigns should be returned (the frontend also filters statuses/deadlines defensively).
+The `target` may be `null` or omitted. In that case the UI shows the amount raised and supporter count, but no progress bar. Campaign data must be public-safe: never return receiving wallet URLs, wallet identifiers marked private, credentials, or payment secrets. `raised` and `contributors` are based on confirmed contribution records. Only published, non-expired campaigns are returned (the frontend also filters statuses/deadlines defensively).
 
 The existing campaign categories have been extended in the frontend with student-centred options: Tuition, Accommodation, Academic Materials, and Emergency. The backend's category validation/model must accept those values before they can be saved successfully. Existing category values remain available.
 

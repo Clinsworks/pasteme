@@ -83,7 +83,7 @@ export default function Explore() {
     setLoading(true);
     setError(false);
 
-    listDiscoverablePastes({ limit: 100, signal: controller.signal })
+    listDiscoverablePastes({ all: true, signal: controller.signal })
       .then((result) => {
         if (!controller.signal.aborted) {
           setPastes(result.filter(isActivePaste));
