@@ -199,7 +199,7 @@ export default function AuthPage({ mode }) {
   };
 
   return (
-    <main className={`auth-page${isSignup ? " auth-page-signup" : ""}`}>
+    <main className={isSignup ? "auth-page auth-page-signup" : "auth-page"}>
 
       {/* LEFT BRAND SECTION */}
       <section className="auth-visual">
@@ -222,8 +222,8 @@ export default function AuthPage({ mode }) {
           <p>{t.brandDescription}</p>
 
           <div className="auth-visual-mark">
-            <Icon name="sparkles" size={18} />
-            <span>YOUR STORY. YOUR IMPACT.</span>
+            {/* <Icon name="sparkles" size={18} /> */}
+            {/* <span>YOUR STORY. YOUR IMPACT.</span> */}
           </div>
 
         </div>
@@ -402,7 +402,7 @@ export default function AuthPage({ mode }) {
         </div>
 
         <footer className="auth-footer">
-          <span>paste<span>me</span>.</span>
+          <BrandLogo className="auth-footer-logo" />
           <span>{t.footer}</span>
         </footer>
 

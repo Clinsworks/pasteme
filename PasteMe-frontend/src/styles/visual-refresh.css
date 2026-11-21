@@ -97,10 +97,10 @@ label svg {
 }
 
 .brand-logo img {
-  width: 34px;
+  width: 52px;
   height: 34px;
-  border-radius: 9px;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .brand-logo > span {
@@ -1136,4 +1136,195 @@ button svg, a svg {
 @media (hover: hover) and (pointer: fine) {
   .campaign-phone { transition: transform 260ms ease; }
   .campaign-phone:hover { transform: rotate(-1deg) translateY(-2px); }
+}
+
+/* Keep account creation within the available viewport at every breakpoint. */
+.auth-page.auth-page-signup {
+  height: 100vh;
+  height: 100svh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.auth-page-signup .auth-visual,
+.auth-page-signup .auth-form-section {
+  min-height: 0;
+}
+
+.auth-page-signup .auth-visual {
+  padding-block: clamp(20px, 4vh, 48px);
+}
+
+.auth-page-signup .auth-form-section {
+  padding-block: clamp(16px, 3vh, 30px);
+}
+
+.auth-page-signup .auth-form-container {
+  margin-block: 0;
+}
+
+.auth-page-signup .auth-form {
+  gap: clamp(9px, 1.6vh, 16px);
+  margin-top: clamp(14px, 2.8vh, 25px);
+}
+
+.auth-page-signup .auth-field {
+  gap: 6px;
+}
+
+.auth-page-signup .auth-field input {
+  min-height: 44px;
+}
+
+.auth-page-signup .auth-switch {
+  margin-top: 16px;
+}
+
+.auth-page-signup .auth-demo-note {
+  margin-top: 16px;
+  padding: 10px;
+}
+
+@media (max-width: 760px) {
+  .auth-page.auth-page-signup {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .auth-page-signup .auth-visual {
+    flex: 0 0 auto;
+    min-height: 58px;
+    padding: 12px 6%;
+  }
+
+  .auth-page-signup .auth-visual-content,
+  .auth-page-signup .auth-visual-footer,
+  .auth-page-signup .auth-demo-note,
+  .auth-page-signup .auth-footer {
+    display: none;
+  }
+
+  .auth-page-signup .auth-form-section {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 12px 7%;
+  }
+
+  .auth-page-signup .auth-form-container {
+    width: 100%;
+    max-width: 450px;
+  }
+
+  .auth-page-signup .auth-form-container h2 {
+    margin: 7px 0 5px;
+    font-size: clamp(28px, 7vw, 36px);
+  }
+
+  .auth-page-signup .auth-form-subtitle {
+    line-height: 1.5;
+  }
+
+  .auth-page-signup .auth-form {
+    gap: 9px;
+    margin-top: 16px;
+  }
+
+  .auth-page-signup .auth-field input {
+    min-height: 40px;
+    padding-block: 9px;
+  }
+
+  .auth-page-signup .auth-submit {
+    min-height: 44px;
+    padding-block: 10px;
+  }
+
+  .auth-page-signup .auth-switch {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 760px) and (max-height: 640px) {
+  .auth-page-signup .auth-visual {
+    min-height: 50px;
+    padding-block: 9px;
+  }
+
+  .auth-page-signup .auth-form-section {
+    padding-block: 8px;
+  }
+
+  .auth-page-signup .auth-form-container h2 {
+    font-size: 27px;
+  }
+
+  .auth-page-signup .auth-form-subtitle {
+    font-size: 11px;
+  }
+
+  .auth-page-signup .auth-form {
+    gap: 7px;
+    margin-top: 10px;
+  }
+
+  .auth-page-signup .auth-field {
+    gap: 4px;
+  }
+
+  .auth-page-signup .auth-field label {
+    font-size: 11px;
+  }
+
+  .auth-page-signup .auth-field input {
+    min-height: 36px;
+    padding-block: 7px;
+  }
+
+  .auth-page-signup .auth-switch {
+    margin-top: 8px;
+  }
+}
+
+@media (min-width: 761px) and (max-height: 680px) {
+  .auth-page-signup .auth-form-section {
+    padding-block: 14px;
+  }
+
+  .auth-page-signup .auth-form {
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  .auth-page-signup .auth-field input {
+    min-height: 38px;
+  }
+
+  .auth-page-signup .auth-demo-note {
+    margin-top: 10px;
+    padding: 8px;
+  }
+}
+
+.auth-footer .brand-logo,
+.dashboard-footer .brand-logo,
+.published-footer .brand-logo,
+.public-footer .brand-logo,
+.checkout-card-footer .brand-logo {
+  gap: 6px;
+  font-size: 13px;
+  letter-spacing: -0.5px;
+}
+
+.auth-footer .brand-logo img,
+.dashboard-footer .brand-logo img,
+.published-footer .brand-logo img,
+.public-footer .brand-logo img,
+.checkout-card-footer .brand-logo img {
+  width: 34px;
+  height: 22px;
+}
+
+.auth-footer .brand-logo,
+.dashboard-footer .brand-logo {
+  color: var(--charcoal);
 }

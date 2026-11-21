@@ -35,7 +35,8 @@ API's `FRONTEND_URL` to allow that origin. Never put private credentials in a
 
 | Route | Purpose | Access |
 |---|---|---|
-| `/` | Landing page | Public |
+| `/` | Homepage and featured Paste discovery | Public |
+| `/explore` | Search and browse all active Pastes | Public |
 | `/login`, `/signup` | Creator authentication | Guest |
 | `/forgot-password` | Password recovery | Guest |
 | `/dashboard` | Creator campaigns and verified contribution totals | Creator |
@@ -43,7 +44,22 @@ API's `FRONTEND_URL` to allow that origin. Never put private credentials in a
 | `/campaign-preview` | Review and publish a campaign | Creator |
 | `/campaign-published/:id` | Share link and QR code | Campaign owner |
 | `/c/:id` | Public campaign page | Public |
-| `/c/:id/donate` | Open Payments checkout | Public |
+| `/c/:id/donate` | Contribution checkout | Signed-in supporter |
+
+## Community discovery frontend
+
+The homepage and `/explore` page call the discovery endpoints documented in
+[DISCOVERY_FRONTEND_INTEGRATION.md](./DISCOVERY_FRONTEND_INTEGRATION.md).
+These endpoints are separate from the creator-owned `/api/campaigns` feed.
+Community totals, contributor highlights, and milestones must come from
+confirmed platform activity. If those endpoints are unavailable, the UI shows
+empty/error states rather than invented figures.
+
+The fundraiser wizard supports student categories, optional university details,
+and an optional goal at the UI level. The backend must accept the new category
+values and optional `university`, `fundraisingFor`, and `target: null` fields for
+those options to persist successfully. Checkout can send an optional `anonymous`
+preference; the backend must persist and respect it in public contribution data.
 
 ## Real-service behavior
 

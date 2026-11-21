@@ -792,3 +792,22 @@
   height: 100%;
   object-fit: cover;
 }
+
+.published-creator-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: -1px 0 12px;
+  color: #89818A;
+  font-size: 10px;
+}
+
+.published-creator-meta span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.published-no-goal-bottom {
+  justify-content: flex-start;
+}

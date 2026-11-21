@@ -6,6 +6,7 @@ import Published from "./pages/Published/Published";
 import PublicCampaign from "./pages/Public/Public";
 import SupporterCheckout from "./pages/Checkout/Checkout";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import Explore from "./pages/Explore/Explore";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -35,28 +36,31 @@ export default function App() {
     <>
       <ScrollToTop />
       <ScrollReveal key={location.pathname} />
-      <Routes>
-      {/* Pages available without a PasteMe account */}
-      <Route path="/" element={<Landing />} />
-      <Route path="/c/:campaignId" element={<PublicCampaign />} />
-      <Route path="/c/:campaignId/donate" element={<SupporterCheckout />} />
+      <div key={location.pathname} className="route-transition">
+        <Routes>
+          {/* Pages available without a PasteMe account */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/c/:campaignId" element={<PublicCampaign />} />
 
-      {/* Account entry and recovery */}
-      <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
-      <Route path="/signup" element={<GuestOnly><Signup /></GuestOnly>} />
-      <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
+          {/* Account entry and recovery */}
+          <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
+          <Route path="/signup" element={<GuestOnly><Signup /></GuestOnly>} />
+          <Route path="/forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
 
-      {/* Creator workspace */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/create" element={<CreateCampaign />} />
-        <Route path="/create-campaign" element={<Navigate to="/create" replace />} />
-        <Route path="/campaign-preview" element={<CampaignPreview />} />
-        <Route path="/campaign-published/:campaignId" element={<Published />} />
-      </Route>
+          {/* Creator workspace */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/c/:campaignId/donate" element={<SupporterCheckout />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/create" element={<CreateCampaign />} />
+            <Route path="/create-campaign" element={<Navigate to="/create" replace />} />
+            <Route path="/campaign-preview" element={<CampaignPreview />} />
+            <Route path="/campaign-published/:campaignId" element={<Published />} />
+          </Route>
 
-      <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
     </>
   );
 }

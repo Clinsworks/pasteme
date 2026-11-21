@@ -1,0 +1,66 @@
+.wallet-username-control {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 13px;
+  border: 1px solid #eae6ea;
+  border-radius: 8px;
+  background: #fcfbfa;
+  color: var(--charcoal, #302b32);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.wallet-username-control:focus-within {
+  border-color: var(--plum, #54265f);
+  box-shadow: 0 0 0 3px rgba(84, 38, 95, 0.06);
+}
+
+.wallet-username-prefix {
+  flex: 0 0 auto;
+  color: #817984;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.wallet-username-control .wallet-username-input {
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 13px 0 13px 2px;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+}
+
+.wallet-username-input::placeholder {
+  color: #b4adb5;
+}
+
+.create-wallet-username-control {
+  padding: 0 15px;
+  border-color: #cfcbd0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.create-wallet-username-control .wallet-username-input {
+  min-height: 54px;
+  padding-block: 14px;
+  font-size: 12px;
+}
+
+@media (max-width: 380px) {
+  .wallet-username-prefix {
+    font-size: 9px;
+  }
+
+  .wallet-username-control .wallet-username-input {
+    font-size: 10px;
+  }
+}

@@ -1,0 +1,350 @@
+.pasteme-nav-shell {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  width: 100%;
+  border-bottom: 1px solid rgba(48, 43, 50, 0.09);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.pasteme-nav-inner {
+  width: min(1180px, calc(100% - 64px));
+  min-height: 76px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(16px, 2.5vw, 34px);
+}
+
+.pasteme-nav-brand {
+  flex: 0 0 auto;
+  color: #302b32;
+}
+
+.pasteme-nav-links {
+  min-width: 0;
+  height: 76px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(12px, 1.8vw, 25px);
+}
+
+.pasteme-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  color: #746d77;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 650;
+  transition: color 160ms ease;
+}
+
+.pasteme-nav-link:hover,
+.pasteme-nav-link.is-active {
+  color: #54265f;
+}
+
+.pasteme-nav-link.is-active::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: #54265f;
+  content: "";
+}
+
+.pasteme-nav-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 13px;
+}
+
+.pasteme-nav-install {
+  display: flex;
+  align-items: center;
+}
+
+.pasteme-language-control {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 9px;
+  border: 1px solid #e8e2e9;
+  border-radius: 8px;
+  background: #fff;
+  color: #54265f;
+}
+
+.pasteme-language-control select {
+  max-width: 92px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #302b32;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.pasteme-nav-signin {
+  color: #6f6872;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.pasteme-nav-signin:hover {
+  color: #54265f;
+}
+
+.pasteme-nav-account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.pasteme-nav-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.pasteme-nav-user:hover,
+.pasteme-nav-user[aria-expanded="true"] {
+  background: #f7f2f8;
+}
+
+.pasteme-nav-user:focus-visible,
+.pasteme-nav-account-menu button:focus-visible {
+  outline: 2px solid #54265f;
+  outline-offset: 2px;
+}
+
+.pasteme-nav-avatar {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #54265f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.pasteme-nav-user-name {
+  color: #302b32;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.pasteme-nav-chevron {
+  width: 7px;
+  height: 7px;
+  margin-left: 1px;
+  border-right: 1.5px solid #746d77;
+  border-bottom: 1.5px solid #746d77;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 160ms ease;
+}
+
+.pasteme-nav-chevron.is-open {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.pasteme-nav-account-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  min-width: 168px;
+  padding: 5px;
+  border: 1px solid #e8e2e9;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(48, 43, 50, 0.14);
+}
+
+.pasteme-nav-account-menu[hidden] {
+  display: none;
+}
+
+.pasteme-nav-account-menu button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #54265f;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.pasteme-nav-account-menu button:hover {
+  background: #f7f2f8;
+}
+
+.pasteme-nav-cta {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: #54265f;
+  color: #fff;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.pasteme-nav-cta:hover {
+  transform: translateY(-1px);
+  background: #42204b;
+}
+
+@media (max-width: 1080px) {
+  .pasteme-nav-inner {
+    width: min(100% - 40px, 1180px);
+    gap: 16px;
+  }
+
+  .pasteme-nav-links {
+    gap: 13px;
+  }
+
+  .pasteme-nav-actions {
+    gap: 9px;
+  }
+
+  .pasteme-nav-install {
+    display: none;
+  }
+}
+
+@media (max-width: 790px) {
+  .pasteme-nav-inner {
+    width: calc(100% - 32px);
+    min-height: 0;
+    flex-wrap: wrap;
+    row-gap: 0;
+    padding-top: 12px;
+  }
+
+  .pasteme-nav-brand {
+    margin-right: auto;
+  }
+
+  .pasteme-nav-links {
+    order: 3;
+    width: 100%;
+    height: 45px;
+    justify-content: flex-start;
+    gap: 22px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .pasteme-nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pasteme-nav-link {
+    flex: 0 0 auto;
+  }
+
+  .pasteme-nav-link.is-active::after {
+    bottom: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .pasteme-nav-inner {
+    width: calc(100% - 26px);
+    padding-top: 10px;
+  }
+
+  .pasteme-nav-actions {
+    gap: 7px;
+  }
+
+  .pasteme-language-control {
+    min-height: 34px;
+    gap: 4px;
+    padding: 0 6px;
+  }
+
+  .pasteme-language-control select {
+    max-width: 72px;
+    font-size: 9px;
+  }
+
+  .pasteme-nav-user-name {
+    display: none;
+  }
+
+  .pasteme-nav-user {
+    gap: 4px;
+    padding: 2px;
+  }
+
+  .pasteme-nav-avatar {
+    width: 29px;
+    height: 29px;
+  }
+
+  .pasteme-nav-cta {
+    min-height: 35px;
+    gap: 5px;
+    padding: 0 9px;
+    font-size: 9px;
+  }
+
+  .pasteme-nav-links {
+    height: 42px;
+    gap: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pasteme-nav-link,
+  .pasteme-nav-user,
+  .pasteme-nav-chevron,
+  .pasteme-nav-cta {
+    transition: none;
+  }
+}

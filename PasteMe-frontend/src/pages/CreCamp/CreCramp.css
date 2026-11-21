@@ -69,33 +69,6 @@
   color: #FFFFFF;
 }
 
-.create-brand-mark {
-  width: 35px;
-  height: 35px;
-  display: grid;
-  place-items: center;
-  border-radius: 11px;
-  background: rgba(169, 197, 160, 0.16);
-  color: var(--sage);
-  font-size: 23px;
-}
-
-.create-brand-word {
-  font-size: 25px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -1.7px;
-}
-
-.create-brand-word span {
-  color: #E8DFEA;
-}
-
-.create-brand-word i {
-  color: var(--sage);
-  font-style: normal;
-}
-
 .create-intro-content {
   position: relative;
   z-index: 1;
@@ -950,16 +923,6 @@
   .create-intro {
     min-height: 230px;
     padding: 22px 6% 25px;
-  }
-
-  .create-brand-mark {
-    width: 30px;
-    height: 30px;
-    font-size: 20px;
-  }
-
-  .create-brand-word {
-    font-size: 22px;
   }
 
   .create-intro-content {

@@ -3,12 +3,18 @@ import { getCategoryLabel } from "../../lib/categoryLabels";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Icon from "../../components/Icon";
+import BrandLogo from "../../components/BrandLogo";
+import InterledgerWalletInput from "../../components/InterledgerWalletInput";
 import { getCampaignWalletAsset } from "../../lib/campaignStore";
 import "./CreCramp.css";
 
 const STEPS = 6;
 
 const categories = [
+  "Tuition",
+  "Accommodation",
+  "Academic Materials",
+  "Emergency",
   "Animals",
   "Business",
   "Community",
@@ -89,6 +95,9 @@ const translations = {
     country: "Country",
     postalCode: "Postal code",
     postalPlaceholder: "Enter postal code",
+    university: "University",
+    universityPlaceholder: "e.g. University of Lagos",
+    universityHelp: "Optional. Add your school so people can find student fundraisers from their campus.",
     categoryQuestion: "What best describes why you're fundraising?",
     stepThreeTitle: "Tell people what this is about.",
     stepThreeSubtitle: "Give your fundraiser a clear title and explain why it matters.",
@@ -97,9 +106,12 @@ const translations = {
     story: "Your story",
     storyPlaceholder: "What are you raising funds for? Why does it matter? How will the funds help?",
     characters: "characters",
-    stepFourTitle: "Set your fundraising goal.",
-    stepFourSubtitle: "Choose the amount you hope to raise and when the fundraiser should end.",
+    stepFourTitle: "How much are you hoping to raise?",
+    stepFourSubtitle: "You can set a goal if you have one in mind. No goal? That's okay too. Choose when your fundraiser should end.",
     goal: "Fundraising goal",
+    goalOptional: "Optional",
+    goalOptionalHelp: "You can start without a fixed target and add one later.",
+    noGoal: "No goal set",
     deadline: "End date",
     chooseDate: "Choose an end date",
     openEnded: "Keep this fundraiser open-ended",
@@ -113,10 +125,10 @@ const translations = {
     removeImage: "Remove image",
     imageOptional: "You can continue without an image.",
     stepSixTitle: "Where should contributions be received?",
-    stepSixSubtitle: "Add the Open Payments wallet address that will receive contributions.",
-    wallet: "Receiving wallet URL",
-    walletPlaceholder: "https://wallet.example/your-wallet",
-    walletHelp: "Use the public wallet address URL provided by your wallet service.",
+    stepSixSubtitle: "Enter the wallet name that will receive contributions. The URL prefix is already provided.",
+    wallet: "Receiving wallet name",
+    walletPlaceholder: "your-name",
+    walletHelp: "The URL prefix is fixed. Enter only the name after the slash.",
     walletPrivacy: "This address is used for receiving contributions and should not be displayed on your public fundraiser page.",
     walletChecking: "Checking wallet details...",
     continue: "Continue",
@@ -131,8 +143,8 @@ const translations = {
     invalidImage: "Choose a valid image file.",
     imageLarge: "Choose an image smaller than 1 MB.",
     imageRead: "The image could not be loaded. Try another file.",
-    invalidWallet: "Enter a valid HTTPS receiving wallet URL.",
-    walletRequired: "Add your receiving wallet URL to continue.",
+    invalidWallet: "Enter a valid receiving wallet name.",
+    walletRequired: "Add your receiving wallet name to continue.",
     walletCurrencyError: "We couldn't verify the receiving wallet's currency. Check the URL and try again.",
     otherCurrency: "The currency used for the fundraiser is determined by your receiving wallet.",
     saved: "Your progress is saved in this browser while you create your fundraiser.",
@@ -171,6 +183,9 @@ const translations = {
     country: "Country",
     postalCode: "Postal code",
     postalPlaceholder: "Enter postal code",
+    university: "University",
+    universityPlaceholder: "e.g. University of Lagos",
+    universityHelp: "No compulsory. Add your school make people fit find student fundraisers from your campus.",
     categoryQuestion: "Which one best describe wetin you dey raise money for?",
     stepThreeTitle: "Tell people wetin this one dey about.",
     stepThreeSubtitle: "Give your fundraiser clear title and explain why e matter.",
@@ -179,9 +194,12 @@ const translations = {
     story: "Your story",
     storyPlaceholder: "Wetin you dey raise money for? Why e matter? How the money go help?",
     characters: "characters",
-    stepFourTitle: "Set your fundraising target.",
-    stepFourSubtitle: "Choose how much you wan raise and when the fundraiser go end.",
+    stepFourTitle: "How much you dey hope to raise?",
+    stepFourSubtitle: "You fit set target if you get one. If you no get target yet, no wahala. Choose when the fundraiser go end.",
     goal: "Fundraising target",
+    goalOptional: "No compulsory",
+    goalOptionalHelp: "You fit start without fixed target and add one later.",
+    noGoal: "No target set",
     deadline: "End date",
     chooseDate: "Choose end date",
     openEnded: "Make this fundraiser no get end date",
@@ -195,10 +213,10 @@ const translations = {
     removeImage: "Remove picture",
     imageOptional: "You fit continue without picture.",
     stepSixTitle: "Where contributions go reach?",
-    stepSixSubtitle: "Add the Open Payments wallet address wey go receive the money.",
-    wallet: "Receiving wallet URL",
-    walletPlaceholder: "https://wallet.example/your-wallet",
-    walletHelp: "Use the public wallet address URL wey your wallet service give you.",
+    stepSixSubtitle: "Enter the wallet name wey go receive contributions. The URL prefix don already dey there.",
+    wallet: "Receiving wallet name",
+    walletPlaceholder: "your-name",
+    walletHelp: "The URL prefix don already dey there. Enter only the name after the slash.",
     walletPrivacy: "This address na for receiving contributions. E no suppose show for your public fundraiser page.",
     walletChecking: "We dey check wallet details...",
     continue: "Continue",
@@ -213,8 +231,8 @@ const translations = {
     invalidImage: "Choose correct image file.",
     imageLarge: "Choose picture wey small pass 1 MB.",
     imageRead: "Picture no fit load. Try another file.",
-    invalidWallet: "Enter correct HTTPS receiving wallet URL.",
-    walletRequired: "Add your receiving wallet URL make you continue.",
+    invalidWallet: "Enter correct receiving wallet name.",
+    walletRequired: "Add your receiving wallet name make you continue.",
     walletCurrencyError: "We no fit check the wallet currency. Check the URL and try again.",
     otherCurrency: "The fundraiser currency go depend on the receiving wallet.",
     saved: "Your progress dey save for this browser as you dey create the fundraiser.",
@@ -253,6 +271,9 @@ const translations = {
     country: "Orílẹ̀-èdè",
     postalCode: "Kóòdù ìpínlẹ̀ ìfiṣẹ́ lẹ́tà",
     postalPlaceholder: "Tẹ kóòdù ìpínlẹ̀",
+    university: "Ilé-ẹ̀kọ́ gíga",
+    universityPlaceholder: "Fún àpẹẹrẹ, University of Lagos",
+    universityHelp: "Kò pọndandan. Fi ilé-ẹ̀kọ́ rẹ kún un kí àwọn ènìyàn lè rí àwọn Paste láti ilé-ẹ̀kọ́ rẹ.",
     categoryQuestion: "Kí ni ó ṣàpèjúwe ìdí tí o fi ń kó owó jọ?",
     stepThreeTitle: "Sọ fún àwọn ènìyàn ohun tí èyí jẹ́ nípa rẹ̀.",
     stepThreeSubtitle: "Fún ìpolongo rẹ ní àkọlé tó ṣe kedere, kí o sì ṣàlàyé ìdí rẹ.",
@@ -261,9 +282,12 @@ const translations = {
     story: "Ìtàn rẹ",
     storyPlaceholder: "Kí ni o ń kó owó jọ fún? Kí ló dé tí ó fi ṣe pàtàkì? Báwo ni owó náà yóò ṣe ràn ọ́ lọ́wọ́?",
     characters: "ààmì ọ̀rọ̀",
-    stepFourTitle: "Yan àfojúsùn owó rẹ.",
-    stepFourSubtitle: "Yan iye owó tí o fẹ́ kó jọ àti ọjọ́ tí ìpolongo náà yóò parí.",
+    stepFourTitle: "Iye owó mélòó ni o fẹ́ kó jọ?",
+    stepFourSubtitle: "O lè yan àfojúsùn bí o bá ti mọ iye rẹ. Bí o kò bá tíì mọ̀, kò burú. Yan ọjọ́ tí ìpolongo náà yóò parí.",
     goal: "Àfojúsùn owó",
+    goalOptional: "Kò pọndandan",
+    goalOptionalHelp: "O lè bẹ̀rẹ̀ láìsí àfojúsùn pàtó, kí o sì fi kún un lẹ́yìn náà.",
+    noGoal: "Kò sí àfojúsùn",
     deadline: "Ọjọ́ ìparí",
     chooseDate: "Yan ọjọ́ ìparí",
     openEnded: "Jẹ́ kí ìpolongo yìí má ní ọjọ́ ìparí",
@@ -277,10 +301,10 @@ const translations = {
     removeImage: "Yọ àwòrán kúrò",
     imageOptional: "O lè tẹ̀síwájú láìsí àwòrán.",
     stepSixTitle: "Níbo ni a ó ti gba owó ìrànlọ́wọ́?",
-    stepSixSubtitle: "Fi URL àpò owó Open Payments tí yóò gba ìrànlọ́wọ́ sí i.",
-    wallet: "URL àpò owó ìgbàwọlé",
-    walletPlaceholder: "https://wallet.example/your-wallet",
-    walletHelp: "Lo URL àdírẹ́sì àpò owó gbogbogbò tí olùpèsè àpò rẹ fún ọ.",
+    stepSixSubtitle: "Tẹ orúkọ àpò owó tí yóò gba ìrànlọ́wọ́. A ti fi ìbẹ̀rẹ̀ URL síbẹ̀.",
+    wallet: "Orúkọ àpò owó ìgbàwọlé",
+    walletPlaceholder: "orúkọ-rẹ",
+    walletHelp: "Ìbẹ̀rẹ̀ URL ti wà níbí. Tẹ orúkọ àpò owó rẹ lẹ́yìn àmì /.",
     walletPrivacy: "A máa lo àdírẹ́sì yìí láti gba ìrànlọ́wọ́. A kò gbọ́dọ̀ fi hàn lójú ìwé ìpolongo gbogbogbò rẹ.",
     walletChecking: "A ń ṣàyẹ̀wò àlàyé àpò owó...",
     continue: "Tẹ̀síwájú",
@@ -295,8 +319,8 @@ const translations = {
     invalidImage: "Yan fáìlì àwòrán tó tọ́.",
     imageLarge: "Yan àwòrán tó kéré sí 1 MB.",
     imageRead: "A kò lè ṣí àwòrán náà. Gbìyànjú fáìlì mìíràn.",
-    invalidWallet: "Tẹ URL àpò owó HTTPS tó tọ́.",
-    walletRequired: "Fi URL àpò owó ìgbàwọlé rẹ kún un kí o tó tẹ̀síwájú.",
+    invalidWallet: "Tẹ orúkọ àpò owó ìgbàwọlé tó tọ́.",
+    walletRequired: "Tẹ orúkọ àpò owó ìgbàwọlé rẹ kí o tó tẹ̀síwájú.",
     walletCurrencyError: "A kò lè jẹ́rìí owó àpò ìgbàwọlé. Ṣàyẹ̀wò URL kí o sì tún gbìyànjú.",
     otherCurrency: "Owó tí ìpolongo yóò lò dá lórí àpò owó ìgbàwọlé rẹ.",
     saved: "A ń fi ìlọsíwájú rẹ pamọ́ sínú ẹ̀rọ aṣàwákiri yìí bí o ṣe ń ṣẹ̀dá ìpolongo.",
@@ -312,6 +336,7 @@ const emptyCampaign = {
   fundraisingFor: "",
   country: "Nigeria",
   postalCode: "",
+  university: "",
   title: "",
   category: "",
   story: "",
@@ -453,10 +478,13 @@ export default function CreateCampaign() {
     }
 
     if (currentStep === 4) {
-      const target = Number(formData.target);
-      if (!Number.isFinite(target) || target <= 0) {
-        setFormError(t.requiredGoal);
-        return false;
+      const rawTarget = String(formData.target ?? "").trim();
+      if (rawTarget) {
+        const target = Number(rawTarget);
+        if (!Number.isFinite(target) || target <= 0) {
+          setFormError(t.requiredGoal);
+          return false;
+        }
       }
       if (!formData.openEnded && !formData.deadline) {
         setFormError(t.requiredDeadline);
@@ -501,13 +529,15 @@ export default function CreateCampaign() {
     setResolvingWallet(true);
     try {
       const walletAsset = await getCampaignWalletAsset(walletUrl.href);
-      const target = Number(formData.target);
+      const rawTarget = String(formData.target ?? "").trim();
+      const target = rawTarget ? Number(rawTarget) : null;
 
       const draft = {
         ...formData,
         title: formData.title.trim(),
         story: formData.story.trim(),
-        target: String(target),
+        university: formData.university?.trim() || "",
+        target: target === null ? null : String(target),
         walletAddress: walletUrl.href,
         currency: walletAsset.currency,
         assetScale: walletAsset.assetScale,
@@ -548,9 +578,11 @@ export default function CreateCampaign() {
     if (currentStep === 1) return Boolean(formData.fundraisingFor);
     if (currentStep === 2) return Boolean(formData.country && formData.category);
     if (currentStep === 3) return Boolean(formData.title.trim() && formData.story.trim());
-    if (currentStep === 4) return Boolean(
-      Number(formData.target) > 0 && (formData.openEnded || formData.deadline)
-    );
+    if (currentStep === 4) {
+      const rawTarget = String(formData.target ?? "").trim();
+      const targetOkay = !rawTarget || (Number.isFinite(Number(rawTarget)) && Number(rawTarget) > 0);
+      return targetOkay && (formData.openEnded || formData.deadline);
+    }
     if (currentStep === 6) return Boolean(formData.walletAddress.trim());
     return true;
   })();
@@ -640,6 +672,21 @@ export default function CreateCampaign() {
         </div>
       </div>
 
+      <div className="create-field create-university-field">
+        <label htmlFor="university">{t.university} <span className="create-optional-label">{t.optional}</span></label>
+        <input
+          id="university"
+          name="university"
+          type="text"
+          value={formData.university || ""}
+          onChange={handleChange}
+          placeholder={t.universityPlaceholder}
+          maxLength={120}
+          autoComplete="organization"
+        />
+        <small className="create-field-meta">{t.universityHelp}</small>
+      </div>
+
       <div className="create-category-block">
         <h3>{t.categoryQuestion}</h3>
         <div className="create-category-chips" role="group" aria-label={t.categoryQuestion}>
@@ -714,7 +761,7 @@ export default function CreateCampaign() {
       </div>
 
       <div className="create-field">
-        <label htmlFor="target">{t.goal}</label>
+        <label htmlFor="target">{t.goal} <span className="create-optional-label">{t.goalOptional}</span></label>
         <div className="create-amount-input">
           <span>{currencyLabel}</span>
           <input
@@ -728,7 +775,7 @@ export default function CreateCampaign() {
             placeholder="e.g. 500,000"
           />
         </div>
-        <small className="create-field-meta">{t.otherCurrency}</small>
+        <small className="create-field-meta">{t.goalOptionalHelp} {t.otherCurrency}</small>
       </div>
 
       <div className="create-field create-deadline-field">
@@ -812,15 +859,13 @@ export default function CreateCampaign() {
 
       <div className="create-field">
         <label htmlFor="walletAddress">{t.wallet}</label>
-        <input
+        <InterledgerWalletInput
           id="walletAddress"
           name="walletAddress"
-          type="url"
+          className="create-wallet-username-control"
           value={formData.walletAddress}
-          onChange={handleChange}
+          onChange={(walletAddress) => setFormData((previous) => ({ ...previous, walletAddress }))}
           placeholder={t.walletPlaceholder}
-          autoComplete="url"
-          spellCheck="false"
         />
         <small className="create-field-meta">{t.walletHelp}</small>
       </div>
@@ -833,7 +878,7 @@ export default function CreateCampaign() {
       <div className="create-final-summary">
         <span>{formData.title || t.campaignTitle}</span>
         <strong>{formData.category ? (getCategoryLabel(formData.category, language)) : "—"}</strong>
-        <strong>{formData.target ? `${Number(formData.target).toLocaleString()} ${currencyLabel}` : "—"}</strong>
+        <strong>{formData.target ? `${Number(formData.target).toLocaleString()} ${currencyLabel}` : t.noGoal}</strong>
       </div>
     </div>
   );
@@ -853,10 +898,7 @@ export default function CreateCampaign() {
   return (
     <main className="create-page create-wizard">
       <aside className="create-intro">
-        <Link to="/dashboard" className="create-brand" aria-label="PasteMe dashboard">
-          <span className="create-brand-mark" aria-hidden="true"><Icon name="sparkles" size={20} /></span>
-          <span className="create-brand-word">paste<span>me</span><i>.</i></span>
-        </Link>
+        <BrandLogo to="/dashboard" className="create-brand" />
 
         <div className="create-intro-content">
           <div className="create-step-counter">
@@ -872,7 +914,7 @@ export default function CreateCampaign() {
         </div>
 
         <div className="create-intro-footer">
-          <span className="create-intro-sparkle"><Icon name="sparkles" size={18} /></span>
+          <span className="create-intro-sparkle"><Icon name="sparkles" size={0} /></span>
           <span>{t.brandFoot}</span>
         </div>
       </aside>

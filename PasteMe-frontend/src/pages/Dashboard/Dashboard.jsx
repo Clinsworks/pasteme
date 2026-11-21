@@ -1,10 +1,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getCategoryLabel } from "../../lib/categoryLabels";
-import { useNavigate } from "react-router-dom";
-import BrandLogo from "../../components/BrandLogo";
+import { Link, useNavigate } from "react-router-dom";
 import Icon from "../../components/Icon";
-import InstallAppButton from "../../components/InstallAppButton";
+import PasteMeNav from "../../components/PasteMeNav";
 import { useAuth } from "../../context/AuthContext";
 import { deleteCampaign, listCampaigns } from "../../lib/campaignStore";
 import { copyText } from "../../lib/clipboard";
@@ -16,19 +15,20 @@ const translations = {
     eyebrow: "CREATOR SPACE",
     title: "Your impact, at a glance.",
     subtitle: "Welcome back. Here's how your campaigns are doing.",
-    newCampaign: "Create campaign",
+    newCampaign: "Create Paste",
     overview: "OVERVIEW",
     totalRaised: "Total raised",
     campaigns: "Published campaigns",
     supporters: "Total supporters",
-    myCampaigns: "Your campaigns",
+    myCampaigns: "Your Pastes",
     campaignDescription: "Manage and follow your fundraising campaigns.",
     published: "Published",
-    view: "View campaign",
+    view: "View Paste",
     copy: "Copy link",
     copied: "Copied!",
     copyFailed: "Could not copy the campaign link.",
     goal: "Goal",
+    noGoal: "No goal set",
     raised: "raised",
     contributors: "supporters",
     noCampaigns: "Your story starts here.",
@@ -42,6 +42,10 @@ const translations = {
     noData: "Your campaign activity will appear here.",
     home: "Home",
     dashboard: "Dashboard",
+    explore: "Explore Pastes",
+    how: "How it works",
+    signIn: "Sign in",
+    startPaste: "Start a Paste",
     language: "Language",
     publishedOn: "Published",
     viewAll: "YOUR FUNDRAISING ACTIVITY",
@@ -73,6 +77,7 @@ const translations = {
     copied: "Don copy!",
     copyFailed: "We no fit copy the campaign link.",
     goal: "Target",
+    noGoal: "No target set",
     raised: "don enter",
     contributors: "supporters",
     noCampaigns: "Your story start here.",
@@ -86,6 +91,10 @@ const translations = {
     noData: "Your campaign activity go show here.",
     home: "Home",
     dashboard: "Dashboard",
+    explore: "Explore Pastes",
+    how: "How e dey work",
+    signIn: "Log in",
+    startPaste: "Start a Paste",
     language: "Language",
     publishedOn: "Published",
     viewAll: "YOUR FUNDRAISING ACTIVITY",
@@ -117,6 +126,7 @@ const translations = {
     copied: "A ti da á kọ!",
     copyFailed: "A kò lè da ìjápọ̀ ìpolongo kọ.",
     goal: "Àfojúsùn",
+    noGoal: "Kò sí àfojúsùn",
     raised: "owó tí a ti gbà",
     contributors: "olùrànlọ́wọ́",
     noCampaigns: "Ìtàn rẹ bẹ̀rẹ̀ níbí.",
@@ -130,6 +140,10 @@ const translations = {
     noData: "Ìṣe àwọn ìpolongo rẹ yóò hàn níbí.",
     home: "Ilé",
     dashboard: "Ojú ìṣàkóso",
+    explore: "Ṣàwárí Pastes",
+    how: "Bí ó ṣe ń ṣiṣẹ́",
+    signIn: "Wọlé",
+    startPaste: "Bẹ̀rẹ̀ Paste",
     language: "Èdè",
     publishedOn: "Ọjọ́ ìtẹ̀jáde",
     viewAll: "ÌṢE ÌKÓJỌ OWÓ RẸ",
@@ -293,50 +307,21 @@ export default function Dashboard() {
   return (
     <main className="dashboard-page">
 
-      {/* NAVIGATION */}
-      <nav className="dashboard-nav">
-
-        <BrandLogo to="/dashboard" className="dashboard-logo" />
-
-        <div className="dashboard-nav-center">
-          <span className="dashboard-nav-active">
-            {t.dashboard}
-          </span>
-        </div>
-
-        <div className="dashboard-nav-right">
-
-          <InstallAppButton label={t.installApp} />
-
-          <div className="dashboard-language">
-            <Icon name="globe" size={16} />
-
-            <select
-              value={language}
-              onChange={handleLanguageChange}
-              aria-label={t.language}
-            >
-              <option value="en">English</option>
-              <option value="pcm">Pidgin</option>
-              <option value="yo">Yorùbá</option>
-            </select>
-          </div>
-
-          <div className="dashboard-user">
-            <div className="dashboard-avatar">
-              {firstName.charAt(0).toUpperCase()}
-            </div>
-            <span className="dashboard-user-name">{firstName}</span>
-          </div>
-
-          <button className="dashboard-logout" type="button" onClick={handleLogout}>
-            {t.logout} <Icon name="log-out" size={16} />
-          </button>
-
-        </div>
-
-      </nav>
-
+      <PasteMeNav
+        activePage="dashboard"
+        isAuthenticated
+        userName={firstName}
+        language={language}
+        onLanguageChange={handleLanguageChange}
+        onLogout={handleLogout}
+        labels={{
+          signIn: t.signIn,
+          start: t.startPaste,
+          language: t.language,
+          install: t.installApp,
+          logout: t.logout,
+        }}
+      />
       <div className="dashboard-container">
 
         {/* HEADER */}
@@ -348,13 +333,19 @@ export default function Dashboard() {
             <p>{t.subtitle}</p>
           </div>
 
-          <button
-            className="dashboard-create-button"
-            onClick={handleNewCampaign}
-          >
-            <Icon name="plus" size={17} />
-            {t.newCampaign}
-          </button>
+          <div className="dashboard-header-actions">
+            <Link className="dashboard-explore-button" to="/explore">
+              <Icon name="compass" size={16} />
+              {t.explore}
+            </Link>
+            <button
+              className="dashboard-create-button"
+              onClick={handleNewCampaign}
+            >
+              <Icon name="plus" size={17} />
+              {t.newCampaign}
+            </button>
+          </div>
 
         </header>
 
@@ -363,9 +354,7 @@ export default function Dashboard() {
 
           <div className="dashboard-section-heading">
             <span>{t.overview}</span>
-            <span className="dashboard-overview-indicator">
-              <Icon name="sparkles" size={14} /> {t.viewAll}
-            </span>
+            <span className="dashboard-overview-indicator">{t.viewAll}</span>
           </div>
 
           <div className="dashboard-stats">
@@ -417,7 +406,10 @@ export default function Dashboard() {
           </div>
 
           {campaignsLoading ? (
-            <p role="status">{t.noData}</p>
+            <div className="dashboard-loading" role="status">
+              <span className="dashboard-loading-mark" aria-hidden="true" />
+              {t.noData}
+            </div>
           ) : sortedCampaigns.length === 0 ? (
 
             <div className="dashboard-empty">
@@ -449,7 +441,11 @@ export default function Dashboard() {
                 const target = Number(campaign.target) || 0;
                 const raised = Number(campaign.raised) || 0;
 
-                const progress = target > 0
+                const hasGoal = campaign.target !== null
+                  && campaign.target !== undefined
+                  && campaign.target !== ""
+                  && target > 0;
+                const progress = hasGoal
                   ? Math.min((raised / target) * 100, 100)
                   : 0;
 
@@ -489,29 +485,35 @@ export default function Dashboard() {
                         <span className="campaign-card-category">
                           {getCategoryLabel(campaign.category || "Other", language)}
                         </span>
+                        {campaign.university && (
+                          <span className="campaign-card-university">
+                            <Icon name="map-pin" size={13} /> {campaign.university}
+                          </span>
+                        )}
 
                         <div className="campaign-card-progress">
-
                           <div className="campaign-card-progress-top">
                             <strong>{formatMoney(raised, campaign.currency, campaign.assetScale)}</strong>
                             <span>
-                              {t.goal}: {formatMoney(target, campaign.currency, campaign.assetScale)}
+                              {t.goal}: {hasGoal ? formatMoney(target, campaign.currency, campaign.assetScale) : t.noGoal}
                             </span>
                           </div>
 
-                          <div className="campaign-progress-track">
-                            <div
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
-
-                          <div className="campaign-progress-bottom">
-                            <span>{Math.round(progress)}% {t.raised}</span>
-                            <span>
-                              {Number(campaign.contributors) || 0} {t.contributors}
-                            </span>
-                          </div>
-
+                          {hasGoal ? (
+                            <>
+                              <div className="campaign-progress-track" role="progressbar" aria-label={t.goal} aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100">
+                                <div style={{ width: `${progress}%` }} />
+                              </div>
+                              <div className="campaign-progress-bottom">
+                                <span>{Math.round(progress)}% {t.raised}</span>
+                                <span>{Number(campaign.contributors) || 0} {t.contributors}</span>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="campaign-progress-bottom campaign-no-goal-bottom">
+                              <span>{Number(campaign.contributors) || 0} {t.contributors}</span>
+                            </div>
+                          )}
                         </div>
 
                         <small className="campaign-published-date">
@@ -582,7 +584,7 @@ export default function Dashboard() {
         {campaigns.length > 0 && (
           <section className="dashboard-quick-create">
 
-            <div className="quick-create-decoration"><Icon name="sparkles" size={22} /></div>
+            {/* <div className="quick-create-decoration"><Icon name="sparkles" size={0} /></div> */}
 
             <div className="quick-create-content">
               <h2>{t.quickTitle}</h2>
