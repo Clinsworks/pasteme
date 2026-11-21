@@ -8,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import discoveryRoutes from "./routes/discoveryRoutes.js";
+import communityRoutes from "./routes/communityRoutes.js";
 import { connectDatabase } from "./config/database.js";
 import { errorHandler, HttpError } from "./middleware/errors.js";
 
@@ -57,6 +58,7 @@ app.get("/api/health", (_request, response) => response.json({ status: "ok" }));
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/discovery", discoveryRoutes);
+app.use("/api/community", communityRoutes);
 app.use("/api/payments", paymentLimiter, paymentRoutes);
 app.use((_request, _response, next) => next(new HttpError(404, "Endpoint not found.")));
 app.use(errorHandler);

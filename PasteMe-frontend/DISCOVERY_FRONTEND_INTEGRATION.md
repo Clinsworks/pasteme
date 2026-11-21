@@ -56,6 +56,11 @@ The existing campaign categories have been extended in the frontend with student
 
 ### `GET /api/community/impact`
 
+This endpoint is backed by confirmed donation records and active campaigns.
+`studentsHelped` remains `null` until the application stores a verified
+beneficiary count; it is not inferred from other activity. `contributors`
+counts confirmed donation records, consistent with the campaign totals.
+
 Expected public-safe fields:
 
 ```json

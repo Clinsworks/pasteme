@@ -13,6 +13,7 @@ const paymentIntentSchema = new mongoose.Schema(
     },
     amount: { type: Number, required: true },
     currency: { type: String, required: true },
+    assetScale: { type: Number, required: true, min: 0, max: 9, default: 2 },
     quote: { type: mongoose.Schema.Types.Mixed, required: true },
     protectedData: { type: String, required: true },
     expiresAt: { type: Date, required: true, index: true },

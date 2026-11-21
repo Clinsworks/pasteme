@@ -6,6 +6,7 @@ const donationSchema = new mongoose.Schema(
     paymentIntentId: { type: String, required: true, unique: true },
     amount: { type: Number, required: true, min: 1 },
     currency: { type: String, required: true },
+    assetScale: { type: Number, required: true, min: 0, max: 9, default: 2 },
   },
   { timestamps: true, versionKey: false }
 );

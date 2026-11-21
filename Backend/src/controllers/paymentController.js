@@ -207,6 +207,7 @@ export async function createPaymentQuote(request, response) {
     campaignId: campaign.id,
     amount: request.body.amount,
     currency: receiver.assetCode,
+    assetScale: receiver.assetScale,
     quote: publicQuote(quote),
     protectedData,
     expiresAt,
@@ -348,6 +349,7 @@ export async function paymentStatus(request, response) {
             paymentIntentId: intent.id,
             amount: intent.amount,
             currency: intent.currency,
+            assetScale: intent.assetScale ?? 2,
           },
         },
         { upsert: true }
