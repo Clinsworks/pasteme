@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getCategoryLabel } from "../../lib/categoryLabels";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import BrandLogo from "../../components/BrandLogo";
 import Icon from "../../components/Icon";
 import { getPublishedCampaign } from "../../lib/campaignStore";
@@ -26,9 +25,7 @@ const translations = {
     copyFailed: "Could not copy link",
     shareMessage: "Support this campaign on PasteMe.",
     contributions: "Every contribution makes a difference.",
-    signInToContribute: "Sign in to contribute",
-    accountRequired: "Create a free account or sign in when you're ready to support this Paste.",
-    signedInNote: "You're signed in. Your contribution will be linked to your account.",
+    noAccountNote: "No PasteMe account needed. Contribute directly from checkout.",
     noGoal: "No fundraising goal set",
     by: "Started by",
     university: "University",
@@ -60,9 +57,7 @@ const translations = {
     copyFailed: "Copy no work",
     shareMessage: "Support this campaign for PasteMe.",
     contributions: "Every contribution get meaning.",
-    signInToContribute: "Log in to contribute",
-    accountRequired: "Create free account or log in when you ready to support this Paste.",
-    signedInNote: "You don log in. Your contribution go connect to your account.",
+    noAccountNote: "You no need PasteMe account. Contribute straight from checkout.",
     noGoal: "No fundraising target set",
     by: "Started by",
     university: "University",
@@ -94,9 +89,7 @@ const translations = {
     copyFailed: "A kò lè da ìjápọ̀ kọ",
     shareMessage: "Ṣètìlẹ́yìn fún ìpolongo yìí ní PasteMe.",
     contributions: "Gbogbo ìrànlọ́wọ́ ní ìtumọ̀.",
-    signInToContribute: "Wọlé láti ṣètọrẹ",
-    accountRequired: "Ṣẹ̀dá àkáǹtì ọ̀fẹ́ tàbí wọlé nígbà tí o bá fẹ́ ṣe àtìlẹ́yìn fún Paste yìí.",
-    signedInNote: "O ti wọlé. A ó so ìtọrẹ rẹ mọ́ àkáǹtì rẹ.",
+    noAccountNote: "O kò nílò àkáǹtì PasteMe. O lè ṣètọrẹ tààrà láti ojú ìsanwó.",
     noGoal: "A kò yan àfojúsùn owó",
     by: "Ẹni tó bẹ̀rẹ̀ rẹ̀",
     university: "Ilé-ẹ̀kọ́ gíga",
@@ -119,7 +112,6 @@ export default function PublicCampaign() {
   const { campaignId } = useParams();
   const [renderedAt] = useState(() => Date.now());
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
 
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(Boolean(campaignId));
@@ -415,13 +407,13 @@ export default function PublicCampaign() {
               navigate(`/c/${encodeURIComponent(campaign.id)}/donate`)
             }
           >
-            {campaignEnded ? t.campaignEnded : isAuthenticated ? t.donate : t.signInToContribute}
+            {campaignEnded ? t.campaignEnded : t.donate}
             {!campaignEnded && <Icon name="arrow-up-right" size={17} />}
           </button>
 
           <p className="public-no-account">
             <Icon name="check-circle" size={15} />
-            {isAuthenticated ? t.signedInNote : t.accountRequired}
+            {t.noAccountNote}
           </p>
 
           <button

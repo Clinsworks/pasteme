@@ -35,7 +35,7 @@ const translations = {
     download: "Download QR code",
     view: "View public campaign",
     notice:
-      "Anyone can view this page. People will sign in or create a free account before contributing.",
+      "Anyone can view this page and contribute without a PasteMe account.",
     authoredNote:
       "Your campaign title and story remain in the language you wrote them in. This selector translates the PasteMe interface.",
     newCampaign: "Create another campaign",
@@ -79,7 +79,7 @@ const translations = {
     download: "Download QR code",
     view: "See public campaign",
     notice:
-      "Anybody fit view this page. People go log in or create free account before dem contribute.",
+      "Anybody fit view this page and contribute without PasteMe account.",
     authoredNote:
       "Your campaign title and story go remain the language wey you write am. This selector dey translate only PasteMe interface.",
     newCampaign: "Create another campaign",
@@ -123,7 +123,7 @@ const translations = {
     download: "Ṣe igbasilẹ kóòdù QR",
     view: "Wo ojú ìwé ìpolongo",
     notice:
-      "Ẹnikẹ́ni lè wo ojú ìwé yìí. Àwọn ènìyàn yóò wọlé tàbí ṣẹ̀dá àkáǹtì ọ̀fẹ́ kí wọ́n tó ṣètọrẹ.",
+      "Ẹnikẹ́ni lè wo ojú ìwé yìí kí ó sì ṣètọrẹ láìní àkáǹtì PasteMe.",
     authoredNote:
       "Àkọlé àti ìtàn ìpolongo rẹ yóò dúró ní èdè tí o fi kọ wọ́n. Aṣàyàn yìí ń túmọ̀ àfihàn PasteMe nìkan.",
     newCampaign: "Ṣẹ̀dá ìpolongo míì",

@@ -19,7 +19,7 @@ const copy = {
     heroTitle: "Big things happen when", heroAccent: "we show up.",
     heroText: "Discover students who need a hand, read their stories and find a way to help. Got something of your own to make happen? Start a Paste and bring your people along.",
     start: "Start a fundraiser", seeHow: "See how it works",
-    supporterNote: "Browse freely. Sign in when you're ready to contribute.",
+    supporterNote: "Browse freely. No PasteMe account is needed to contribute.",
     visualShare: "Easy to share", visualShareSub: "One link. One QR.",
     visualType: "A COMMUNITY CAMPAIGN", visualStatus: "SAMPLE CAMPAIGN", visualMessage: "ONE COMMUNITY. MANY HANDS.", visualIndex: "PASTEME / SAMPLE 01", visualMadeFor: "MADE TO BE SHARED", bottomOne: "YOUR STORY", bottomTwo: "YOUR PEOPLE", bottomThree: "YOUR IMPACT",
     visualTitle: "Help a dream take shape.", visualText: "Every contribution brings us one step closer.",
@@ -32,7 +32,7 @@ const copy = {
     steps: [
       ["Create your fundraiser", "Tell your story, set a goal, and connect your compatible receiving wallet."],
       ["Share your page", "Get a unique campaign link and QR code. Share them with your community."],
-      ["Receive contributions", "People sign in, choose an amount, and complete payment through a compatible wallet."],
+      ["Receive contributions", "People choose an amount and authorize payment through a compatible wallet. No PasteMe account is needed."],
     ],
     whyEyebrow: "Made for real life", whyTitle: "Less time figuring things out. More time getting support.",
     whyText: "A fundraiser should be easy to find, easy to understand, and straightforward to support. PasteMe brings those pieces together.",
@@ -40,14 +40,14 @@ const copy = {
     benefits: [
       ["Your own fundraising page", "Give your cause a dedicated page where people can understand what you're raising money for."],
       ["QR-powered sharing", "Make your campaign easy to access from posters, social media, events, and printed materials."],
-      ["One account, both sides", "Create your own Paste and support other students using the same account."],
+      ["An account for creators", "Use a PasteMe account to create fundraisers; supporters can contribute without signing in."],
       ["Transparent payment status", "Campaign progress should reflect contributions that have been confirmed by the payment provider."],
     ],
     faqEyebrow: "Good questions", faqTitle: "Before you get started.",
     faqText: "Here are a few things worth knowing about how PasteMe works.",
     faqs: [
       ["What is PasteMe?", "PasteMe helps people create fundraising pages, share them through a unique link or QR code, and receive contributions through compatible digital wallets."],
-      ["Do I need an account to support someone?", "You can browse every public Paste without signing in. When you are ready to contribute, create a free account or log in first."],
+      ["Do I need an account to support someone?", "No. Open any public Paste, choose Contribute, and go straight to checkout. You authorize payment with your compatible wallet."],
       ["How does the QR code work?", "Each campaign gets a QR code that points to its public fundraising page. Scanning it takes supporters directly to that campaign."],
       ["Does PasteMe hold the money?", "PasteMe is designed to facilitate payments through the connected payment infrastructure rather than act as a wallet or hold supporter funds. The actual payment flow depends on the supported wallet and provider."],
       ["Are all campaigns independently verified?", "A connected wallet does not automatically mean that a campaign or its claims have been independently verified. PasteMe should clearly distinguish wallet connection from campaign verification."],
@@ -62,7 +62,7 @@ const copy = {
     impactEyebrow: "LOOK WHAT WE CAN DO TOGETHER", impactTitle: "Little bits of help add up.", impactText: "As the community grows, we'll share the real difference people are making here.", totalContributed: "Total contributed", studentsHelped: "Students helped", activePastes: "Active Pastes", contributors: "Contributors", impactEmpty: "Community numbers will show here as confirmed activity comes in.", impactUnavailable: "Community numbers are not loading right now.", featuredUnavailable: "We could not load Pastes right now.", highlightsUnavailable: "Community highlights are not loading right now.", retry: "Try again",
     featuredEyebrow: "A PLACE TO START", featuredTitle: "A few stories from the community.", featuredText: "Take a look around. Someone's story might be one you can help with.", viewAllPastes: "See all Pastes", noFeatured: "No active Pastes to show just yet. Check back as students share their stories.",
     highlightsEyebrow: "GOOD THINGS HAPPEN HERE", highlightsTitle: "People showing up for people.", topContributors: "Community supporters", contributorPeriod: "Based on confirmed contributions in the last 30 days.", recentMilestones: "Recent milestones", anonymousSupporter: "A community member", noLeaders: "Supporter highlights will appear here as contributions are confirmed.", noMilestones: "Milestones will show here when a Paste reaches a meaningful goal.", milestoneReached: "reached",
-    cardBy: "By", cardView: "View Paste", cardContribute: "Contribute", cardSignIn: "Sign in to support", cardRaised: "raised so far", cardGoal: "Goal", cardNoGoal: "No goal set", cardFunded: "funded", cardSupporters: "supporters", cardUntitled: "Untitled Paste", cardProgress: "Fundraising progress",
+    cardBy: "By", cardView: "View Paste", cardContribute: "Contribute", cardRaised: "raised so far", cardGoal: "Goal", cardNoGoal: "No goal set", cardFunded: "funded", cardSupporters: "supporters", cardUntitled: "Untitled Paste", cardProgress: "Fundraising progress",
 
   },
   pcm: {
@@ -71,7 +71,7 @@ const copy = {
     heroTitle: "Big things fit happen when", heroAccent: "we show up.",
     heroText: "Find students wey need small support, read their stories and see how you fit help. You get your own thing wey you wan make happen? Start a Paste and bring your people along.",
     start: "Start fundraiser", seeHow: "See how e dey work",
-    supporterNote: "Browse freely. Log in when you ready to contribute.",
+    supporterNote: "Browse freely. You no need PasteMe account to contribute.",
     visualShare: "Easy to share", visualShareSub: "One link. One QR.",
     visualType: "COMMUNITY CAMPAIGN", visualStatus: "SAMPLE CAMPAIGN", visualMessage: "PLENTY PEOPLE. ONE CAUSE.", visualIndex: "PASTEME / SAMPLE 01", visualMadeFor: "DEM FIT SHARE AM", bottomOne: "YOUR STORY", bottomTwo: "YOUR PEOPLE", bottomThree: "YOUR IMPACT",
     visualTitle: "Help make one dream happen.", visualText: "Every contribution dey bring us closer.",
@@ -84,7 +84,7 @@ const copy = {
     steps: [
       ["Create your fundraiser", "Tell your story, set your target, and connect your receiving wallet."],
       ["Share your page", "Get campaign link and QR code wey you fit share with your community."],
-      ["Receive contributions", "People go log in, choose amount, and pay through compatible wallet."],
+      ["Receive contributions", "People choose amount and authorize payment through compatible wallet. Dem no need PasteMe account."],
     ],
     whyEyebrow: "Made for sharing", whyTitle: "Make people focus on your cause, no be wahala.",
     whyText: "Fundraising suppose easy to find, understand and support. PasteMe bring everything together.",
@@ -92,14 +92,14 @@ const copy = {
     benefits: [
       ["Your own fundraising page", "Give your cause one page wey people fit understand wetin you dey raise money for."],
       ["QR-powered sharing", "Make people access your campaign from posters, social media, events and printed materials."],
-      ["One account, both sides", "Create your own Paste and support other students with the same account."],
+      ["Account na for creators", "Use PasteMe account to create fundraiser; supporters fit contribute without login."],
       ["Clear payment status", "Campaign progress suppose show only contributions wey payment provider don confirm."],
     ],
     faqEyebrow: "Good questions", faqTitle: "Before you start.",
     faqText: "See some things wey you suppose know about how PasteMe dey work.",
     faqs: [
       ["Wetin be PasteMe?", "PasteMe help people create fundraising pages, share with link or QR code, and receive contributions through compatible digital wallets."],
-      ["I need account to support person?", "You fit browse every public Paste without logging in. When you ready to contribute, create free account or log in first."],
+      ["I need account to support person?", "No. Open any public Paste, choose Contribute, and go straight to checkout. Authorize payment with your compatible wallet."],
       ["How QR code dey work?", "Every campaign get QR code wey point to the public fundraising page. When person scan am, e go open that campaign."],
       ["PasteMe dey hold the money?", "PasteMe dey help payments pass through the connected payment infrastructure. E no be wallet and no suppose hold supporter money."],
       ["Dem verify every campaign?", "Connecting wallet no mean say the campaign or wetin e claim don get independent verification."],
@@ -114,7 +114,7 @@ const copy = {
     impactEyebrow: "SEE WETIN WE FIT DO TOGETHER", impactTitle: "Small-small help fit add up.", impactText: "As the community dey grow, we go show the real difference wey people dey make here.", totalContributed: "Total money wey people don give", studentsHelped: "Students wey get help", activePastes: "Pastes wey dey active", contributors: "People wey contribute", impactEmpty: "Community numbers go show here as confirmed activity dey enter.", impactUnavailable: "We no fit load community numbers now.", featuredUnavailable: "We no fit load Pastes now.", highlightsUnavailable: "Community highlights no fit load now.", retry: "Try again",
     featuredEyebrow: "MAKE WE START HERE", featuredTitle: "Some stories from the community.", featuredText: "Look around first. You fit see one story wey you fit help.", viewAllPastes: "See all Pastes", noFeatured: "No active Paste dey here yet. Check back as students share their stories.",
     highlightsEyebrow: "GOOD THINGS DEY HAPPEN HERE", highlightsTitle: "People dey show up for people.", topContributors: "People wey support others", contributorPeriod: "Based on confirmed contributions for the last 30 days.", recentMilestones: "Recent milestones", anonymousSupporter: "One person for the community", noLeaders: "Supporter highlights go show as contributions dey confirm.", noMilestones: "Milestones go show when one Paste reach important target.", milestoneReached: "don reach",
-    cardBy: "By", cardView: "See Paste", cardContribute: "Contribute", cardSignIn: "Log in to support", cardRaised: "money wey don enter", cardGoal: "Target", cardNoGoal: "No target set", cardFunded: "don fund", cardSupporters: "supporters", cardUntitled: "Untitled Paste", cardProgress: "Fundraising progress",
+    cardBy: "By", cardView: "See Paste", cardContribute: "Contribute", cardRaised: "money wey don enter", cardGoal: "Target", cardNoGoal: "No target set", cardFunded: "don fund", cardSupporters: "supporters", cardUntitled: "Untitled Paste", cardProgress: "Fundraising progress",
 
   },
   yo: {
@@ -123,7 +123,7 @@ const copy = {
     heroTitle: "Ohun ńlá máa ń ṣẹlẹ̀ nígbà tí", heroAccent: "a bá fọwọ́sowọ́pọ̀.",
     heroText: "Ṣàwárí àwọn akẹ́kọ̀ọ́ tó nílò ìrànlọ́wọ́, ka ìtàn wọn kí o sì rí ọ̀nà láti ràn wọ́n lọ́wọ́. Ṣé o tún ní ohun tí o fẹ́ ṣe? Ṣẹ̀dá Paste rẹ kí o sì pe àwọn ènìyàn rẹ láti kópa.",
     start: "Bẹ̀rẹ̀ ìkójọ owó", seeHow: "Wo bí ó ṣe ń ṣiṣẹ́",
-    supporterNote: "O lè ṣàwárí láìwọlé. Wọlé nígbà tí o bá fẹ́ ṣètọrẹ.",
+    supporterNote: "O lè ṣàwárí láìwọlé, kí o sì ṣètọrẹ láìní àkáǹtì PasteMe.",
     visualShare: "Ó rọrùn láti pín", visualShareSub: "Ìjápọ̀ kan. QR kan.",
     visualType: "ÌPOLONGO ÀWÙJỌ", visualStatus: "ÀFÍHÀN ÌPOLONGO", visualMessage: "Ọ̀PỌ̀ ÀWỌN ÈNÌYÀN. OHUN TÓ ṢE PÀTÀKÌ KAN.", visualIndex: "PASTEME / ÀPẸẸRẸ 01", visualMadeFor: "A ṢE É FÚN PÍPIN", bottomOne: "ÌTÀN RẸ", bottomTwo: "ÀWÙJỌ RẸ", bottomThree: "IPA RẸ",
     visualTitle: "Ran àlá kan lọ́wọ́ láti ṣẹ. ", visualText: "Gbogbo ìrànlọ́wọ́ mú wa sún mọ́ àfojúsùn.",
@@ -136,7 +136,7 @@ const copy = {
     steps: [
       ["Ṣẹ̀dá ìpolongo rẹ", "Sọ ìtàn rẹ, yan àfojúsùn owó, kí o sì so àpò owó ìgbàwọlé pọ̀."],
       ["Pín ojú ìwé rẹ", "Gba ìjápọ̀ àti kóòdù QR pàtàkì, kí o sì pín wọn pẹ̀lú àwùjọ rẹ."],
-      ["Gba ìtọrẹ", "Àwọn ènìyàn yóò wọlé, yan iye owó, kí wọ́n sì san án nípasẹ̀ àpò owó tó bá mu."],
+      ["Gba ìtọrẹ", "Àwọn ènìyàn yóò yan iye owó, kí wọ́n sì fọwọ́ sí ìsanwó pẹ̀lú àpò owó tó bá mu. Àkáǹtì PasteMe kò pọndandan."],
     ],
     whyEyebrow: "A ṣe é fún gbogbo ènìyàn", whyTitle: "Kí àwọn ènìyàn dojú kọ ohun tó ṣe pàtàkì, kì í ṣe ìṣòro ìlànà.",
     whyText: "Ó yẹ kí ìkójọ owó rọrùn láti rí, lóye àti láti ṣe àtìlẹ́yìn fún. PasteMe so gbogbo rẹ̀ pọ̀.",
@@ -151,7 +151,7 @@ const copy = {
     faqText: "Àwọn ohun díẹ̀ tí ó yẹ kí o mọ̀ nípa bí PasteMe ṣe ń ṣiṣẹ́.",
     faqs: [
       ["Kí ni PasteMe?", "PasteMe ń ran àwọn ènìyàn lọ́wọ́ láti ṣẹ̀dá ojú ìkójọ owó, pín wọn pẹ̀lú ìjápọ̀ tàbí kóòdù QR, kí wọ́n sì gba ìtọrẹ nípasẹ̀ àpò owó tó bá mu."],
-      ["Ṣé mo nílò àkáǹtì láti ṣètọrẹ?", "O lè ṣàwárí gbogbo Pastes láìwọlé. Nígbà tí o bá fẹ́ ṣètọrẹ, ṣẹ̀dá àkáǹtì ọ̀fẹ́ tàbí wọlé."],
+      ["Ṣé mo nílò àkáǹtì láti ṣètọrẹ?", "Rárá. Ṣí Paste gbogbogbò, yan Ṣètọrẹ, kí o sì lọ tààrà sí ojú ìsanwó. Fọwọ́ sí ìsanwó pẹ̀lú àpò owó tó bá mu."],
       ["Báwo ni kóòdù QR ṣe ń ṣiṣẹ́?", "Gbogbo ìpolongo ní kóòdù QR tó ń darí sí ojú ìpolongo rẹ. Ṣíṣàyẹ̀wò rẹ̀ yóò ṣí ìpolongo náà."],
       ["Ṣé PasteMe ń tọ́jú owó náà?", "A ṣe PasteMe láti ràn àwọn ìsanwó lọ́wọ́ nípasẹ̀ ètò ìsanwó tó sopọ̀, kì í ṣe láti ṣiṣẹ́ bí àpò owó tàbí tọ́jú owó olùrànlọ́wọ́."],
       ["Ṣé a ń fìdí gbogbo ìpolongo múlẹ̀?", "Pípọ̀ àpò owó mọ́ ọn kò túmọ̀ sí pé a ti ṣàyẹ̀wò ìpolongo tàbí gbogbo ohun tí ó sọ lọ́nà òmìnira."],
@@ -166,7 +166,7 @@ const copy = {
     impactEyebrow: "WO OHUN TÍ A LÈ ṢE PAPỌ̀", impactTitle: "Ìrànlọ́wọ́ kékeré máa ń pọ̀ sí i.", impactText: "Bí àwùjọ ṣe ń dàgbà, a ó fi ipa gidi tí àwọn ènìyàn ń ní hàn.", totalContributed: "Àpapọ̀ owó ìtọrẹ", studentsHelped: "Àwọn akẹ́kọ̀ọ́ tí a ràn lọ́wọ́", activePastes: "Pastes tó ń ṣiṣẹ́", contributors: "Àwọn olùrànlọ́wọ́", impactEmpty: "Àwọn nọ́ńbà àwùjọ yóò hàn níbí bí a ṣe ń gba ìtọrẹ tí a ti jẹ́rìí.", impactUnavailable: "A kò lè ṣí àwọn nọ́ńbà àwùjọ báyìí.", featuredUnavailable: "A kò lè ṣí àwọn Paste báyìí.", highlightsUnavailable: "A kò lè ṣí àkójọ àwọn tó ń ṣe àtìlẹ́yìn báyìí.", retry: "Tún gbìyànjú",
     featuredEyebrow: "IBI TÍ A TI LÈ BẸ̀RẸ̀", featuredTitle: "Àwọn ìtàn díẹ̀ láti inú àwùjọ.", featuredText: "Wo àwọn ìpolongo. Ó ṣeé ṣe kí ìtàn kan wà tí o lè ràn lọ́wọ́.", viewAllPastes: "Wo gbogbo Pastes", noFeatured: "Kò sí Paste tó ń ṣiṣẹ́ láti fi hàn síbẹ̀. Padà wá bí àwọn akẹ́kọ̀ọ́ ṣe ń pín ìtàn wọn.",
     highlightsEyebrow: "OHUN RERE Ń ṢẸLẸ̀ NÍBÍ", highlightsTitle: "Àwọn ènìyàn ń ran ara wọn lọ́wọ́.", topContributors: "Àwọn tó ń ṣe àtìlẹ́yìn", contributorPeriod: "Lórí àwọn ìtọrẹ tí a ti jẹ́rìí ní ọjọ́ 30 tó kọjá.", recentMilestones: "Àwọn ìpele tuntun", anonymousSupporter: "Ẹnìkan nínú àwùjọ", noLeaders: "Àwọn olùrànlọ́wọ́ yóò hàn níbí bí a ṣe ń jẹ́rìí ìtọrẹ.", noMilestones: "Àwọn ìpele yóò hàn nígbà tí Paste bá dé àfojúsùn pàtàkì kan.", milestoneReached: "ti dé",
-    cardBy: "Láti ọ̀dọ̀", cardView: "Wo Paste", cardContribute: "Ṣètọrẹ", cardSignIn: "Wọlé láti ṣe àtìlẹ́yìn", cardRaised: "owó tí a ti gbà", cardGoal: "Àfojúsùn", cardNoGoal: "Kò sí àfojúsùn", cardFunded: "ti kún", cardSupporters: "olùrànlọ́wọ́", cardUntitled: "Paste tí kò ní àkọlé", cardProgress: "Ìlọsíwájú ìkójọ owó",
+    cardBy: "Láti ọ̀dọ̀", cardView: "Wo Paste", cardContribute: "Ṣètọrẹ", cardRaised: "owó tí a ti gbà", cardGoal: "Àfojúsùn", cardNoGoal: "Kò sí àfojúsùn", cardFunded: "ti kún", cardSupporters: "olùrànlọ́wọ́", cardUntitled: "Paste tí kò ní àkọlé", cardProgress: "Ìlọsíwájú ìkójọ owó",
 
   },
 };
@@ -390,7 +390,6 @@ function pasteCardLabels(t) {
     by: t.cardBy,
     view: t.cardView,
     contribute: t.cardContribute,
-    signInToSupport: t.cardSignIn,
     raised: t.cardRaised,
     goal: t.cardGoal,
     noGoal: t.cardNoGoal,
@@ -401,7 +400,7 @@ function pasteCardLabels(t) {
   };
 }
 
-function FeaturedPastes({ t, pastes, loading, error, onRetry, isAuthenticated }) {
+function FeaturedPastes({ t, pastes, loading, error, onRetry }) {
   return (
     <section className="section featured-pastes-section landing-section" id="explore-pastes">
       <div className="container">
@@ -426,7 +425,7 @@ function FeaturedPastes({ t, pastes, loading, error, onRetry, isAuthenticated })
         ) : pastes.length ? (
           <div className="featured-paste-grid">
             {pastes.slice(0, 3).map((paste) => (
-              <PasteCard key={paste.id || paste._id} paste={paste} language={t.languageCode || "en"} labels={pasteCardLabels(t)} isAuthenticated={isAuthenticated} />
+              <PasteCard key={paste.id || paste._id} paste={paste} language={t.languageCode || "en"} labels={pasteCardLabels(t)} />
             ))}
           </div>
         ) : (
@@ -684,7 +683,7 @@ export default function Landing() {
         <Hero t={t} isAuthenticated={isAuthenticated} />
         <TrustStrip t={t} />
         <CommunityImpact t={t} impact={impact} loading={discoveryLoading} error={impactError} onRetry={retryDiscovery} />
-        <FeaturedPastes t={t} pastes={featuredPastes} loading={discoveryLoading} error={featuredError} onRetry={retryDiscovery} isAuthenticated={isAuthenticated} />
+        <FeaturedPastes t={t} pastes={featuredPastes} loading={discoveryLoading} error={featuredError} onRetry={retryDiscovery} />
         <CommunityHighlights t={t} highlights={highlights} loading={discoveryLoading} error={highlightsError} onRetry={retryDiscovery} />
         <HowItWorks t={t} />
         <WhyPasteMe t={t} isAuthenticated={isAuthenticated} />

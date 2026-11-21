@@ -35,13 +35,14 @@ const translations = {
     processing: "Preparing your payment...",
     redirecting: "Taking you to your wallet...",
     secure: "Your payment is authorized through your wallet provider.",
-    noSignup: "Your PasteMe account keeps your contributions connected to you.",
+    noSignup: "No PasteMe account needed. Authorize your contribution securely with your wallet.",
     success: "Your contribution is confirmed.",
     successText: "Thank you for being part of this story.",
     pending: "Your payment is still being confirmed.",
     pendingText: "Please check again shortly. Do not submit another payment.",
     failed: "We couldn't confirm this payment.",
     failedText: "Your campaign total has not been updated.",
+    progressRefreshError: "Payment is confirmed, but campaign progress couldn't refresh. Return to the campaign and reload to see the latest total.",
     retry: "Check payment status",
     viewCampaign: "Return to campaign",
     titleNotFound: "Campaign not found",
@@ -92,13 +93,14 @@ const translations = {
     processing: "We dey prepare your payment...",
     redirecting: "We dey take you go your wallet...",
     secure: "Your wallet provider go ask you to approve the payment.",
-    noSignup: "Your PasteMe account go keep your contributions connected to you.",
+    noSignup: "You no need PasteMe account. Authorize your contribution securely with your wallet.",
     success: "Your contribution don confirm.",
     successText: "Thank you say you join this story.",
     pending: "We still dey confirm your payment.",
     pendingText: "Check again shortly. No send another payment.",
     failed: "We no fit confirm this payment.",
     failedText: "We never update the campaign total.",
+    progressRefreshError: "Payment don confirm, but campaign progress no refresh. Go back to the campaign and reload am to see the latest total.",
     retry: "Check payment status",
     viewCampaign: "Go back to campaign",
     titleNotFound: "We no find this campaign",
@@ -149,13 +151,14 @@ const translations = {
     processing: "A ń pèsè ìsanwó rẹ...",
     redirecting: "A ń gbé ọ lọ sí àpò owó rẹ...",
     secure: "Olùpèsè àpò owó rẹ yóò béèrè ìfọwọ́sí rẹ.",
-    noSignup: "Àkáǹtì PasteMe rẹ yóò so àwọn ìtọrẹ rẹ mọ́ ọ.",
+    noSignup: "O kò nílò àkáǹtì PasteMe. Fọwọ́ sí ìsanwó rẹ ní ààbò pẹ̀lú àpò owó rẹ.",
     success: "A ti jẹ́rìí ìrànlọ́wọ́ rẹ.",
     successText: "Ẹ ṣé fún jíjẹ́ ọ̀kan lára ìtàn yìí.",
     pending: "A ṣì ń jẹ́rìí ìsanwó rẹ.",
     pendingText: "Jọ̀wọ́ tún yẹ̀ wò lẹ́yìn ìgbà díẹ̀. Má ṣe san owó lẹ́ẹ̀kansi.",
     failed: "A kò lè jẹ́rìí ìsanwó yìí.",
     failedText: "A kò tíì ṣe àtúnṣe iye owó ìpolongo.",
+    progressRefreshError: "A ti jẹ́rìí ìsanwó, ṣùgbọ́n ìlọsíwájú ìpolongo kò tún ṣe. Padà sí ìpolongo kí o sì tún ojú ìwé náà ṣe.",
     retry: "Ṣàyẹ̀wò ipò ìsanwó",
     viewCampaign: "Padà sí ìpolongo",
     titleNotFound: "A kò rí ìpolongo yìí",
@@ -184,6 +187,22 @@ const translations = {
 };
 
 const quickAmounts = [500, 1000, 2500, 5000];
+
+async function fetchPublishedCampaign(campaignId, options = {}) {
+  const campaign = await getPublishedCampaign(campaignId, {
+    ...options,
+    cache: "no-store",
+  });
+
+  if (
+    String(campaign.id) !== String(campaignId) ||
+    campaign.status !== "published"
+  ) {
+    throw new Error("Campaign unavailable.");
+  }
+
+  return campaign;
+}
 
 function formatPaymentAmount(amount) {
   if (!amount || amount.value == null) return "—";
@@ -251,17 +270,9 @@ export default function SupporterCheckout() {
 
     async function loadCampaign() {
       try {
-        const result = await getPublishedCampaign(campaignId, {
+        const result = await fetchPublishedCampaign(campaignId, {
           signal: controller.signal,
-          cache: "no-store",
         });
-
-        if (
-          String(result.id) !== String(campaignId) ||
-          result.status !== "published"
-        ) {
-          throw new Error("Campaign unavailable.");
-        }
 
         if (!controller.signal.aborted) {
           setCampaign(result);
@@ -299,6 +310,14 @@ export default function SupporterCheckout() {
 
         if (data.status === "settled") {
           setStep("success");
+          try {
+            const updatedCampaign = await fetchPublishedCampaign(campaignId);
+            if (!stopped) setCampaign(updatedCampaign);
+          } catch (refreshError) {
+            if (stopped) return;
+            console.error("Campaign progress refresh failed:", refreshError);
+            setError(t.progressRefreshError);
+          }
           return;
         }
 
@@ -325,7 +344,7 @@ export default function SupporterCheckout() {
       stopped = true;
       window.clearTimeout(timer);
     };
-  }, [returnedIntentId, isReturning, t.checkStatus]);
+  }, [campaignId, returnedIntentId, isReturning, t.checkStatus, t.progressRefreshError]);
 
   function handleLanguageChange(event) {
     const selected = event.target.value;
@@ -454,6 +473,13 @@ export default function SupporterCheckout() {
 
       if (data.status === "settled") {
         setStep("success");
+        try {
+          const updatedCampaign = await fetchPublishedCampaign(campaignId);
+          setCampaign(updatedCampaign);
+        } catch (refreshError) {
+          console.error("Campaign progress refresh failed:", refreshError);
+          setError(t.progressRefreshError);
+        }
       } else if (data.status === "failed") {
         setStep("failed");
       } else {
@@ -796,6 +822,7 @@ export default function SupporterCheckout() {
               title={t.success}
               description={t.successText}
               success
+              error={error}
               buttonText={t.viewCampaign}
               onClick={handleReturnToCampaign}
             />
