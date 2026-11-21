@@ -42,6 +42,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/c/:campaignId" element={<PublicCampaign />} />
+          <Route path="/c/:campaignId/donate" element={<SupporterCheckout />} />
 
           {/* Account entry and recovery */}
           <Route path="/login" element={<GuestOnly><Login /></GuestOnly>} />
@@ -50,7 +51,6 @@ export default function App() {
 
           {/* Creator workspace */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/c/:campaignId/donate" element={<SupporterCheckout />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create" element={<CreateCampaign />} />
             <Route path="/create-campaign" element={<Navigate to="/create" replace />} />

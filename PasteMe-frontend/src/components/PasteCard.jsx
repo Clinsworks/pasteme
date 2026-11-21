@@ -21,7 +21,7 @@ function getUniversity(paste) {
     || "";
 }
 
-export default function PasteCard({ paste, language = "en", labels, isAuthenticated = false }) {
+export default function PasteCard({ paste, language = "en", labels }) {
   const id = paste?.id || paste?._id;
   if (!id) return null;
 
@@ -104,7 +104,7 @@ export default function PasteCard({ paste, language = "en", labels, isAuthentica
             {labels.view}<Icon name="arrow-up-right" size={15} />
           </Link>
           <Link className="paste-card-support" to={`/c/${encodeURIComponent(id)}/donate`}>
-            {isAuthenticated ? labels.contribute : labels.signInToSupport}
+            {labels.contribute}
           </Link>
         </div>
       </div>
