@@ -1,19 +1,25 @@
-import { useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BrandLogo from "../../components/BrandLogo";
-import brandMark from "../../assets/logo.png";
+import brandMark from "../../assets/logo.svg";
 import Icon from "../../components/Icon";
 import InstallAppButton from "../../components/InstallAppButton";
+import PasteCard from "../../components/PasteCard";
+import { useAuth } from "../../context/AuthContext";
+import { getCommunityHighlights, getCommunityImpact, listDiscoverablePastes } from "../../lib/discoveryStore";
+import { formatMoney } from "../../lib/money";
 import "./Landing.css";
+
+const Cloudee = lazy(() => import("../../components/CloudeeAvatar"));
 
 const copy = {
   en: {
     how: "How it works", why: "Why PasteMe", faqNav: "FAQs", login: "Sign in", signup: "Get started", openMenu: "Open navigation", closeMenu: "Close navigation", visualProgressLabel: "Sample campaign progress",
     language: "Language", installApp: "Install app", eyebrow: "Fundraising, made easier",
     heroTitle: "Big things happen when", heroAccent: "we show up.",
-    heroText: "Got something important you want to make happen? Start a fundraiser, share one link or QR code, and let the people who care help you move it forward.",
+    heroText: "Discover students who need a hand, read their stories and find a way to help. Got something of your own to make happen? Start a Paste and bring your people along.",
     start: "Start a fundraiser", seeHow: "See how it works",
-    supporterNote: "No account needed to support someone.",
+    supporterNote: "Browse freely. Sign in when you're ready to contribute.",
     visualShare: "Easy to share", visualShareSub: "One link. One QR.",
     visualType: "A COMMUNITY CAMPAIGN", visualStatus: "SAMPLE CAMPAIGN", visualMessage: "ONE COMMUNITY. MANY HANDS.", visualIndex: "PASTEME / SAMPLE 01", visualMadeFor: "MADE TO BE SHARED", bottomOne: "YOUR STORY", bottomTwo: "YOUR PEOPLE", bottomThree: "YOUR IMPACT",
     visualTitle: "Help a dream take shape.", visualText: "Every contribution brings us one step closer.",
@@ -26,7 +32,7 @@ const copy = {
     steps: [
       ["Create your fundraiser", "Tell your story, set a goal, and connect your compatible receiving wallet."],
       ["Share your page", "Get a unique campaign link and QR code. Share them with your community."],
-      ["Receive contributions", "Supporters open your page, choose an amount, and complete payment through their wallet."],
+      ["Receive contributions", "People sign in, choose an amount, and complete payment through a compatible wallet."],
     ],
     whyEyebrow: "Made for real life", whyTitle: "Less time figuring things out. More time getting support.",
     whyText: "A fundraiser should be easy to find, easy to understand, and straightforward to support. PasteMe brings those pieces together.",
@@ -34,14 +40,14 @@ const copy = {
     benefits: [
       ["Your own fundraising page", "Give your cause a dedicated page where people can understand what you're raising money for."],
       ["QR-powered sharing", "Make your campaign easy to access from posters, social media, events, and printed materials."],
-      ["No supporter registration", "Supporters can access a campaign directly without creating a PasteMe account."],
+      ["One account, both sides", "Create your own Paste and support other students using the same account."],
       ["Transparent payment status", "Campaign progress should reflect contributions that have been confirmed by the payment provider."],
     ],
     faqEyebrow: "Good questions", faqTitle: "Before you get started.",
     faqText: "Here are a few things worth knowing about how PasteMe works.",
     faqs: [
       ["What is PasteMe?", "PasteMe helps people create fundraising pages, share them through a unique link or QR code, and receive contributions through compatible digital wallets."],
-      ["Do supporters need a PasteMe account?", "No. Supporters can open a public campaign page directly and proceed to checkout without registering for PasteMe."],
+      ["Do I need an account to support someone?", "You can browse every public Paste without signing in. When you are ready to contribute, create a free account or log in first."],
       ["How does the QR code work?", "Each campaign gets a QR code that points to its public fundraising page. Scanning it takes supporters directly to that campaign."],
       ["Does PasteMe hold the money?", "PasteMe is designed to facilitate payments through the connected payment infrastructure rather than act as a wallet or hold supporter funds. The actual payment flow depends on the supported wallet and provider."],
       ["Are all campaigns independently verified?", "A connected wallet does not automatically mean that a campaign or its claims have been independently verified. PasteMe should clearly distinguish wallet connection from campaign verification."],
@@ -52,14 +58,20 @@ const copy = {
     ctaButton: "Start a fundraiser", footerDescription: "Making it easier to bring people together around a cause.",
     explore: "Explore", getStarted: "Get started", footerHow: "How it works", footerWhy: "Why PasteMe", footerFaq: "FAQs",
     footerCreate: "Create a campaign", footerLogin: "Creator sign in", footerBottom: "Built to make giving easier.",
+    navHome: "Home", navExplore: "Explore Pastes", dashboard: "Dashboard", startPaste: "Start a Paste", explorePastes: "Explore Pastes", exploreSubtitle: "See what students are working towards. Maybe there's a story you can help move forward.",
+    impactEyebrow: "LOOK WHAT WE CAN DO TOGETHER", impactTitle: "Little bits of help add up.", impactText: "As the community grows, we'll share the real difference people are making here.", totalContributed: "Total contributed", studentsHelped: "Students helped", activePastes: "Active Pastes", contributors: "Contributors", impactEmpty: "Community numbers will show here as confirmed activity comes in.", impactUnavailable: "Community numbers are not loading right now.", featuredUnavailable: "We could not load Pastes right now.", highlightsUnavailable: "Community highlights are not loading right now.", retry: "Try again",
+    featuredEyebrow: "A PLACE TO START", featuredTitle: "A few stories from the community.", featuredText: "Take a look around. Someone's story might be one you can help with.", viewAllPastes: "See all Pastes", noFeatured: "No active Pastes to show just yet. Check back as students share their stories.",
+    highlightsEyebrow: "GOOD THINGS HAPPEN HERE", highlightsTitle: "People showing up for people.", topContributors: "Community supporters", contributorPeriod: "Based on confirmed contributions in the last 30 days.", recentMilestones: "Recent milestones", anonymousSupporter: "A community member", noLeaders: "Supporter highlights will appear here as contributions are confirmed.", noMilestones: "Milestones will show here when a Paste reaches a meaningful goal.", milestoneReached: "reached",
+    cardBy: "By", cardView: "View Paste", cardContribute: "Contribute", cardSignIn: "Sign in to support", cardRaised: "raised so far", cardGoal: "Goal", cardNoGoal: "No goal set", cardFunded: "funded", cardSupporters: "supporters", cardUntitled: "Untitled Paste", cardProgress: "Fundraising progress",
+
   },
   pcm: {
     how: "How e dey work", why: "Why PasteMe", faqNav: "FAQs", login: "Log in", signup: "Get started", openMenu: "Open navigation", closeMenu: "Close navigation", visualProgressLabel: "Sample campaign progress",
     language: "Language", installApp: "Install app", eyebrow: "Fundraising don easier",
     heroTitle: "Big things fit happen when", heroAccent: "we show up.",
-    heroText: "You get something important wey you wan make happen? Start fundraiser, share one link or QR code, make people wey care fit support you.",
+    heroText: "Find students wey need small support, read their stories and see how you fit help. You get your own thing wey you wan make happen? Start a Paste and bring your people along.",
     start: "Start fundraiser", seeHow: "See how e dey work",
-    supporterNote: "People fit contribute without creating PasteMe account.",
+    supporterNote: "Browse freely. Log in when you ready to contribute.",
     visualShare: "Easy to share", visualShareSub: "One link. One QR.",
     visualType: "COMMUNITY CAMPAIGN", visualStatus: "SAMPLE CAMPAIGN", visualMessage: "PLENTY PEOPLE. ONE CAUSE.", visualIndex: "PASTEME / SAMPLE 01", visualMadeFor: "DEM FIT SHARE AM", bottomOne: "YOUR STORY", bottomTwo: "YOUR PEOPLE", bottomThree: "YOUR IMPACT",
     visualTitle: "Help make one dream happen.", visualText: "Every contribution dey bring us closer.",
@@ -72,7 +84,7 @@ const copy = {
     steps: [
       ["Create your fundraiser", "Tell your story, set your target, and connect your receiving wallet."],
       ["Share your page", "Get campaign link and QR code wey you fit share with your community."],
-      ["Receive contributions", "People go open your page, choose amount, and pay through their wallet."],
+      ["Receive contributions", "People go log in, choose amount, and pay through compatible wallet."],
     ],
     whyEyebrow: "Made for sharing", whyTitle: "Make people focus on your cause, no be wahala.",
     whyText: "Fundraising suppose easy to find, understand and support. PasteMe bring everything together.",
@@ -80,14 +92,14 @@ const copy = {
     benefits: [
       ["Your own fundraising page", "Give your cause one page wey people fit understand wetin you dey raise money for."],
       ["QR-powered sharing", "Make people access your campaign from posters, social media, events and printed materials."],
-      ["No supporter registration", "People fit open campaign directly without creating PasteMe account."],
+      ["One account, both sides", "Create your own Paste and support other students with the same account."],
       ["Clear payment status", "Campaign progress suppose show only contributions wey payment provider don confirm."],
     ],
     faqEyebrow: "Good questions", faqTitle: "Before you start.",
     faqText: "See some things wey you suppose know about how PasteMe dey work.",
     faqs: [
       ["Wetin be PasteMe?", "PasteMe help people create fundraising pages, share with link or QR code, and receive contributions through compatible digital wallets."],
-      ["Supporters need PasteMe account?", "No. Supporters fit open public campaign page directly and go checkout without registering for PasteMe."],
+      ["I need account to support person?", "You fit browse every public Paste without logging in. When you ready to contribute, create free account or log in first."],
       ["How QR code dey work?", "Every campaign get QR code wey point to the public fundraising page. When person scan am, e go open that campaign."],
       ["PasteMe dey hold the money?", "PasteMe dey help payments pass through the connected payment infrastructure. E no be wallet and no suppose hold supporter money."],
       ["Dem verify every campaign?", "Connecting wallet no mean say the campaign or wetin e claim don get independent verification."],
@@ -98,14 +110,20 @@ const copy = {
     ctaButton: "Start fundraiser", footerDescription: "We dey make am easy for people to join around one cause.",
     explore: "Explore", getStarted: "Get started", footerHow: "How e dey work", footerWhy: "Why PasteMe", footerFaq: "FAQs",
     footerCreate: "Create campaign", footerLogin: "Creator login", footerBottom: "Built to make giving easier.",
+    navHome: "Home", navExplore: "Explore Pastes", dashboard: "Dashboard", startPaste: "Start a Paste", explorePastes: "Explore Pastes", exploreSubtitle: "See wetin students dey work towards. Maybe na one story you fit help move forward.",
+    impactEyebrow: "SEE WETIN WE FIT DO TOGETHER", impactTitle: "Small-small help fit add up.", impactText: "As the community dey grow, we go show the real difference wey people dey make here.", totalContributed: "Total money wey people don give", studentsHelped: "Students wey get help", activePastes: "Pastes wey dey active", contributors: "People wey contribute", impactEmpty: "Community numbers go show here as confirmed activity dey enter.", impactUnavailable: "We no fit load community numbers now.", featuredUnavailable: "We no fit load Pastes now.", highlightsUnavailable: "Community highlights no fit load now.", retry: "Try again",
+    featuredEyebrow: "MAKE WE START HERE", featuredTitle: "Some stories from the community.", featuredText: "Look around first. You fit see one story wey you fit help.", viewAllPastes: "See all Pastes", noFeatured: "No active Paste dey here yet. Check back as students share their stories.",
+    highlightsEyebrow: "GOOD THINGS DEY HAPPEN HERE", highlightsTitle: "People dey show up for people.", topContributors: "People wey support others", contributorPeriod: "Based on confirmed contributions for the last 30 days.", recentMilestones: "Recent milestones", anonymousSupporter: "One person for the community", noLeaders: "Supporter highlights go show as contributions dey confirm.", noMilestones: "Milestones go show when one Paste reach important target.", milestoneReached: "don reach",
+    cardBy: "By", cardView: "See Paste", cardContribute: "Contribute", cardSignIn: "Log in to support", cardRaised: "money wey don enter", cardGoal: "Target", cardNoGoal: "No target set", cardFunded: "don fund", cardSupporters: "supporters", cardUntitled: "Untitled Paste", cardProgress: "Fundraising progress",
+
   },
   yo: {
     how: "Bí ó ṣe ń ṣiṣẹ́", why: "Ìdí PasteMe", faqNav: "Ìbéèrè", login: "Wọlé", signup: "Bẹ̀rẹ̀", openMenu: "Ṣí àkójọ", closeMenu: "Pa àkójọ", visualProgressLabel: "Ìlọsíwájú àpẹẹrẹ ìpolongo",
     language: "Èdè", installApp: "Fi app sori ẹrọ", eyebrow: "A mú ìkójọ owó rọrùn",
     heroTitle: "Ohun ńlá máa ń ṣẹlẹ̀ nígbà tí", heroAccent: "a bá fọwọ́sowọ́pọ̀.",
-    heroText: "Ṣé ohun pàtàkì kan wà tí o fẹ́ ṣe? Bẹ̀rẹ̀ ìkójọ owó, pín ìjápọ̀ kan tàbí kóòdù QR, kí àwọn tó bìkítà lè ràn ọ́ lọ́wọ́.",
+    heroText: "Ṣàwárí àwọn akẹ́kọ̀ọ́ tó nílò ìrànlọ́wọ́, ka ìtàn wọn kí o sì rí ọ̀nà láti ràn wọ́n lọ́wọ́. Ṣé o tún ní ohun tí o fẹ́ ṣe? Ṣẹ̀dá Paste rẹ kí o sì pe àwọn ènìyàn rẹ láti kópa.",
     start: "Bẹ̀rẹ̀ ìkójọ owó", seeHow: "Wo bí ó ṣe ń ṣiṣẹ́",
-    supporterNote: "Àwọn olùrànlọ́wọ́ lè ṣètọrẹ láìní àkáǹtì PasteMe.",
+    supporterNote: "O lè ṣàwárí láìwọlé. Wọlé nígbà tí o bá fẹ́ ṣètọrẹ.",
     visualShare: "Ó rọrùn láti pín", visualShareSub: "Ìjápọ̀ kan. QR kan.",
     visualType: "ÌPOLONGO ÀWÙJỌ", visualStatus: "ÀFÍHÀN ÌPOLONGO", visualMessage: "Ọ̀PỌ̀ ÀWỌN ÈNÌYÀN. OHUN TÓ ṢE PÀTÀKÌ KAN.", visualIndex: "PASTEME / ÀPẸẸRẸ 01", visualMadeFor: "A ṢE É FÚN PÍPIN", bottomOne: "ÌTÀN RẸ", bottomTwo: "ÀWÙJỌ RẸ", bottomThree: "IPA RẸ",
     visualTitle: "Ran àlá kan lọ́wọ́ láti ṣẹ. ", visualText: "Gbogbo ìrànlọ́wọ́ mú wa sún mọ́ àfojúsùn.",
@@ -118,7 +136,7 @@ const copy = {
     steps: [
       ["Ṣẹ̀dá ìpolongo rẹ", "Sọ ìtàn rẹ, yan àfojúsùn owó, kí o sì so àpò owó ìgbàwọlé pọ̀."],
       ["Pín ojú ìwé rẹ", "Gba ìjápọ̀ àti kóòdù QR pàtàkì, kí o sì pín wọn pẹ̀lú àwùjọ rẹ."],
-      ["Gba ìtọrẹ", "Àwọn ènìyàn yóò ṣí ojú ìwé rẹ, yan iye owó, kí wọ́n sì san án nípasẹ̀ àpò owó wọn."],
+      ["Gba ìtọrẹ", "Àwọn ènìyàn yóò wọlé, yan iye owó, kí wọ́n sì san án nípasẹ̀ àpò owó tó bá mu."],
     ],
     whyEyebrow: "A ṣe é fún gbogbo ènìyàn", whyTitle: "Kí àwọn ènìyàn dojú kọ ohun tó ṣe pàtàkì, kì í ṣe ìṣòro ìlànà.",
     whyText: "Ó yẹ kí ìkójọ owó rọrùn láti rí, lóye àti láti ṣe àtìlẹ́yìn fún. PasteMe so gbogbo rẹ̀ pọ̀.",
@@ -133,7 +151,7 @@ const copy = {
     faqText: "Àwọn ohun díẹ̀ tí ó yẹ kí o mọ̀ nípa bí PasteMe ṣe ń ṣiṣẹ́.",
     faqs: [
       ["Kí ni PasteMe?", "PasteMe ń ran àwọn ènìyàn lọ́wọ́ láti ṣẹ̀dá ojú ìkójọ owó, pín wọn pẹ̀lú ìjápọ̀ tàbí kóòdù QR, kí wọ́n sì gba ìtọrẹ nípasẹ̀ àpò owó tó bá mu."],
-      ["Ṣé àwọn olùrànlọ́wọ́ nílò àkáǹtì PasteMe?", "Rárá. Wọ́n lè ṣí ojú ìpolongo gbogbo ènìyàn tààrà kí wọ́n sì lọ sí ibi ìsanwó láìforúkọsílẹ̀."],
+      ["Ṣé mo nílò àkáǹtì láti ṣètọrẹ?", "O lè ṣàwárí gbogbo Pastes láìwọlé. Nígbà tí o bá fẹ́ ṣètọrẹ, ṣẹ̀dá àkáǹtì ọ̀fẹ́ tàbí wọlé."],
       ["Báwo ni kóòdù QR ṣe ń ṣiṣẹ́?", "Gbogbo ìpolongo ní kóòdù QR tó ń darí sí ojú ìpolongo rẹ. Ṣíṣàyẹ̀wò rẹ̀ yóò ṣí ìpolongo náà."],
       ["Ṣé PasteMe ń tọ́jú owó náà?", "A ṣe PasteMe láti ràn àwọn ìsanwó lọ́wọ́ nípasẹ̀ ètò ìsanwó tó sopọ̀, kì í ṣe láti ṣiṣẹ́ bí àpò owó tàbí tọ́jú owó olùrànlọ́wọ́."],
       ["Ṣé a ń fìdí gbogbo ìpolongo múlẹ̀?", "Pípọ̀ àpò owó mọ́ ọn kò túmọ̀ sí pé a ti ṣàyẹ̀wò ìpolongo tàbí gbogbo ohun tí ó sọ lọ́nà òmìnira."],
@@ -144,10 +162,16 @@ const copy = {
     ctaButton: "Bẹ̀rẹ̀ ìkójọ owó", footerDescription: "A ń mú kí ó rọrùn fún àwọn ènìyàn láti kóra jọ fún ohun tó ṣe pàtàkì.",
     explore: "Ṣàwárí", getStarted: "Bẹ̀rẹ̀", footerHow: "Bí ó ṣe ń ṣiṣẹ́", footerWhy: "Ìdí PasteMe", footerFaq: "Ìbéèrè",
     footerCreate: "Ṣẹ̀dá ìpolongo", footerLogin: "Wíwọlé olùṣẹ̀dá", footerBottom: "A ṣe é láti mú ìtọrẹ rọrùn.",
+    navHome: "Ilé", navExplore: "Ṣàwárí Pastes", dashboard: "Ojú ìṣàkóso", startPaste: "Bẹ̀rẹ̀ Paste", explorePastes: "Ṣàwárí Pastes", exploreSubtitle: "Wo ohun tí àwọn akẹ́kọ̀ọ́ ń ṣiṣẹ́ lé lórí. Ó ṣeé ṣe kí ìtàn kan wà tí o lè ràn lọ́wọ́.",
+    impactEyebrow: "WO OHUN TÍ A LÈ ṢE PAPỌ̀", impactTitle: "Ìrànlọ́wọ́ kékeré máa ń pọ̀ sí i.", impactText: "Bí àwùjọ ṣe ń dàgbà, a ó fi ipa gidi tí àwọn ènìyàn ń ní hàn.", totalContributed: "Àpapọ̀ owó ìtọrẹ", studentsHelped: "Àwọn akẹ́kọ̀ọ́ tí a ràn lọ́wọ́", activePastes: "Pastes tó ń ṣiṣẹ́", contributors: "Àwọn olùrànlọ́wọ́", impactEmpty: "Àwọn nọ́ńbà àwùjọ yóò hàn níbí bí a ṣe ń gba ìtọrẹ tí a ti jẹ́rìí.", impactUnavailable: "A kò lè ṣí àwọn nọ́ńbà àwùjọ báyìí.", featuredUnavailable: "A kò lè ṣí àwọn Paste báyìí.", highlightsUnavailable: "A kò lè ṣí àkójọ àwọn tó ń ṣe àtìlẹ́yìn báyìí.", retry: "Tún gbìyànjú",
+    featuredEyebrow: "IBI TÍ A TI LÈ BẸ̀RẸ̀", featuredTitle: "Àwọn ìtàn díẹ̀ láti inú àwùjọ.", featuredText: "Wo àwọn ìpolongo. Ó ṣeé ṣe kí ìtàn kan wà tí o lè ràn lọ́wọ́.", viewAllPastes: "Wo gbogbo Pastes", noFeatured: "Kò sí Paste tó ń ṣiṣẹ́ láti fi hàn síbẹ̀. Padà wá bí àwọn akẹ́kọ̀ọ́ ṣe ń pín ìtàn wọn.",
+    highlightsEyebrow: "OHUN RERE Ń ṢẸLẸ̀ NÍBÍ", highlightsTitle: "Àwọn ènìyàn ń ran ara wọn lọ́wọ́.", topContributors: "Àwọn tó ń ṣe àtìlẹ́yìn", contributorPeriod: "Lórí àwọn ìtọrẹ tí a ti jẹ́rìí ní ọjọ́ 30 tó kọjá.", recentMilestones: "Àwọn ìpele tuntun", anonymousSupporter: "Ẹnìkan nínú àwùjọ", noLeaders: "Àwọn olùrànlọ́wọ́ yóò hàn níbí bí a ṣe ń jẹ́rìí ìtọrẹ.", noMilestones: "Àwọn ìpele yóò hàn nígbà tí Paste bá dé àfojúsùn pàtàkì kan.", milestoneReached: "ti dé",
+    cardBy: "Láti ọ̀dọ̀", cardView: "Wo Paste", cardContribute: "Ṣètọrẹ", cardSignIn: "Wọlé láti ṣe àtìlẹ́yìn", cardRaised: "owó tí a ti gbà", cardGoal: "Àfojúsùn", cardNoGoal: "Kò sí àfojúsùn", cardFunded: "ti kún", cardSupporters: "olùrànlọ́wọ́", cardUntitled: "Paste tí kò ní àkọlé", cardProgress: "Ìlọsíwájú ìkójọ owó",
+
   },
 };
  
-function Navbar({ t, language, onLanguageChange }) {
+function Navbar({ t, language, onLanguageChange, isAuthenticated }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
@@ -168,6 +192,8 @@ function Navbar({ t, language, onLanguageChange }) {
         </button>
 
         <nav id="landing-navigation" className={menuOpen ? "nav-links open" : "nav-links"}>
+          <Link to="/" onClick={closeMenu}>{t.navHome}</Link>
+          {/* <Link to="/explore" onClick={closeMenu}>{t.navExplore}</Link> */}
           <a href="#how-it-works" onClick={closeMenu}>{t.how}</a>
           <a href="#why-pasteme" onClick={closeMenu}>{t.why}</a>
           <a href="#faq" onClick={closeMenu}>{t.faqNav}</a>
@@ -181,9 +207,13 @@ function Navbar({ t, language, onLanguageChange }) {
                 <option value="yo">Yorùbá</option>
               </select>
             </label>
-            <Link className="sign-in" to="/login" onClick={closeMenu}>{t.login}</Link>
-            <Link className="primary-button nav-cta" to="/signup" onClick={closeMenu}>
-              {t.signup} <Icon name="arrow-up-right" size={16} />
+            {isAuthenticated ? (
+              <Link className="sign-in" to="/dashboard" onClick={closeMenu}>{t.dashboard}</Link>
+            ) : (
+              <Link className="sign-in" to="/login" onClick={closeMenu}>{t.login}</Link>
+            )}
+            <Link className="primary-button nav-cta" to={isAuthenticated ? "/create" : "/signup"} onClick={closeMenu}>
+              {isAuthenticated ? t.startPaste : t.signup} <Icon name="arrow-up-right" size={16} />
             </Link>
           </div>
         </nav>
@@ -257,17 +287,17 @@ function HeroVisual({ t }) {
   );
 }
 
-function Hero({ t }) {
+function Hero({ t, isAuthenticated }) {
   return (
-    <section className="hero hero-editorial">
+    <section className="hero hero-editorial landing-section">
       <div className="container hero-grid">
         <div className="hero-copy">
           <span className="eyebrow hero-eyebrow"><span className="eyebrow-spark">✳</span>{t.eyebrow}</span>
           <h1>{t.heroTitle} <em>{t.heroAccent}</em></h1>
           <p className="hero-description">{t.heroText}</p>
           <div className="hero-actions">
-            <Link to="/create" className="primary-button">{t.start} <Icon name="arrow-up-right" size={16} /></Link>
-            <a href="#how-it-works" className="secondary-button">{t.seeHow} <Icon name="arrow-down" size={16} /></a>
+            <Link to="/explore" className="primary-button">{t.explorePastes} <Icon name="arrow-up-right" size={16} /></Link>
+            <Link to={isAuthenticated ? "/create" : "/signup"} className="secondary-button">{t.startPaste} <Icon name="plus" size={16} /></Link>
           </div>
           <div className="hero-note"><span className="hero-note-dot" />{t.supporterNote}</div>
           
@@ -282,7 +312,7 @@ function Hero({ t }) {
 function TrustStrip({ t }) {
   const icons = ["share", "qr-code", "check-circle"];
   return (
-    <section className="trust-strip" aria-label="PasteMe benefits">
+    <section className="trust-strip landing-section" aria-label="PasteMe benefits">
       <div className="container trust-inner">
         {t.trust.map((label, index) => (
           <div className="trust-item" key={label}>
@@ -294,10 +324,181 @@ function TrustStrip({ t }) {
   );
 }
 
+function impactTotal(impact) {
+  const totals = Array.isArray(impact?.totalsByCurrency) ? impact.totalsByCurrency : [];
+  if (totals.length) {
+    return totals.map((item) => formatMoney(item.amount ?? item.value, item.currency || "NGN", item.assetScale)).join(" · ");
+  }
+  if (impact?.totalContributed && typeof impact.totalContributed === "object") {
+    const item = impact.totalContributed;
+    return formatMoney(item.amount ?? item.value, item.currency || "NGN", item.assetScale);
+  }
+  return impact?.totalContributed != null
+    ? formatMoney(impact.totalContributed, impact.currency || "NGN", impact.assetScale)
+    : "—";
+}
+
+function CommunityImpact({ t, impact, loading, error, onRetry }) {
+  const hasImpactData = Boolean(
+    (Array.isArray(impact?.totalsByCurrency) && impact.totalsByCurrency.length) ||
+    impact?.totalContributed != null ||
+    impact?.studentsHelped != null ||
+    impact?.activePastes != null ||
+    impact?.contributors != null
+  );
+  const stats = [
+    { icon: "wallet", label: t.totalContributed, value: loading ? "···" : impactTotal(impact) },
+    { icon: "graduation-cap", label: t.studentsHelped, value: loading || impact?.studentsHelped == null ? "—" : Number(impact.studentsHelped).toLocaleString() },
+    { icon: "megaphone", label: t.activePastes, value: loading || impact?.activePastes == null ? "—" : Number(impact.activePastes).toLocaleString() },
+    { icon: "users", label: t.contributors, value: loading || impact?.contributors == null ? "—" : Number(impact.contributors).toLocaleString() },
+  ];
+
+  return (
+    <section className="section community-impact-section landing-section">
+      <div className="container">
+        <div className="community-impact-heading">
+          <div>
+            <span className="eyebrow">{t.impactEyebrow}</span>
+            <h2>{t.impactTitle}</h2>
+            <p>{t.impactText}</p>
+          </div>
+          <span className="community-impact-mark"><Icon name="heart-handshake" size={27} /></span>
+        </div>
+        <div className="community-impact-grid">
+          {stats.map((stat) => (
+            <article className="community-impact-stat" key={stat.label}>
+              <span className="community-impact-icon"><Icon name={stat.icon} size={20} /></span>
+              <strong>{stat.value}</strong>
+              <span>{stat.label}</span>
+            </article>
+          ))}
+        </div>
+        {!loading && error ? (
+          <p className="community-impact-note community-data-error">
+            {t.impactUnavailable} <button type="button" onClick={onRetry}>{t.retry}</button>
+          </p>
+        ) : !loading && !hasImpactData ? (
+          <p className="community-impact-note">{t.impactEmpty}</p>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+function pasteCardLabels(t) {
+  return {
+    by: t.cardBy,
+    view: t.cardView,
+    contribute: t.cardContribute,
+    signInToSupport: t.cardSignIn,
+    raised: t.cardRaised,
+    goal: t.cardGoal,
+    noGoal: t.cardNoGoal,
+    funded: t.cardFunded,
+    supporters: t.cardSupporters,
+    untitled: t.cardUntitled,
+    progress: t.cardProgress,
+  };
+}
+
+function FeaturedPastes({ t, pastes, loading, error, onRetry, isAuthenticated }) {
+  return (
+    <section className="section featured-pastes-section landing-section" id="explore-pastes">
+      <div className="container">
+        <div className="featured-pastes-heading">
+          <div className="section-heading">
+            <span className="eyebrow">{t.featuredEyebrow}</span>
+            <h2>{t.featuredTitle}</h2>
+            <p>{t.featuredText}</p>
+          </div>
+          <Link className="featured-view-all" to="/explore">{t.viewAllPastes}<Icon name="arrow-up-right" size={16} /></Link>
+        </div>
+        {loading ? (
+          <div className="featured-paste-skeletons" aria-label={t.loading}>
+            {[0, 1, 2].map((item) => <div className="featured-paste-skeleton" key={item} />)}
+          </div>
+        ) : error ? (
+          <div className="featured-pastes-empty featured-pastes-error">
+            <Icon name="cloud-off" size={22} />
+            <p>{t.featuredUnavailable}</p>
+            <button type="button" onClick={onRetry}>{t.retry}</button>
+          </div>
+        ) : pastes.length ? (
+          <div className="featured-paste-grid">
+            {pastes.slice(0, 3).map((paste) => (
+              <PasteCard key={paste.id || paste._id} paste={paste} language={t.languageCode || "en"} labels={pasteCardLabels(t)} isAuthenticated={isAuthenticated} />
+            ))}
+          </div>
+        ) : (
+          <div className="featured-pastes-empty"><Icon name="heart-handshake" size={22} /><p>{t.noFeatured}</p><Link to="/explore">{t.viewAllPastes}<Icon name="arrow-up-right" size={14} /></Link></div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function CommunityHighlights({ t, highlights, loading, error, onRetry }) {
+  const contributors = Array.isArray(highlights?.topContributors) ? highlights.topContributors.slice(0, 3) : [];
+  const milestones = Array.isArray(highlights?.recentMilestones) ? highlights.recentMilestones.slice(0, 3) : [];
+
+  return (
+    <section className="section community-highlights-section landing-section">
+      <div className="container">
+        <div className="section-heading">
+          <span className="eyebrow">{t.highlightsEyebrow}</span>
+          <h2>{t.highlightsTitle}</h2>
+        </div>
+        <div className="community-highlights-grid">
+          <article className="community-highlight-panel">
+            <div className="community-highlight-title"><Icon name="users" size={19} /><div><h3>{t.topContributors}</h3><small className="community-period-note">{t.contributorPeriod}</small></div></div>
+            {loading ? <p className="community-highlight-empty">{t.loading}</p> : error ? (
+              <p className="community-highlight-empty community-data-error">{t.highlightsUnavailable} <button type="button" onClick={onRetry}>{t.retry}</button></p>
+            ) : contributors.length ? (
+              <ol className="community-leader-list">
+                {contributors.map((person, index) => {
+                  const anonymous = Boolean(person.anonymous || person.isAnonymous);
+                  const name = anonymous ? t.anonymousSupporter : (person.displayName || person.name || t.anonymousSupporter);
+                  const amount = person.contributionTotal ?? person.totalContributed;
+                  return <li key={`${name}-${index}`}><span className="community-leader-rank">0{index + 1}</span><span className="community-leader-name">{name}</span>{!anonymous && amount != null && <strong>{formatMoney(amount, person.currency || "NGN", person.assetScale)}</strong>}</li>;
+                })}
+              </ol>
+            ) : <p className="community-highlight-empty">{t.noLeaders}</p>}
+          </article>
+
+          <article className="community-highlight-panel milestone-panel">
+            <div className="community-highlight-title"><Icon name="flag" size={19} /><h3>{t.recentMilestones}</h3></div>
+            {loading ? <p className="community-highlight-empty">{t.loading}</p> : error ? (
+              <p className="community-highlight-empty community-data-error">{t.highlightsUnavailable} <button type="button" onClick={onRetry}>{t.retry}</button></p>
+            ) : milestones.length ? (
+              <ul className="community-milestone-list">
+                {milestones.map((milestone, index) => (
+                  <li key={`${milestone.campaignId || milestone.id || milestone.campaignTitle}-${index}`}>
+                    <span className="community-milestone-mark"><Icon name="check" size={15} /></span>
+                    <span>
+                      <strong>
+                        {milestone.campaignId ? (
+                          <Link className="community-milestone-link" to={`/c/${encodeURIComponent(milestone.campaignId)}`}>
+                            {milestone.campaignTitle || milestone.title || t.featuredTitle}
+                          </Link>
+                        ) : (milestone.campaignTitle || milestone.title || t.featuredTitle)}
+                      </strong>
+                      <small>{Math.round(Number(milestone.progressPercent ?? milestone.progress) || 0)}% {t.milestoneReached}</small>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="community-highlight-empty">{t.noMilestones}</p>}
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks({ t }) {
   const icons = ["file-text", "qr-code", "heart-handshake"];
   return (
-    <section className="section how-section" id="how-it-works">
+    <section className="section how-section landing-section" id="how-it-works">
       <div className="container">
         <div className="section-heading centered">
           <span className="eyebrow">{t.howEyebrow}</span>
@@ -322,16 +523,16 @@ function HowItWorks({ t }) {
   );
 }
 
-function WhyPasteMe({ t }) {
+function WhyPasteMe({ t, isAuthenticated }) {
   const benefitIcons = ["file-text", "qr-code", "users", "shield-check"];
   return (
-    <section className="section why-section" id="why-pasteme">
+    <section className="section why-section landing-section" id="why-pasteme">
       <div className="container why-grid">
         <div className="why-copy">
           <span className="eyebrow">{t.whyEyebrow}</span>
           <h2>{t.whyTitle}</h2>
           <p>{t.whyText}</p>
-          <Link to="/create" className="text-link">{t.createCampaign} <Icon name="arrow-up-right" size={16} /></Link>
+          <Link to={isAuthenticated ? "/create" : "/signup"} className="text-link">{t.createCampaign} <Icon name="arrow-up-right" size={16} /></Link>
         </div>
         <div className="benefit-grid">
           {t.benefits.map(([title, description], index) => (
@@ -349,7 +550,7 @@ function WhyPasteMe({ t }) {
 
 function FAQ({ t }) {
   return (
-    <section className="section faq-section" id="faq">
+    <section className="section faq-section landing-section" id="faq">
       <div className="container faq-grid">
         <div className="section-heading">
           <span className="eyebrow">{t.faqEyebrow}</span>
@@ -369,22 +570,32 @@ function FAQ({ t }) {
   );
 }
 
-function FinalCTA({ t }) {
+function FinalCTA({ t, isAuthenticated }) {
   return (
-    <section className="final-cta">
+    <section className="final-cta landing-section">
       <div className="container final-cta-inner">
-        <div>
+        <div className="final-cta-copy">
           <span className="eyebrow">{t.ctaEyebrow}</span>
           <h2>{t.ctaTitle}</h2>
           <p>{t.ctaText}</p>
         </div>
-        <Link to="/create" className="cta-light-button">{t.ctaButton} <Icon name="arrow-up-right" size={16} /></Link>
+        <div className="final-cta-avatar">
+          <Suspense fallback={null}>
+            <Cloudee
+              className="final-cta-avatar-image"
+              state="idle"
+              size={170}
+              ariaLabel="Cloudee, the PasteMe mascot"
+            />
+          </Suspense>
+        </div>
+        <Link to={isAuthenticated ? "/create" : "/signup"} className="cta-light-button">{t.ctaButton} <Icon name="arrow-up-right" size={16} /></Link>
       </div>
     </section>
   );
 }
 
-function Footer({ t }) {
+function Footer({ t, isAuthenticated }) {
   return (
     <footer className="footer">
       <div className="container footer-main">
@@ -395,13 +606,14 @@ function Footer({ t }) {
         <div className="footer-links">
           <div>
             <strong>{t.explore}</strong>
+            <Link to="/explore">{t.navExplore}</Link>
             <a href="#how-it-works">{t.footerHow}</a>
             <a href="#why-pasteme">{t.footerWhy}</a>
             <a href="#faq">{t.footerFaq}</a>
           </div>
           <div>
             <strong>{t.getStarted}</strong>
-            <Link to="/create">{t.footerCreate}</Link>
+            <Link to={isAuthenticated ? "/create" : "/signup"}>{t.footerCreate}</Link>
             <Link to="/login">{t.footerLogin}</Link>
           </div>
         </div>
@@ -416,7 +628,48 @@ function Footer({ t }) {
 
 export default function Landing() {
   const [language, setLanguage] = useState(() => localStorage.getItem("pasteme_language") || "en");
-  const t = copy[language] || copy.en;
+  const { isAuthenticated } = useAuth();
+  const [featuredPastes, setFeaturedPastes] = useState([]);
+  const [impact, setImpact] = useState(null);
+  const [highlights, setHighlights] = useState(null);
+  const [discoveryLoading, setDiscoveryLoading] = useState(true);
+  const [featuredError, setFeaturedError] = useState(false);
+  const [impactError, setImpactError] = useState(false);
+  const [highlightsError, setHighlightsError] = useState(false);
+  const [discoveryRetry, setDiscoveryRetry] = useState(0);
+  const retryDiscovery = () => setDiscoveryRetry((value) => value + 1);
+  const t = { ...(copy[language] || copy.en), languageCode: language };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setDiscoveryLoading(true);
+    setFeaturedError(false);
+    setImpactError(false);
+    setHighlightsError(false);
+    Promise.allSettled([
+      listDiscoverablePastes({ limit: 3, signal: controller.signal }),
+      getCommunityImpact({ signal: controller.signal }),
+      getCommunityHighlights({ signal: controller.signal }),
+    ]).then(([pastesResult, impactResult, highlightsResult]) => {
+      if (controller.signal.aborted) return;
+      if (pastesResult.status === "fulfilled") {
+        setFeaturedPastes(pastesResult.value.filter((paste) => {
+          if (paste.status && paste.status !== "published" && paste.status !== "active") return false;
+          if (paste.openEnded || !paste.deadline) return true;
+          return new Date(`${paste.deadline}T23:59:59`).getTime() >= Date.now();
+        }));
+      } else {
+        setFeaturedError(true);
+      }
+      if (impactResult.status === "fulfilled") setImpact(impactResult.value);
+      else setImpactError(true);
+      if (highlightsResult.status === "fulfilled") setHighlights(highlightsResult.value);
+      else setHighlightsError(true);
+    }).finally(() => {
+      if (!controller.signal.aborted) setDiscoveryLoading(false);
+    });
+    return () => controller.abort();
+  }, [discoveryRetry]);
 
   const handleLanguageChange = (event) => {
     const selected = event.target.value;
@@ -425,17 +678,20 @@ export default function Landing() {
   };
 
   return (
-    <>
-      <Navbar t={t} language={language} onLanguageChange={handleLanguageChange} />
+    <div className="landing-page">
+      <Navbar t={t} language={language} onLanguageChange={handleLanguageChange} isAuthenticated={isAuthenticated} />
       <main>
-        <Hero t={t} />
+        <Hero t={t} isAuthenticated={isAuthenticated} />
         <TrustStrip t={t} />
+        <CommunityImpact t={t} impact={impact} loading={discoveryLoading} error={impactError} onRetry={retryDiscovery} />
+        <FeaturedPastes t={t} pastes={featuredPastes} loading={discoveryLoading} error={featuredError} onRetry={retryDiscovery} isAuthenticated={isAuthenticated} />
+        <CommunityHighlights t={t} highlights={highlights} loading={discoveryLoading} error={highlightsError} onRetry={retryDiscovery} />
         <HowItWorks t={t} />
-        <WhyPasteMe t={t} />
+        <WhyPasteMe t={t} isAuthenticated={isAuthenticated} />
         <FAQ t={t} />
-        <FinalCTA t={t} />
+        <FinalCTA t={t} isAuthenticated={isAuthenticated} />
       </main>
-      <Footer t={t} />
-    </>
+      <Footer t={t} isAuthenticated={isAuthenticated} />
+    </div>
   );
 }

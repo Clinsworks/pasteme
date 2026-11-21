@@ -13,7 +13,7 @@ const translations = {
   en: {
     navPreview: "Campaign preview", editCampaign: "Edit campaign", publicPreview: "PUBLIC CAMPAIGN PAGE",
     previewTitle: "Here's how your story will look.", previewSubtitle: "This is what people will see when they open your campaign.",
-    cover: "Your campaign cover", raised: "raised so far", goal: "fundraising goal", funded: "funded", contributions: "contributions",
+    cover: "Your campaign cover", raised: "raised so far", goal: "fundraising goal", noGoal: "No goal set", funded: "funded", contributions: "contributions", by: "Started by", university: "University",
     deadline: "CAMPAIGN DEADLINE", deadlineLabel: "Deadline", openEnded: "Open-ended", noDeadline: "Not specified",
     footnote: "Your story is the heart of this campaign. Make sure every detail is accurate before publishing.",
     almost: "ALMOST THERE", readyTitle: "Ready to share your story?", readyText: "Take a moment to make sure everything is in place.",
@@ -25,7 +25,7 @@ const translations = {
   pcm: {
     navPreview: "Campaign preview", editCampaign: "Edit campaign", publicPreview: "PUBLIC CAMPAIGN PAGE",
     previewTitle: "See how your story go look.", previewSubtitle: "Na this people go see when dem open your campaign.",
-    cover: "Your campaign cover", raised: "don enter", goal: "fundraising target", funded: "don fund", contributions: "contributions",
+    cover: "Your campaign cover", raised: "don enter", goal: "fundraising target", noGoal: "No target set", funded: "don fund", contributions: "contributions", by: "Started by", university: "University",
     deadline: "CAMPAIGN DEADLINE", deadlineLabel: "Deadline", openEnded: "No fixed deadline", noDeadline: "No deadline yet",
     footnote: "Your story na the heart of this campaign. Check say every detail correct before you publish.",
     almost: "E DON NEAR", readyTitle: "You ready to share your story?", readyText: "Check say everything dey correct before you publish.",
@@ -37,7 +37,7 @@ const translations = {
   yo: {
     navPreview: "Àyẹ̀wò ìpolongo", editCampaign: "Ṣàtúnṣe ìpolongo", publicPreview: "OJÚ ÌPOLONGO FÚN GBOGBO ÈNÌYÀN",
     previewTitle: "Báyìí ni ìtàn rẹ yóò ṣe rí.", previewSubtitle: "Èyí ni ohun tí àwọn ènìyàn yóò rí nígbà tí wọ́n bá ṣí ìpolongo rẹ.",
-    cover: "Àwòrán ìborí ìpolongo", raised: "owó tí a ti gbà", goal: "àfojúsùn owó", funded: "ti kún", contributions: "ìrànlọ́wọ́",
+    cover: "Àwòrán ìborí ìpolongo", raised: "owó tí a ti gbà", goal: "àfojúsùn owó", noGoal: "Kò sí àfojúsùn", funded: "ti kún", contributions: "ìrànlọ́wọ́", by: "Ẹni tó bẹ̀rẹ̀ rẹ̀", university: "Ilé-ẹ̀kọ́ gíga",
     deadline: "ỌJỌ́ ÌPARÍ ÌPOLONGO", deadlineLabel: "Ọjọ́ ìparí", openEnded: "Kò ní ọjọ́ ìparí", noDeadline: "A kò sọ ọjọ́ ìparí",
     footnote: "Ìtàn rẹ ni ọkàn ìpolongo yìí. Jẹ́rìísí pé gbogbo àlàyé tọ́ kí o tó tẹ̀ ẹ jáde.",
     almost: "Ó TI FẸ́RẸ̀ PARÍ", readyTitle: "Ṣé o ti ṣetán láti pín ìtàn rẹ?", readyText: "Ṣàyẹ̀wò gbogbo àlàyé kí o tó tẹ̀ ẹ jáde.",
@@ -73,8 +73,14 @@ export default function CampaignPreview() {
     [location.state, user?.email]
   );
 
-  const progress = campaign?.target
-    ? Math.min(((Number(campaign.raised) || 0) / Number(campaign.target)) * 100, 100)
+  const goalValue = Number(campaign?.target);
+  const hasGoal = campaign?.target !== null
+    && campaign?.target !== undefined
+    && campaign?.target !== ""
+    && Number.isFinite(goalValue)
+    && goalValue > 0;
+  const progress = hasGoal
+    ? Math.min(((Number(campaign.raised) || 0) / goalValue) * 100, 100)
     : 0;
   const category = getCategoryLabel(campaign?.category, language);
 
@@ -94,7 +100,9 @@ export default function CampaignPreview() {
 
     setPublishError("");
 
-    if (!campaign.title?.trim() || !campaign.category || !campaign.story?.trim() || Number(campaign.target) <= 0) {
+    const rawGoal = String(campaign.target ?? "").trim();
+    const goalIsInvalid = rawGoal !== "" && (!Number.isFinite(Number(rawGoal)) || Number(rawGoal) <= 0);
+    if (!campaign.title?.trim() || !campaign.category || !campaign.story?.trim() || goalIsInvalid) {
       setPublishError(t.error);
       return;
     }
@@ -201,6 +209,12 @@ export default function CampaignPreview() {
             <div className="public-campaign-content">
               <span className="campaign-category">{category}</span>
               <h2>{campaign.title}</h2>
+              {(user?.displayName || user?.name || campaign.university) && (
+                <div className="preview-creator-meta">
+                  {(user?.displayName || user?.name) && <span>{t.by} {user.displayName || user.name}</span>}
+                  {campaign.university && <span><Icon name="map-pin" size={13} />{campaign.university}</span>}
+                </div>
+              )}
               <p className="campaign-story">{campaign.story}</p>
 
               <div className="campaign-funding">
@@ -210,17 +224,25 @@ export default function CampaignPreview() {
                     <span>{t.raised}</span>
                   </div>
                   <div className="funding-target">
-                    <strong>{formatMoney(campaign.target, campaign.currency, campaign.assetScale)}</strong>
+                    <strong>{hasGoal ? formatMoney(goalValue, campaign.currency, campaign.assetScale) : t.noGoal}</strong>
                     <span>{t.goal}</span>
                   </div>
                 </div>
-                <div className="funding-track">
-                  <div className="funding-fill" style={{ width: `${progress}%` }} />
-                </div>
-                <div className="funding-footer">
-                  <span>{Math.round(progress)}% {t.funded}</span>
-                  <span>{campaign.contributors || 0} {t.contributions}</span>
-                </div>
+                {hasGoal ? (
+                  <>
+                    <div className="funding-track" role="progressbar" aria-label={t.goal} aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100">
+                      <div className="funding-fill" style={{ width: `${progress}%` }} />
+                    </div>
+                    <div className="funding-footer">
+                      <span>{Math.round(progress)}% {t.funded}</span>
+                      <span>{campaign.contributors || 0} {t.contributions}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="funding-footer funding-no-goal">
+                    <span>{campaign.contributors || 0} {t.contributions}</span>
+                  </div>
+                )}
               </div>
 
               <div className="campaign-deadline">
@@ -254,7 +276,7 @@ export default function CampaignPreview() {
             </div>
             <div className="checklist-item">
               <span className="check-icon"><Icon name="check" size={15} /></span>
-              <div><strong>{t.goalLabel}</strong><span>{formatMoney(campaign.target, campaign.currency, campaign.assetScale)}</span></div>
+              <div><strong>{t.goalLabel}</strong><span>{hasGoal ? formatMoney(goalValue, campaign.currency, campaign.assetScale) : t.noGoal}</span></div>
             </div>
             <div className="checklist-item">
               <span className="check-icon"><Icon name="check" size={15} /></span>

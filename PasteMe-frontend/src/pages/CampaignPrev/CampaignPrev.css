@@ -528,3 +528,22 @@
   .preview-nav-actions { gap: 7px; }
   .preview-language-select { max-width: 88px; }
 }
+
+.preview-creator-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 2px 0 12px;
+  color: #847B88;
+  font-size: 10px;
+}
+
+.preview-creator-meta span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.funding-no-goal {
+  margin-top: 9px;
+}

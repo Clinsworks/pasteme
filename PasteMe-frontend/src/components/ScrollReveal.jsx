@@ -4,6 +4,7 @@ import { useEffect } from "react";
 // Elements remain visible by default; the reveal class is only applied when
 // IntersectionObserver is available and the visitor has not requested reduced motion.
 const REVEAL_SELECTORS = [
+  ".landing-page .landing-section",
   ".hero-copy",
   ".hero-visual",
   ".trust-item",
@@ -52,6 +53,10 @@ export default function ScrollReveal() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          if (entry.target.matches(".landing-page .landing-section")) {
+            entry.target.classList.toggle("is-visible", entry.isIntersecting);
+            return;
+          }
           if (!entry.isIntersecting) return;
           entry.target.classList.add("is-visible");
           observer.unobserve(entry.target);

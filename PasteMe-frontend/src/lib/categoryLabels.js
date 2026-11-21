@@ -1,5 +1,9 @@
 const categoryNames = {
   Animals: { en: "Animals", pcm: "Animals", yo: "Ẹranko" },
+  Tuition: { en: "Tuition", pcm: "School fees", yo: "Owó ilé ẹ̀kọ́" },
+  Accommodation: { en: "Accommodation", pcm: "Accommodation", yo: "Ibugbe" },
+  "Academic Materials": { en: "Academic materials", pcm: "School materials", yo: "Ohun èlò ẹ̀kọ́" },
+  Emergency: { en: "Emergency", pcm: "Emergency", yo: "Pajawiri" },
   Business: { en: "Business", pcm: "Business", yo: "Iṣòwò" },
   Community: { en: "Community", pcm: "Community", yo: "Àwùjọ" },
   Competitions: { en: "Competitions", pcm: "Competitions", yo: "Ìdíje" },

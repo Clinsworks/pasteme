@@ -20,6 +20,7 @@ const translations = {
     details: "CAMPAIGN DETAILS",
     raised: "raised so far",
     goal: "fundraising goal",
+    noGoal: "No goal set", by: "Started by", university: "University",
     deadline: "CAMPAIGN DEADLINE",
     openEnded: "Open-ended",
     contributions: "contributions",
@@ -34,7 +35,7 @@ const translations = {
     download: "Download QR code",
     view: "View public campaign",
     notice:
-      "Anyone with this link can view your campaign. Supporters do not need to create an account.",
+      "Anyone can view this page. People will sign in or create a free account before contributing.",
     authoredNote:
       "Your campaign title and story remain in the language you wrote them in. This selector translates the PasteMe interface.",
     newCampaign: "Create another campaign",
@@ -63,6 +64,7 @@ const translations = {
     details: "CAMPAIGN DETAILS",
     raised: "Money wey don enter",
     goal: "Money wey you dey target",
+    noGoal: "No target set", by: "Started by", university: "University",
     deadline: "CAMPAIGN DEADLINE",
     openEnded: "No fixed deadline",
     contributions: "people don contribute",
@@ -77,7 +79,7 @@ const translations = {
     download: "Download QR code",
     view: "See public campaign",
     notice:
-      "Anybody wey get this link fit see your campaign. Supporters no need to create account.",
+      "Anybody fit view this page. People go log in or create free account before dem contribute.",
     authoredNote:
       "Your campaign title and story go remain the language wey you write am. This selector dey translate only PasteMe interface.",
     newCampaign: "Create another campaign",
@@ -106,6 +108,7 @@ const translations = {
     details: "ÀLÀYÉ ÌPOLONGO",
     raised: "owó tí a ti gbà",
     goal: "àfojúsùn owó",
+    noGoal: "Kò sí àfojúsùn", by: "Ẹni tó bẹ̀rẹ̀ rẹ̀", university: "Ilé-ẹ̀kọ́ gíga",
     deadline: "ỌJỌ́ ÌPARÍ ÌPOLONGO",
     openEnded: "Kò ní ọjọ́ ìparí",
     contributions: "ìrànlọ́wọ́",
@@ -120,7 +123,7 @@ const translations = {
     download: "Ṣe igbasilẹ kóòdù QR",
     view: "Wo ojú ìwé ìpolongo",
     notice:
-      "Ẹnikẹ́ni tó bá ní ìjápọ̀ yìí lè wo ìpolongo rẹ. Àwọn olùrànlọ́wọ́ kò nílò láti ṣí àkáǹtì.",
+      "Ẹnikẹ́ni lè wo ojú ìwé yìí. Àwọn ènìyàn yóò wọlé tàbí ṣẹ̀dá àkáǹtì ọ̀fẹ́ kí wọ́n tó ṣètọrẹ.",
     authoredNote:
       "Àkọlé àti ìtàn ìpolongo rẹ yóò dúró ní èdè tí o fi kọ wọ́n. Aṣàyàn yìí ń túmọ̀ àfihàn PasteMe nìkan.",
     newCampaign: "Ṣẹ̀dá ìpolongo míì",
@@ -316,14 +319,17 @@ export default function CampaignPublished() {
     );
   }
 
-  const progress = campaign.target
-    ? Math.min(
-        ((Number(campaign.raised) || 0) /
-          Number(campaign.target)) *
-          100,
-        100
-      )
+  const goalValue = Number(campaign.target);
+  const hasGoal = campaign.target !== null
+    && campaign.target !== undefined
+    && campaign.target !== ""
+    && Number.isFinite(goalValue)
+    && goalValue > 0;
+  const progress = hasGoal
+    ? Math.min(((Number(campaign.raised) || 0) / goalValue) * 100, 100)
     : 0;
+  const creatorName = campaign.creator?.displayName || campaign.creator?.name || campaign.creatorName || campaign.owner?.displayName || campaign.owner?.name || "";
+  const university = campaign.university || campaign.creatorUniversity || campaign.creator?.university || campaign.owner?.university || "";
 
   const category =
     getCategoryLabel(campaign.category, language);
@@ -420,6 +426,13 @@ export default function CampaignPublished() {
 
               <h2>{campaign.title}</h2>
 
+              {(creatorName || university) && (
+                <div className="published-creator-meta">
+                  {creatorName && <span>{t.by} {creatorName}</span>}
+                  {university && <span><Icon name="map-pin" size={13} />{university}</span>}
+                </div>
+              )}
+
               <p className="published-story">
                 {campaign.story}
               </p>
@@ -436,24 +449,27 @@ export default function CampaignPublished() {
 
                   <div className="published-goal">
                     <strong>
-                      {formatMoney(campaign.target, campaign.currency, campaign.assetScale)}
+                      {hasGoal ? formatMoney(goalValue, campaign.currency, campaign.assetScale) : t.noGoal}
                     </strong>
                     <span>{t.goal}</span>
                   </div>
                 </div>
 
-                <div className="published-progress">
-                  <div
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-
-                <div className="published-funding-bottom">
-                  <span>{Math.round(progress)}%</span>
-                  <span>
-                    {campaign.contributors || 0} {t.contributions}
-                  </span>
-                </div>
+                {hasGoal ? (
+                  <>
+                    <div className="published-progress" role="progressbar" aria-label={t.goal} aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100">
+                      <div style={{ width: `${progress}%` }} />
+                    </div>
+                    <div className="published-funding-bottom">
+                      <span>{Math.round(progress)}%</span>
+                      <span>{campaign.contributors || 0} {t.contributions}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="published-funding-bottom published-no-goal-bottom">
+                    <span>{campaign.contributors || 0} {t.contributions}</span>
+                  </div>
+                )}
 
               </div>
 
@@ -605,7 +621,7 @@ export default function CampaignPublished() {
       </section>
 
       <footer className="published-footer">
-        <span>paste<span>me</span>.</span>
+        <BrandLogo className="published-footer-logo" />
         <button onClick={handleNewCampaign}>
           {t.newCampaign} <Icon name="arrow-up-right" size={15} />
         </button>

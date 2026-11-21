@@ -25,6 +25,8 @@ body {
 
 /* Each route enters softly without shifting the layout. */
 .route-transition {
+  width: 100%;
+  min-width: 0;
   min-height: 100%;
   animation: pm-page-enter 320ms var(--pm-ease-out) both;
 }

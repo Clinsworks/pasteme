@@ -342,26 +342,16 @@
 /* WALLET INPUT */
 
 .checkout-wallet-input {
-  box-sizing: border-box;
-  width: 100%;
-  border: 1px solid #EAE6EA;
-  border-radius: 8px;
-  background: #FCFBFA;
-  outline: none;
-  padding: 13px;
-  font-size: 11px;
-  font-family: inherit;
-  color: var(--charcoal);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 0 13px;
 }
 
-.checkout-wallet-input:focus,
+.checkout-wallet-input:focus-within,
 .checkout-custom-amount:focus-within {
   border-color: var(--plum);
   box-shadow: 0 0 0 3px rgba(84, 38, 95, 0.06);
 }
 
-.checkout-wallet-input::placeholder {
+.checkout-wallet-input .wallet-username-input::placeholder {
   color: #B4ADB5;
 }
 
@@ -663,8 +653,9 @@
 }
 
 .checkout-state-logo img {
-  width: 48px;
+  width: 73px;
   height: 48px;
+  object-fit: contain;
 }
 
 .checkout-state h1 {
@@ -776,4 +767,44 @@
   font-weight: 800;
   letter-spacing: .8px;
   text-align: center;
+}
+
+.checkout-anonymous-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  margin: 0 0 18px;
+  background: #F8F6F2;
+  border: 1px solid #EEE9E5;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.checkout-anonymous-option input {
+  margin: 2px 0 0;
+  accent-color: #54265F;
+  flex: 0 0 auto;
+}
+
+.checkout-anonymous-option span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkout-anonymous-option strong {
+  color: #302B32;
+  font-size: 10px;
+}
+
+.checkout-anonymous-option small,
+.checkout-no-goal-note {
+  color: #89838A;
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.checkout-no-goal-note {
+  margin: 10px 0 0;
 }

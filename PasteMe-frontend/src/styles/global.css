@@ -39,10 +39,11 @@ a {
 }
 
 .brand-logo img {
-  width: 32px;
-  height: 32px;
+  width: 52px;
+  height: 34px;
   flex: 0 0 auto;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .brand-logo > span {

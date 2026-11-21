@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 290" width="440" height="290">
+  <defs>
+    <!-- Single Bill Graphic (114 x 218) -->
+    <g id="pasteme-bill">
+      <!-- Outer bill body -->
+      <rect x="-57" y="-109" width="114" height="218" rx="10" ry="10" fill="#A4B893" />
+      <!-- Inner lighter field -->
+      <rect x="-45" y="-97" width="90" height="194" rx="4" ry="4" fill="#BCCDB0" />
+      <!-- Corner quarter-circle notches -->
+      <path d="M -45,-97 L -29,-97 A 16,16 0 0 1 -45,-81 Z" fill="#A4B893" />
+      <path d="M 45,-97 L 45,-81 A 16,16 0 0 1 29,-97 Z" fill="#A4B893" />
+      <path d="M -45,97 L -45,81 A 16,16 0 0 1 -29,97 Z" fill="#A4B893" />
+      <path d="M 45,97 L 29,97 A 16,16 0 0 1 45,81 Z" fill="#A4B893" />
+      <!-- Center white dot -->
+      <circle cx="0" cy="0" r="15.5" fill="#FFFFFF" />
+    </g>
+
+    <!-- Cutout mask so the front bill cleanly separates from the middle bill -->
+    <mask id="middle-bill-cutout">
+      <rect x="0" y="0" width="440" height="290" fill="white" />
+      <g transform="translate(309, 165) rotate(42)">
+        <rect x="-65" y="-117" width="130" height="234" rx="15" ry="15" fill="black" />
+      </g>
+    </mask>
+  </defs>
+
+  <!-- Left Bill (tilted -42 degrees) -->
+  <g transform="translate(131, 165) rotate(-42)">
+    <use href="#pasteme-bill" />
+  </g>
+
+  <!-- Center Bill (upright, masked for clean overlap gap) -->
+  <g mask="url(#middle-bill-cutout)">
+    <g transform="translate(220, 125)">
+      <use href="#pasteme-bill" />
+    </g>
+  </g>
+
+  <!-- Right Bill (tilted +42 degrees, foreground) -->
+  <g transform="translate(309, 165) rotate(42)">
+    <use href="#pasteme-bill" />
+  </g>
+</svg>

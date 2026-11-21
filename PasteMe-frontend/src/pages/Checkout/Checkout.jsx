@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import BrandLogo from "../../components/BrandLogo";
 import Icon from "../../components/Icon";
+import InterledgerWalletInput from "../../components/InterledgerWalletInput";
 import { getPublishedCampaign } from "../../lib/campaignStore";
 import { getCategoryLabel } from "../../lib/categoryLabels";
 import { apiRequest } from "../../lib/api";
@@ -17,20 +18,24 @@ const translations = {
     subtitle: "Choose an amount and become part of this story.",
     amount: "Choose your contribution",
     custom: "Enter another amount",
-    wallet: "Your wallet address",
-    walletHelp: "Enter your public Open Payments wallet URL.",
+    wallet: "Your wallet name",
+    walletHelp: "The URL prefix is fixed. Enter only the name after the slash.",
     walletWarning: "Never enter your wallet password or secret keys here.",
     continue: "Get payment quote",
     quoteTitle: "Review your contribution",
     receive: "Campaign receives",
     total: "Total from your wallet",
+    noGoal: "This fundraiser has no fixed goal.",
+    anonymousContribution: "Keep my contribution anonymous",
+    anonymousHelp: "Your name will not appear publicly with this contribution.",
+    anonymousStatus: "Public display", anonymousValue: "Anonymous",
     quoteExpiry: "Quote expires",
     authorize: "Continue to wallet",
     back: "Go back",
     processing: "Preparing your payment...",
     redirecting: "Taking you to your wallet...",
     secure: "Your payment is authorized through your wallet provider.",
-    noSignup: "No PasteMe account is required.",
+    noSignup: "Your PasteMe account keeps your contributions connected to you.",
     success: "Your contribution is confirmed.",
     successText: "Thank you for being part of this story.",
     pending: "Your payment is still being confirmed.",
@@ -42,8 +47,8 @@ const translations = {
     titleNotFound: "Campaign not found",
     notFound: "This campaign is unavailable.",
     loading: "Loading checkout...",
-    required: "Please enter a valid amount and wallet URL.",
-    invalidWallet: "Enter a valid HTTPS Open Payments wallet address.",
+    required: "Please enter an amount and your wallet name.",
+    invalidWallet: "We couldn't form a valid wallet URL from that name.",
     quoteError: "We couldn't prepare a payment quote. Please try again.",
     authorizationError: "We couldn't start wallet authorization.",
     amountError: "Enter an amount greater than zero.",
@@ -56,7 +61,7 @@ const translations = {
     secureNote: "Your payment details are processed securely.",
     customPlaceholder: "Enter amount in the campaign currency",
     minimum: "Enter a valid contribution amount.",
-    walletLabel: "Open Payments wallet URL",
+    walletLabel: "Your wallet name",
     refresh: "Refresh status",
     home: "Back to PasteMe",
     campaignEnded: "This campaign has ended.",
@@ -70,20 +75,24 @@ const translations = {
     subtitle: "Choose how much you wan give and join this story.",
     amount: "Choose how much you wan contribute",
     custom: "Enter another amount",
-    wallet: "Your wallet address",
-    walletHelp: "Enter your public Open Payments wallet URL.",
+    wallet: "Your wallet name",
+    walletHelp: "The URL prefix don already dey there. Enter only your wallet name after the slash.",
     walletWarning: "No enter your wallet password or secret keys here.",
     continue: "Get payment quote",
     quoteTitle: "Check your contribution",
     receive: "Campaign go receive",
     total: "Total wey go comot your wallet",
+    noGoal: "This fundraiser no get fixed target.",
+    anonymousContribution: "Make my contribution anonymous",
+    anonymousHelp: "Your name no go show publicly with this contribution.",
+    anonymousStatus: "Public display", anonymousValue: "Anonymous",
     quoteExpiry: "Quote go expire",
     authorize: "Continue to wallet",
     back: "Go back",
     processing: "We dey prepare your payment...",
     redirecting: "We dey take you go your wallet...",
     secure: "Your wallet provider go ask you to approve the payment.",
-    noSignup: "You no need PasteMe account.",
+    noSignup: "Your PasteMe account go keep your contributions connected to you.",
     success: "Your contribution don confirm.",
     successText: "Thank you say you join this story.",
     pending: "We still dey confirm your payment.",
@@ -95,8 +104,8 @@ const translations = {
     titleNotFound: "We no find this campaign",
     notFound: "This campaign no dey available.",
     loading: "Checkout dey load...",
-    required: "Enter correct amount and wallet URL.",
-    invalidWallet: "Enter correct HTTPS Open Payments wallet address.",
+    required: "Enter correct amount and your wallet name.",
+    invalidWallet: "We no fit make a correct wallet URL from that name.",
     quoteError: "We no fit prepare payment quote. Try again.",
     authorizationError: "We no fit start wallet authorization.",
     amountError: "Enter amount wey pass zero.",
@@ -109,7 +118,7 @@ const translations = {
     secureNote: "We go process your payment details securely.",
     customPlaceholder: "Enter amount in the campaign currency",
     minimum: "Enter correct contribution amount.",
-    walletLabel: "Open Payments wallet URL",
+    walletLabel: "Your wallet name",
     refresh: "Refresh status",
     home: "Back to PasteMe",
     campaignEnded: "This campaign don end.",
@@ -123,20 +132,24 @@ const translations = {
     subtitle: "Yan iye owó tí o fẹ́ fi ṣe ìrànlọ́wọ́.",
     amount: "Yan iye owó ìrànlọ́wọ́ rẹ",
     custom: "Tẹ iye owó mìíràn",
-    wallet: "Àdírẹ́sì àpò owó rẹ",
-    walletHelp: "Tẹ ìjápọ̀ àpò owó Open Payments rẹ.",
+    wallet: "Orúkọ àpò owó rẹ",
+    walletHelp: "Ìbẹ̀rẹ̀ URL ti wà níbí. Tẹ orúkọ àpò owó rẹ lẹ́yìn àmì /.",
     walletWarning: "Má ṣe tẹ ọ̀rọ̀ aṣínà tàbí kọ́kọ́rọ́ àṣírí rẹ síbí.",
     continue: "Gba ìṣirò owó",
     quoteTitle: "Ṣàyẹ̀wò ìrànlọ́wọ́ rẹ",
     receive: "Owó tí ìpolongo yóò gbà",
     total: "Àpapọ̀ owó láti inú àpò rẹ",
+    noGoal: "Ìpolongo yìí kò ní àfojúsùn owó pàtó.",
+    anonymousContribution: "Jẹ́ kí ìtọrẹ mi má hàn gbangba",
+    anonymousHelp: "Orúkọ rẹ kò ní hàn gbangba pẹ̀lú ìtọrẹ yìí.",
+    anonymousStatus: "Àfihàn fún gbogbo ènìyàn", anonymousValue: "Àìfi orúkọ hàn",
     quoteExpiry: "Àkókò tí ìṣirò yóò fi parí",
     authorize: "Tẹ̀síwájú sí àpò owó rẹ",
     back: "Padà",
     processing: "A ń pèsè ìsanwó rẹ...",
     redirecting: "A ń gbé ọ lọ sí àpò owó rẹ...",
     secure: "Olùpèsè àpò owó rẹ yóò béèrè ìfọwọ́sí rẹ.",
-    noSignup: "O kò nílò àkáǹtì PasteMe.",
+    noSignup: "Àkáǹtì PasteMe rẹ yóò so àwọn ìtọrẹ rẹ mọ́ ọ.",
     success: "A ti jẹ́rìí ìrànlọ́wọ́ rẹ.",
     successText: "Ẹ ṣé fún jíjẹ́ ọ̀kan lára ìtàn yìí.",
     pending: "A ṣì ń jẹ́rìí ìsanwó rẹ.",
@@ -148,8 +161,8 @@ const translations = {
     titleNotFound: "A kò rí ìpolongo yìí",
     notFound: "Ìpolongo yìí kò sí ní báyìí.",
     loading: "A ń ṣí ojú ìwé ìsanwó...",
-    required: "Tẹ iye owó àti ìjápọ̀ àpò owó tó pé.",
-    invalidWallet: "Tẹ ìjápọ̀ àpò owó Open Payments HTTPS tó tọ́.",
+    required: "Tẹ iye owó àti orúkọ àpò owó rẹ.",
+    invalidWallet: "A kò lè ṣẹ̀dá URL àpò owó tó tọ́ láti inú orúkọ yìí.",
     quoteError: "A kò lè gba ìṣirò owó. Jọ̀wọ́ tún gbìyànjú.",
     authorizationError: "A kò lè bẹ̀rẹ̀ ìfọwọ́sí àpò owó.",
     amountError: "Tẹ iye owó tó ju òdo lọ.",
@@ -162,7 +175,7 @@ const translations = {
     secureNote: "A ó dáàbò bo àlàyé ìsanwó rẹ.",
     customPlaceholder: "Tẹ iye owó ní owó ìpolongo",
     minimum: "Tẹ iye owó tó tọ́.",
-    walletLabel: "Ìjápọ̀ àpò owó Open Payments",
+    walletLabel: "Orúkọ àpò owó rẹ",
     refresh: "Tún ṣàyẹ̀wò ipò",
     home: "Padà sí PasteMe",
     campaignEnded: "Ìpolongo yìí ti parí.",
@@ -212,6 +225,7 @@ export default function SupporterCheckout() {
   const [amount, setAmount] = useState("1000");
   const [customAmount, setCustomAmount] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
+  const [anonymousContribution, setAnonymousContribution] = useState(false);
 
   const [step, setStep] = useState(returnedIntentId && isReturning ? "checking" : "form");
   const [quote, setQuote] = useState(null);
@@ -367,6 +381,7 @@ export default function SupporterCheckout() {
           campaignId,
           senderWalletAddress: walletUrl.href,
           amount: amountValue,
+          anonymous: anonymousContribution,
         }),
       });
 
@@ -484,6 +499,7 @@ export default function SupporterCheckout() {
 
   const raised = Number(campaign.raised) || 0;
   const goal = Number(campaign.target) || 0;
+  const hasGoal = campaign.target !== null && campaign.target !== undefined && campaign.target !== "" && goal > 0;
   const category = getCategoryLabel(campaign.category, language);
 
   return (
@@ -546,19 +562,21 @@ export default function SupporterCheckout() {
               <span>{t.receive}</span>
             </div>
 
-            <div className="checkout-campaign-goal">
-              <strong>{formatMoney(goal, campaign.currency, campaign.assetScale)}</strong>
-              <span>{t.viewGoal || "Goal"}</span>
-            </div>
+            {hasGoal && (
+              <div className="checkout-campaign-goal">
+                <strong>{formatMoney(goal, campaign.currency, campaign.assetScale)}</strong>
+                <span>{t.viewGoal || "Goal"}</span>
+              </div>
+            )}
           </div>
 
-          <div className="checkout-progress-track">
-            <div
-              style={{
-                width: `${goal > 0 ? Math.min((raised / goal) * 100, 100) : 0}%`,
-              }}
-            />
-          </div>
+          {hasGoal ? (
+            <div className="checkout-progress-track" role="progressbar" aria-label={t.viewGoal || "Goal"} aria-valuenow={Math.round(Math.min((raised / goal) * 100, 100))} aria-valuemin="0" aria-valuemax="100">
+              <div style={{ width: `${Math.min((raised / goal) * 100, 100)}%` }} />
+            </div>
+          ) : (
+            <p className="checkout-no-goal-note">{t.noGoal}</p>
+          )}
 
           <button
             type="button"
@@ -642,16 +660,13 @@ export default function SupporterCheckout() {
                     {t.walletLabel}
                   </label>
 
-                  <input
+                  <InterledgerWalletInput
                     id="senderWallet"
+                    name="senderWallet"
                     className="checkout-wallet-input"
-                    type="url"
                     value={walletAddress}
-                    onChange={(e) => setWalletAddress(e.target.value)}
-                    placeholder="https://wallet.example.com/you"
-                    autoComplete="off"
-                    spellCheck="false"
-                    required
+                    onChange={setWalletAddress}
+                    placeholder="your-name"
                   />
 
                   <small>{t.walletHelp}</small>
@@ -661,6 +676,18 @@ export default function SupporterCheckout() {
                   <Icon name="alert-circle" size={17} />
                   <p>{t.walletWarning}</p>
                 </div>
+
+                <label className="checkout-anonymous-option">
+                  <input
+                    type="checkbox"
+                    checked={anonymousContribution}
+                    onChange={(event) => setAnonymousContribution(event.target.checked)}
+                  />
+                  <span>
+                    <strong>{t.anonymousContribution}</strong>
+                    <small>{t.anonymousHelp}</small>
+                  </span>
+                </label>
 
                 {error && (
                   <p className="checkout-error" role="alert">{error}</p>
@@ -703,6 +730,13 @@ export default function SupporterCheckout() {
                   {formatPaymentAmount(quote.debitAmount)}
                 </strong>
               </div>
+
+              {anonymousContribution && (
+                <div className="quote-row">
+                  <span>{t.anonymousStatus}</span>
+                  <strong>{t.anonymousValue}</strong>
+                </div>
+              )}
 
               {quote.expiresAt && (
                 <div className="quote-row quote-expiry">
@@ -791,7 +825,7 @@ export default function SupporterCheckout() {
           )}
 
           <div className="checkout-card-footer">
-            <span>paste<span>me</span>.</span>
+            <BrandLogo className="checkout-footer-logo" />
             <small>{t.secureNote}</small>
           </div>
 

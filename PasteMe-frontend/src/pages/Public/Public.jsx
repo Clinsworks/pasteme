@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getCategoryLabel } from "../../lib/categoryLabels";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import BrandLogo from "../../components/BrandLogo";
 import Icon from "../../components/Icon";
 import { getPublishedCampaign } from "../../lib/campaignStore";
@@ -25,7 +26,13 @@ const translations = {
     copyFailed: "Could not copy link",
     shareMessage: "Support this campaign on PasteMe.",
     contributions: "Every contribution makes a difference.",
-    noAccount: "No account needed to contribute.",
+    signInToContribute: "Sign in to contribute",
+    accountRequired: "Create a free account or sign in when you're ready to support this Paste.",
+    signedInNote: "You're signed in. Your contribution will be linked to your account.",
+    noGoal: "No fundraising goal set",
+    by: "Started by",
+    university: "University",
+    
     notFound: "Campaign not found",
     notFoundText: "This campaign may be unavailable or may not have been published.",
     home: "Back to PasteMe",
@@ -53,7 +60,13 @@ const translations = {
     copyFailed: "Copy no work",
     shareMessage: "Support this campaign for PasteMe.",
     contributions: "Every contribution get meaning.",
-    noAccount: "You no need account to contribute.",
+    signInToContribute: "Log in to contribute",
+    accountRequired: "Create free account or log in when you ready to support this Paste.",
+    signedInNote: "You don log in. Your contribution go connect to your account.",
+    noGoal: "No fundraising target set",
+    by: "Started by",
+    university: "University",
+    
     notFound: "We no fit find this campaign",
     notFoundText: "This campaign fit no dey available or dem never publish am.",
     home: "Go back to PasteMe",
@@ -81,7 +94,13 @@ const translations = {
     copyFailed: "A kò lè da ìjápọ̀ kọ",
     shareMessage: "Ṣètìlẹ́yìn fún ìpolongo yìí ní PasteMe.",
     contributions: "Gbogbo ìrànlọ́wọ́ ní ìtumọ̀.",
-    noAccount: "O kò nílò àkáǹtì láti ṣètọrẹ.",
+    signInToContribute: "Wọlé láti ṣètọrẹ",
+    accountRequired: "Ṣẹ̀dá àkáǹtì ọ̀fẹ́ tàbí wọlé nígbà tí o bá fẹ́ ṣe àtìlẹ́yìn fún Paste yìí.",
+    signedInNote: "O ti wọlé. A ó so ìtọrẹ rẹ mọ́ àkáǹtì rẹ.",
+    noGoal: "A kò yan àfojúsùn owó",
+    by: "Ẹni tó bẹ̀rẹ̀ rẹ̀",
+    university: "Ilé-ẹ̀kọ́ gíga",
+    
     notFound: "A kò rí ìpolongo yìí",
     notFoundText: "Ó ṣeé ṣe kí ìpolongo yìí kò sí mọ́ tàbí kí a kò tíì tẹ̀ ẹ jáde.",
     home: "Padà sí PasteMe",
@@ -100,6 +119,7 @@ export default function PublicCampaign() {
   const { campaignId } = useParams();
   const [renderedAt] = useState(() => Date.now());
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(Boolean(campaignId));
@@ -221,11 +241,14 @@ export default function PublicCampaign() {
   }
 
   const target = Number(campaign.target) || 0;
+  const hasGoal = campaign.target !== null && campaign.target !== undefined && campaign.target !== "" && target > 0;
   const raised = Number(campaign.raised) || 0;
 
-  const progress = target > 0
+  const progress = hasGoal
     ? Math.min((raised / target) * 100, 100)
     : 0;
+  const creatorName = campaign.creator?.displayName || campaign.creator?.name || campaign.creatorName || campaign.owner?.name || "";
+  const university = campaign.university || campaign.creatorUniversity || campaign.creator?.university || campaign.owner?.university || "";
 
   const category =
     getCategoryLabel(campaign.category, language);
@@ -302,6 +325,12 @@ export default function PublicCampaign() {
         <div className="public-hero-content">
           <span className="public-category">{category}</span>
           <h1>{campaign.title}</h1>
+          {(creatorName || university) && (
+            <div className="public-creator-meta">
+              {creatorName && <span>{t.by} {creatorName}</span>}
+              {university && <span><Icon name="map-pin" size={13} />{university}</span>}
+            </div>
+          )}
 
           <div className="public-hero-meta">
             <span className="public-live"><i /> {campaignEnded ? t.ended : t.live}</span>
@@ -338,29 +367,33 @@ export default function PublicCampaign() {
             {formatMoney(raised, campaign.currency, campaign.assetScale)}
           </div>
 
-          <div className="public-goal-row">
-            <span>{t.viewGoal}</span>
-            <strong>{formatMoney(target, campaign.currency, campaign.assetScale)}</strong>
-          </div>
-
-          <div
-            className="public-progress-track"
-            role="progressbar"
-            aria-label={t.viewGoal}
-            aria-valuenow={Math.round(progress)}
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            <div
-              className="public-progress-fill"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          <div className="public-progress-info">
-            <strong>{Math.round(progress)}%</strong>
-            <span>{contributorCount} {t.supporters}</span>
-          </div>
+          {hasGoal ? (
+            <>
+              <div className="public-goal-row">
+                <span>{t.viewGoal}</span>
+                <strong>{formatMoney(target, campaign.currency, campaign.assetScale)}</strong>
+              </div>
+              <div
+                className="public-progress-track"
+                role="progressbar"
+                aria-label={t.viewGoal}
+                aria-valuenow={Math.round(progress)}
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <div className="public-progress-fill" style={{ width: `${progress}%` }} />
+              </div>
+              <div className="public-progress-info">
+                <strong>{Math.round(progress)}%</strong>
+                <span>{contributorCount} {t.supporters}</span>
+              </div>
+            </>
+          ) : (
+            <div className="public-no-goal-note">
+              <span>{t.noGoal}</span>
+              <strong>{contributorCount} {t.supporters}</strong>
+            </div>
+          )}
 
           <div className="public-donation-divider" />
 
@@ -382,13 +415,13 @@ export default function PublicCampaign() {
               navigate(`/c/${encodeURIComponent(campaign.id)}/donate`)
             }
           >
-            {campaignEnded ? t.campaignEnded : t.donate}
+            {campaignEnded ? t.campaignEnded : isAuthenticated ? t.donate : t.signInToContribute}
             {!campaignEnded && <Icon name="arrow-up-right" size={17} />}
           </button>
 
           <p className="public-no-account">
             <Icon name="check-circle" size={15} />
-            {t.noAccount}
+            {isAuthenticated ? t.signedInNote : t.accountRequired}
           </p>
 
           <button
@@ -412,7 +445,7 @@ export default function PublicCampaign() {
 
       {/* FOOTER */}
       <footer className="public-footer">
-        <span>paste<span>me</span>.</span>
+        <BrandLogo className="public-footer-logo" />
         <p>{t.footerLine}</p>
       </footer>
 

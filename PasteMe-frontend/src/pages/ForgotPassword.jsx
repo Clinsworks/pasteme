@@ -161,7 +161,7 @@ export default function ForgotPassword() {
         </div>
 
         <footer className="auth-footer">
-          <span>paste<span>me</span>.</span>
+          <BrandLogo className="auth-footer-logo" />
           <span>{t.footer}</span>
         </footer>
       </section>
